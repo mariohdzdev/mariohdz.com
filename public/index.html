@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mario Hernández</title>
+  <meta name="description" content="Linux and AI every day. Open source whenever I can.">
+  <meta name="author" content="Mario Hernández">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f5f5f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://mariohdz.com/">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/geist-mono-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/theme.js"></script>
+  <script src="/main.js" defer></script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mariohdz.com/">
+  <meta property="og:title" content="Mario Hernández">
+  <meta property="og:description" content="Linux and AI every day. Open source whenever I can.">
+</head>
+<body id="top">
+  <header class="bar">
+    <a class="bar-home mono" href="/" data-shield>mariohdz<span>.com</span></a>
+    <nav class="bar-nav mono" aria-label="Elsewhere">
+      <a href="https://github.com/mariohdzdev" rel="me" data-shield>GitHub<svg class="arrow" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg></a>
+      <a href="mailto:contact@mariohdz.com" data-shield>Email</a>
+      <button class="theme-toggle" type="button" data-theme-toggle data-shield aria-label="Switch theme">
+        <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
+        <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="name">
+      <canvas class="field" aria-hidden="true"></canvas>
+      <div class="wrap hero-inner">
+        <p class="status mono"><span class="dot" aria-hidden="true"></span><span data-shield>Open to projects</span></p>
+        <h1 id="name" class="name">
+          <span class="line"><span data-shield>Mario</span></span>
+          <span class="line"><span data-shield>Hernández</span></span>
+        </h1>
+        <p class="tagline mono">
+          <span class="sr-only">Linux and AI every day. Open source whenever I can.</span>
+          <span aria-hidden="true"><span data-decode data-shield>Linux and AI every day. Open source whenever I can.</span><span class="caret"></span></span>
+        </p>
+      </div>
+      <a class="cue mono" href="#about" data-shield>Scroll<span class="cue-line" aria-hidden="true"></span></a>
+    </section>
+
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="wrap reveal">
+        <h2 id="about-title" class="label mono"><span class="sr-only">About</span><span aria-hidden="true"><span class="num">01</span><span class="sep">/</span><span data-decode>About</span></span></h2>
+        <div class="prose">
+          <p class="lead">Linux and AI are the two things I keep coming back to. I like <em>the why behind them</em>: the logic of a system, the reasons for a design decision, how an architecture fits together. I’m not tied to one distro, model or tool; I’d rather understand what’s underneath. I learn most by breaking things and fixing them.</p>
+          <p>I run models locally and build small tools with coding agents: automations, fixes for my own setup, things that save me time. I also use AI for research and to keep up with new technology. I like owning my tools and my data, so I lean toward local, open source software. When a fix belongs upstream, I try to send it there.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact" aria-labelledby="contact-title">
+      <canvas class="field" aria-hidden="true"></canvas>
+      <div class="wrap reveal">
+        <h2 id="contact-title" class="label mono"><span class="sr-only">Contact</span><span aria-hidden="true"><span class="num">02</span><span class="sep">/</span><span data-decode>Contact</span></span></h2>
+        <p class="contact-text"><span data-shield>I’m open to projects and collaborations, and happy to talk about Linux, AI or open source. Email is the best way to reach me:</span></p>
+        <div class="email-row">
+          <a class="email" href="mailto:contact@mariohdz.com"><span data-shield>contact@mariohdz.com</span></a>
+          <button class="copy mono" type="button" data-copy="contact@mariohdz.com"><span data-copy-label aria-live="polite">Copy</span></button>
+        </div>
+        <p class="elsewhere"><span data-shield>My code is on <a href="https://github.com/mariohdzdev">GitHub</a>.</span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot mono">
+    <div class="wrap foot-inner">
+      <span>© 2026 Mario Hernández</span>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+</body>
+</html>
