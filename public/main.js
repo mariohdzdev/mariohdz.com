@@ -134,8 +134,8 @@ class GlyphField {
     for (const i of this.active) this.drawCell(i);
   }
 
-  ignite(x, y, strength = 1) {
-    const { radius, cellW, cellH, cols, rows } = this;
+  ignite(x, y, strength = 1, radius = this.radius) {
+    const { cellW, cellH, cols, rows } = this;
     const c0 = Math.max(0, Math.floor((x - radius) / cellW));
     const c1 = Math.min(cols - 1, Math.floor((x + radius) / cellW));
     const r0 = Math.max(0, Math.floor((y - radius) / cellH));
@@ -404,11 +404,31 @@ if (spied.length) {
 /* Services: what's included folds away on phones and stays open on wider screens */
 
 const wideScreen = matchMedia("(min-width: 40rem)");
-const syncAreas = () => {
+const syncFolds = () => {
   for (const details of document.querySelectorAll(".area-more")) details.open = wideScreen.matches;
 };
-wideScreen.addEventListener("change", syncAreas);
-syncAreas();
+wideScreen.addEventListener("change", syncFolds);
+syncFolds();
+
+/* Service cards and the contact form: a light follows the pointer inside them, and a card's icon resolves again on the way in */
+
+if (motion && finePointer) {
+  for (const card of document.querySelectorAll("[data-spot]")) {
+    const icon = card.querySelector(".area-icon");
+    card.addEventListener(
+      "pointermove",
+      (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--sx", `${event.clientX - rect.left}px`);
+        card.style.setProperty("--sy", `${event.clientY - rect.top}px`);
+      },
+      { passive: true },
+    );
+    card.addEventListener("pointerenter", (event) => {
+      if (icon && event.pointerType === "mouse") decode(icon, 450);
+    });
+  }
+}
 
 /* Copy the email address. Without JavaScript the link opens the mail app; without clipboard access the address
    gets selected so it can be copied by hand. */
@@ -453,6 +473,16 @@ document.querySelectorAll("[data-copy]").forEach((chip, index) => {
 
 const contactForm = document.querySelector("[data-contact]");
 
+// Once a message is on its way, the glyphs around the button light up in a wide burst behind the glass.
+function celebrate(element) {
+  const field = fields.find((candidate) => candidate.host.contains(element));
+  if (!field || !motion || !field.cols) return;
+  const box = field.canvas.getBoundingClientRect();
+  const spot = element.getBoundingClientRect();
+  field.ignite(spot.left + spot.width / 2 - box.left, spot.top + spot.height / 2 - box.top, 1, field.radius * 2.4);
+  wake();
+}
+
 if (contactForm) {
   const status = contactForm.querySelector("[data-form-status]");
   const button = contactForm.querySelector('button[type="submit"]');
@@ -478,6 +508,7 @@ if (contactForm) {
       contactForm.reset();
       contactForm.dataset.state = "sent";
       status.textContent = TEXT.sent(name.split(/\s+/)[0], email);
+      celebrate(button);
     } catch (error) {
       contactForm.dataset.state = "error";
       status.textContent = error instanceof TypeError ? TEXT.failed : error.message;

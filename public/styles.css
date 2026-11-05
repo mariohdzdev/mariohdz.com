@@ -17,7 +17,6 @@
 :root {
   color-scheme: light;
   --bg: #f1f4f8;
-  --surface: #f7f9fc;
   --text: #0b0c16;
   --muted: #4a5170;
   --faint: #646b8a;
@@ -31,11 +30,31 @@
   --header: rgba(241, 244, 248, 0.84);
   --selection: rgba(18, 176, 106, 0.2);
   --error: #b42318;
+  --mint: #0c7c50;
+  --cyan: #0a737b;
+  --lav: #4f5fb0;
+  --mint-glow: #12b06a;
+  --cyan-glow: #14a7b0;
+  --lav-glow: #6f83db;
+  --tile-top: #ffffff;
+  --tile-bottom: #f8fafc;
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-line: rgba(11, 12, 22, 0.08);
+  --sheen: rgba(255, 255, 255, 0.95);
+  --field: rgba(255, 255, 255, 0.72);
+  --shade: rgba(32, 44, 80, 0.16);
+  --aurora: 0.3;
+  --on-accent: #ffffff;
   --sun: none;
   --moon: block;
   --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+  /* The rest of the desktop theme: cyan and lavender join the mint. */
+  --hue: var(--accent);
+  --hue-glow: var(--glow);
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --lift: 0 0.6rem 1.5rem -0.75rem color-mix(in srgb, var(--accent) 55%, transparent);
   --gutter: 1.25rem;
   --max: 75rem;
   --head: 3.75rem;
@@ -50,7 +69,6 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #0b0c16;
-    --surface: #0f111e;
     --text: #ddf7ff;
     --muted: #b5c5db;
     --faint: #7d82a8;
@@ -64,6 +82,21 @@
     --header: rgba(11, 12, 22, 0.8);
     --selection: rgba(130, 251, 156, 0.25);
     --error: #ff9f9f;
+    --mint: #82fb9c;
+    --cyan: #7cf8f7;
+    --lav: #829dd4;
+    --mint-glow: #82fb9c;
+    --cyan-glow: #7cf8f7;
+    --lav-glow: #829dd4;
+    --tile-top: #151828;
+    --tile-bottom: #10121f;
+    --glass: rgba(21, 24, 40, 0.6);
+    --glass-line: rgba(221, 247, 255, 0.08);
+    --sheen: rgba(221, 247, 255, 0.07);
+    --field: rgba(9, 10, 20, 0.55);
+    --shade: rgba(0, 0, 0, 0.5);
+    --aurora: 0.3;
+    --on-accent: #0b0c16;
     --sun: block;
     --moon: none;
   }
@@ -72,7 +105,6 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #0b0c16;
-  --surface: #0f111e;
   --text: #ddf7ff;
   --muted: #b5c5db;
   --faint: #7d82a8;
@@ -86,6 +118,21 @@
   --header: rgba(11, 12, 22, 0.8);
   --selection: rgba(130, 251, 156, 0.25);
   --error: #ff9f9f;
+  --mint: #82fb9c;
+  --cyan: #7cf8f7;
+  --lav: #829dd4;
+  --mint-glow: #82fb9c;
+  --cyan-glow: #7cf8f7;
+  --lav-glow: #829dd4;
+  --tile-top: #151828;
+  --tile-bottom: #10121f;
+  --glass: rgba(21, 24, 40, 0.6);
+  --glass-line: rgba(221, 247, 255, 0.08);
+  --sheen: rgba(221, 247, 255, 0.07);
+  --field: rgba(9, 10, 20, 0.55);
+  --shade: rgba(0, 0, 0, 0.5);
+  --aurora: 0.3;
+  --on-accent: #0b0c16;
   --sun: block;
   --moon: none;
 }
@@ -399,16 +446,18 @@ a:hover > .arrow-right {
   padding: 0.65rem 1rem;
   border-radius: 999px;
   background: var(--accent);
-  color: var(--bg);
+  box-shadow: var(--bevel);
+  color: var(--on-accent);
   font: 600 0.8125rem/1 var(--sans);
   letter-spacing: -0.005em;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.25s var(--ease);
+  transition: transform 0.25s var(--ease), box-shadow 0.3s;
 }
 
 .bar-cta:hover {
   transform: translateY(-1px);
+  box-shadow: var(--bevel), var(--lift);
 }
 
 .bar-cta .long {
@@ -444,16 +493,18 @@ a:hover > .arrow-right {
   letter-spacing: -0.005em;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.25s var(--ease), border-color 0.2s, background-color 0.2s;
+  transition: transform 0.25s var(--ease), border-color 0.2s, background-color 0.2s, box-shadow 0.3s;
 }
 
 .btn-primary {
   background: var(--accent);
-  color: var(--bg);
+  box-shadow: var(--bevel);
+  color: var(--on-accent);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
+  box-shadow: var(--bevel), var(--lift);
 }
 
 .btn-ghost {
@@ -620,9 +671,9 @@ a:hover > .arrow-right {
 
 .tagline {
   max-width: 44rem;
-  margin: clamp(1rem, 2.5vh, 1.5rem) 0 0;
-  color: var(--muted);
-  font-size: clamp(0.8125rem, 0.77rem + 0.3vw, 1rem);
+  margin: clamp(1.25rem, 3vh, 2rem) 0 0;
+  color: var(--text);
+  font-size: clamp(0.9375rem, 0.86rem + 0.4vw, 1.25rem);
   line-height: 1.6;
 }
 
@@ -662,90 +713,6 @@ a:hover > .arrow-right {
   }
 }
 
-.hero-offer {
-  display: grid;
-  gap: 1.5rem;
-  max-width: 38rem;
-}
-
-.lead {
-  margin: 0;
-  font-size: var(--read);
-  line-height: 1.45;
-  letter-spacing: -0.012em;
-  text-wrap: pretty;
-}
-
-.cue {
-  position: absolute;
-  right: var(--edge);
-  bottom: 2rem;
-  display: none;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--faint);
-  font-size: 0.6875rem;
-  letter-spacing: 0.12em;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-
-.cue:hover {
-  color: var(--text);
-}
-
-.cue-line {
-  position: relative;
-  width: 3rem;
-  height: 1px;
-  overflow: hidden;
-  background: var(--rule);
-}
-
-.cue-line::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--glow);
-  transform: translateX(-100%);
-}
-
-.motion .cue-line::after {
-  animation: sweep 2.6s var(--ease) infinite;
-}
-
-@keyframes sweep {
-  60%,
-  to {
-    transform: translateX(100%);
-  }
-}
-
-@media (min-width: 40rem) {
-  .cue {
-    display: flex;
-  }
-}
-
-/* Wide screens split the hero: the name on the left, the offer on the right. */
-@media (min-width: 100rem) {
-  .hero-inner {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    align-items: end;
-    column-gap: 4rem;
-  }
-
-  .hero-offer {
-    justify-self: end;
-    max-width: 34rem;
-    padding-bottom: 0.4rem;
-  }
-
-  .cue {
-    display: none;
-  }
-}
 
 /* Sections */
 
@@ -759,7 +726,7 @@ a:hover > .arrow-right {
   display: flex;
   gap: 0.6rem;
   margin: 0 0 1.25rem;
-  color: var(--muted);
+  color: var(--accent);
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1;
@@ -785,183 +752,154 @@ a:hover > .arrow-right {
   text-wrap: balance;
 }
 
-/* On desktops the sections sit next to an index that follows the reader, like the margin of a manual. */
-
-.rail {
-  display: none;
-}
-
+/* On desktops each section's label sits in the margin and stays in view while the section is read,
+   like the running head of a manual. The header keeps the navigation. */
 @media (min-width: 64rem) {
-  .sheet {
+  .section {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .section-inner {
     display: grid;
     grid-template-columns: var(--margin) minmax(0, 1fr);
     column-gap: clamp(2rem, 4vw, 4.5rem);
-    width: min(100% - 2 * var(--gutter), var(--max));
-    margin-inline: auto;
   }
 
-  .sheet .section-inner {
-    width: auto;
-  }
-
-  .sheet .eyebrow {
-    display: none;
-  }
-
-  .rail {
+  .section-inner > .eyebrow {
     position: sticky;
     top: calc(var(--head) + 2.5rem);
-    display: block;
     align-self: start;
-    margin-top: calc(var(--space) - 0.4rem);
+    margin: calc(var(--space) + 0.9rem) 0 0;
   }
 
-  .rail ol {
-    display: grid;
-    gap: 0.2rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .rail a {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding-block: 0.45rem;
-    color: var(--faint);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color 0.25s;
-  }
-
-  .rail a::before {
-    content: "";
-    flex: none;
-    width: 0.9rem;
-    height: 1px;
-    background: var(--rule-strong);
-    transition: width 0.45s var(--ease), background-color 0.45s;
-  }
-
-  .rail .num {
-    transition: color 0.25s;
-  }
-
-  .rail a:hover,
-  .rail a[aria-current="true"] {
-    color: var(--text);
-  }
-
-  .rail a[aria-current="true"]::before {
-    width: 1.75rem;
-    background: var(--glow);
-  }
-
-  .rail a[aria-current="true"] .num {
-    color: var(--accent);
-  }
-
-  .rail-status {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin: 2rem 0 0;
-    color: var(--faint);
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    line-height: 1.5;
-    text-transform: uppercase;
+  .section-body {
+    padding-top: var(--space);
+    border-top: 1px solid var(--rule);
   }
 }
 
-/* About: a statement, the story and a spec sheet */
+/* A lit tile: the soft mint light from the top corner that marks what matters most on the page. */
+.glow {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--mint-glow) 16%, transparent), transparent 55%),
+    radial-gradient(90% 120% at 100% 100%, color-mix(in srgb, var(--cyan-glow) 9%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--tile-top), var(--tile-bottom));
+  box-shadow:
+    inset 0 1px 0 var(--sheen),
+    0 1.5rem 3rem -2.5rem color-mix(in srgb, var(--mint-glow) 60%, transparent);
+}
+
+/* About: the statement, the path that led here and the principle behind the work */
 
 .about {
   display: grid;
-  gap: 2.25rem;
+  gap: 2.5rem;
 }
 
 .about .section-title {
   margin: 0;
 }
 
-.prose {
-  max-width: 40rem;
-}
-
-.prose p {
+.path {
   margin: 0;
-  font-size: var(--read);
-  line-height: 1.55;
-  letter-spacing: -0.012em;
-  text-wrap: pretty;
-}
-
-.prose p + p {
-  margin-top: 1.1em;
-}
-
-.spec {
-  margin: 0;
+  padding: 0;
+  list-style: none;
   border-top: 1px solid var(--rule);
-  container-type: inline-size;
 }
 
-.spec > div {
+.path-step {
   display: grid;
-  gap: 0.35rem;
-  padding-block: 0.95rem;
+  gap: 0.45rem;
+  padding-block: 1.25rem 1.35rem;
   border-bottom: 1px solid var(--rule);
 }
 
-.spec dt {
-  color: var(--faint);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: color 0.3s;
-}
-
-.spec dd {
+.path-when {
   margin: 0;
-  font-size: 0.9375rem;
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   line-height: 1.5;
 }
 
-.spec > div:hover dt {
-  color: var(--accent);
+.path-what h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
 }
 
-@container (min-width: 19rem) {
-  .spec > div {
-    grid-template-columns: 8.5rem minmax(0, 1fr);
-    align-items: baseline;
-    gap: 1rem;
+.path-what p {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.principle {
+  padding: 1.6rem 1.4rem 1.7rem;
+}
+
+.principle-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.principle p:not(.principle-title) {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Tablets: each step keeps its time on the left, like the dates of a résumé. */
+@media (min-width: 40rem) {
+  .path-step {
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .principle {
+    padding: 2rem 2.25rem 2.1rem;
   }
 }
 
-@media (min-width: 40rem) {
+/* Desktops: the path on the left and the principle beside it. */
+@media (min-width: 64rem) {
   .about {
     grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-    gap: clamp(2rem, 4.5vw, 3.5rem) clamp(2rem, 5vw, 4.5rem);
+    gap: clamp(2.5rem, 4vw, 3.5rem) clamp(2rem, 4vw, 3.5rem);
     align-items: start;
   }
 
   .about .section-title {
     grid-column: 1 / -1;
   }
+
+  .path-step {
+    grid-template-columns: 6rem minmax(0, 1fr);
+  }
+
+  .principle {
+    padding: 1.9rem 1.9rem 2rem;
+  }
 }
 
-/* Wide screens give the statement its own column. */
+/* Wide screens: the statement gets its own column again. */
 @media (min-width: 100rem) {
   .about {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 0.8fr);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr) minmax(0, 0.9fr);
   }
 
   .about .section-title {
@@ -970,9 +908,31 @@ a:hover > .arrow-right {
   }
 }
 
-/* Services: three areas */
+/* Services: three areas, each in its own tone from the palette, over a soft aurora */
+
+[data-hue="mint"] {
+  --hue: var(--mint);
+  --hue-glow: var(--mint-glow);
+}
+
+[data-hue="cyan"] {
+  --hue: var(--cyan);
+  --hue-glow: var(--cyan-glow);
+}
+
+[data-hue="lav"] {
+  --hue: var(--lav);
+  --hue-glow: var(--lav-glow);
+}
+
+[data-hue="muted"] {
+  --hue: var(--faint);
+  --hue-glow: var(--faint);
+}
 
 .areas {
+  position: relative;
+  isolation: isolate;
   display: grid;
   gap: 1rem;
   margin: 0;
@@ -980,53 +940,108 @@ a:hover > .arrow-right {
   list-style: none;
 }
 
+/* Three soft lights behind the cards give the glass something to frost. */
+.areas::before {
+  content: "";
+  position: absolute;
+  inset: -16% -10%;
+  z-index: -1;
+  background:
+    radial-gradient(34% 40% at 24% 30%, var(--mint-glow), transparent 70%),
+    radial-gradient(30% 34% at 52% 52%, var(--cyan-glow), transparent 70%),
+    radial-gradient(34% 40% at 78% 72%, var(--lav-glow), transparent 70%);
+  /* Fades out well before its own edges, so the lights never show a border. */
+  -webkit-mask-image: radial-gradient(farthest-side, #000 45%, transparent);
+  mask-image: radial-gradient(farthest-side, #000 45%, transparent);
+  opacity: var(--aurora);
+  pointer-events: none;
+}
+
 .area {
   position: relative;
+  isolation: isolate;
   display: grid;
   gap: 1.25rem;
   padding: 1.5rem 1.25rem 1.6rem;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--glass-line);
   border-radius: 1rem;
-  background: var(--surface);
-  transition: border-color 0.3s;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 var(--sheen),
+    0 1.75rem 3rem -2.25rem color-mix(in srgb, var(--hue-glow) 55%, transparent);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s;
 }
 
+/* The edge picks up the area's tone from the top corner. */
 .area::before {
   content: "";
   position: absolute;
-  top: -1px;
-  right: 1.25rem;
-  left: 1.25rem;
-  height: 1px;
-  background: var(--glow);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.6s var(--ease);
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(145deg, var(--hue), color-mix(in srgb, var(--hue) 20%, transparent) 32%, transparent 58%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.6;
+  transition: opacity 0.4s, transform 0.7s var(--ease);
+  pointer-events: none;
 }
 
-.area:hover {
-  border-color: var(--rule-strong);
+/* A light that follows the pointer inside the card, like the glyphs in the hero. */
+.area::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(18rem circle at var(--sx, 0) var(--sy, 0), color-mix(in srgb, var(--hue-glow) 17%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
 }
 
-.area:hover::before {
-  transform: scaleX(1);
+.area:hover::before,
+.area:hover::after {
+  opacity: 1;
 }
 
-.area-num {
-  display: block;
-  color: var(--faint);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  transition: color 0.3s;
+.motion .area:hover {
+  transform: translateY(-3px);
 }
 
-.area:hover .area-num {
-  color: var(--accent);
+/* Touch screens have no pointer to follow, so each card lights up as it comes into view. */
+@media (hover: none) {
+  .is-in .area::before,
+  .is-in .area::after {
+    opacity: 1;
+  }
+}
+
+.area-icon {
+  display: grid;
+  width: fit-content;
+  place-items: center;
+  min-width: 2.6rem;
+  height: 2.6rem;
+  padding: 0 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--hue) 32%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--hue) 10%, transparent);
+  box-shadow: 0 0 1.75rem -0.5rem color-mix(in srgb, var(--hue-glow) 55%, transparent);
+  color: var(--hue);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: pre;
 }
 
 .area h3 {
-  margin: 0.9rem 0 0.5rem;
+  margin: 1.1rem 0 0.5rem;
   font-size: 1.375rem;
   font-weight: 500;
   line-height: 1.2;
@@ -1063,7 +1078,7 @@ a:hover > .arrow-right {
 
 .area-more summary::after {
   content: "+";
-  color: var(--accent);
+  color: var(--hue);
   font-size: 1.125rem;
   line-height: 1;
   transition: transform 0.3s var(--ease);
@@ -1103,48 +1118,79 @@ a:hover > .arrow-right {
 
 .area-list li::before {
   content: "+";
-  color: var(--accent);
+  color: var(--hue);
   font-family: var(--mono);
 }
 
+/* Custom work: many clients need something that isn't on the list, so it gets the lit tile. */
 .custom {
   display: grid;
-  gap: 1.1rem;
-  margin-top: 1rem;
-  padding: 1.5rem 1.25rem;
-  border: 1px dashed var(--rule-strong);
-  border-radius: 1rem;
+  gap: 1.75rem;
+  margin-top: 1.25rem;
+  padding: 1.75rem 1.4rem 1.9rem;
 }
 
-.custom p {
-  max-width: 40rem;
-  margin: 0;
+.custom h3 {
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.custom-intro p {
+  max-width: 34rem;
+  margin: 0 0 1.5rem;
+  color: var(--muted);
   font-size: 1.0625rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.custom-label {
+  margin: 0 0 0.9rem;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.custom-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.custom-list li {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.5rem;
   line-height: 1.5;
   text-wrap: pretty;
 }
 
-.custom strong {
+.custom-list li::before {
+  content: "+";
   color: var(--accent);
-  font-weight: 500;
-}
-
-.custom .btn {
-  justify-self: start;
+  font-family: var(--mono);
 }
 
 @media (min-width: 40rem) {
   .custom {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 1.5rem 2rem;
+    padding: 2.25rem 2.25rem 2.4rem;
   }
 }
 
-/* Tablets list the areas as rows: what it is on the left, what's included on the right. */
+/* Tablets list the areas as rows: what it is on the left, what's included on the right.
+   Each row's tone runs along its top edge and stretches out as the section comes into view. */
 @media (min-width: 40rem) and (max-width: 63.999rem) {
   .areas {
     gap: 0;
+  }
+
+  .areas::before {
+    opacity: calc(var(--aurora) * 0.55);
   }
 
   .area {
@@ -1155,27 +1201,50 @@ a:hover > .arrow-right {
     border-top: 1px solid var(--rule);
     border-radius: 0;
     background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .motion .area:hover {
+    transform: none;
   }
 
   .area::before {
-    right: 0;
-    left: 0;
+    inset: -1px 0 auto;
+    height: 1px;
+    padding: 0;
+    -webkit-mask: none;
+    mask: none;
+    background: linear-gradient(90deg, var(--hue), transparent);
+    opacity: 1;
+    transform: scaleX(0.2);
+    transform-origin: left;
+  }
+
+  .area:hover::before,
+  .is-in .area::before {
+    transform: scaleX(1);
+  }
+
+  .is-in .area:nth-child(2)::before {
+    transition-delay: 0.15s;
+  }
+
+  .is-in .area:nth-child(3)::before {
+    transition-delay: 0.3s;
+  }
+
+  .area::after {
+    display: none;
   }
 
   .js .area-list {
-    padding-top: 2.1rem;
-  }
-
-  .custom {
-    margin-top: 0;
-    padding: 1.75rem 0 0;
-    border: 0;
-    border-top: 1px solid var(--rule);
-    border-radius: 0;
+    padding-top: 3.7rem;
   }
 }
 
-/* Desktops show the three areas side by side, with their lists lined up. */
+/* Desktops show the three areas side by side as glass cards, with their lists lined up. */
 @media (min-width: 64rem) {
   .areas {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1187,11 +1256,8 @@ a:hover > .arrow-right {
     grid-row: span 2;
     grid-template-rows: subgrid;
     padding: 1.75rem 1.5rem 2rem;
-  }
-
-  .area::before {
-    right: 1.5rem;
-    left: 1.5rem;
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    backdrop-filter: blur(18px) saturate(1.3);
   }
 
   .js .area-list {
@@ -1200,8 +1266,16 @@ a:hover > .arrow-right {
   }
 
   .custom {
-    margin-top: 1.25rem;
-    padding: 1.5rem 1.75rem;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding: 2.5rem 2.75rem;
+  }
+
+  .custom-examples {
+    padding-left: 2.5rem;
+    border-left: 1px solid var(--rule);
   }
 }
 
@@ -1226,11 +1300,28 @@ a:hover > .arrow-right {
   left: 0;
   width: 0.6rem;
   height: 0.6rem;
-  border: 1px solid var(--glow);
+  border: 1px solid var(--hue);
   border-radius: 50%;
-  background: var(--glow);
-  box-shadow: 0 0 0 4px var(--bg);
+  background: var(--hue);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0.9rem 4px color-mix(in srgb, var(--hue) 30%, transparent);
   transition: background-color 0.5s;
+}
+
+/* The steps run from the mint to the lavender of the palette. */
+.step:nth-child(1) {
+  --hue: var(--mint-glow);
+}
+
+.step:nth-child(2) {
+  --hue: color-mix(in srgb, var(--mint-glow) 45%, var(--cyan-glow));
+}
+
+.step:nth-child(3) {
+  --hue: color-mix(in srgb, var(--cyan-glow) 65%, var(--lav-glow));
+}
+
+.step:nth-child(4) {
+  --hue: var(--lav-glow);
 }
 
 .step::after {
@@ -1256,7 +1347,7 @@ a:hover > .arrow-right {
 }
 
 .motion .is-in .step::before {
-  background: var(--glow);
+  background: var(--hue);
 }
 
 .motion .is-in .step:nth-child(1)::before {
@@ -1340,7 +1431,7 @@ a:hover > .arrow-right {
   }
 
   .steps::after {
-    background: var(--glow);
+    background: linear-gradient(90deg, var(--mint-glow), var(--cyan-glow) 55%, var(--lav-glow));
     transform-origin: left;
   }
 
@@ -1367,10 +1458,11 @@ a:hover > .arrow-right {
   }
 }
 
-/* Contact */
+/* Contact: what to expect on one side, the form on the other */
 
 .contact-main {
-  container: contact / inline-size;
+  display: grid;
+  gap: 2.5rem;
 }
 
 .contact .section-title {
@@ -1378,307 +1470,46 @@ a:hover > .arrow-right {
 }
 
 .contact-text {
-  max-width: 36rem;
-  margin: 0 0 2.25rem;
+  max-width: 34rem;
+  margin: 0 0 2rem;
   font-size: var(--read);
   line-height: 1.5;
   letter-spacing: -0.012em;
   text-wrap: pretty;
 }
 
-.contact-layout {
-  display: grid;
-  gap: 1.75rem;
-}
-
-.direct {
-  order: -1;
-}
-
-@container contact (min-width: 52rem) {
-  .contact-layout {
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    gap: clamp(2rem, 4vw, 4rem);
-    align-items: start;
-  }
-
-  .direct {
-    order: 0;
-  }
-}
-
-@media (min-width: 64rem) {
-  .contact {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .contact-inner {
-    display: grid;
-    grid-template-columns: var(--margin) minmax(0, 1fr);
-    column-gap: clamp(2rem, 4vw, 4.5rem);
-  }
-
-  .contact .eyebrow {
-    margin: 0;
-    padding-top: calc(var(--space) + 0.9rem);
-  }
-
-  .contact-main {
-    padding-top: var(--space);
-    border-top: 1px solid var(--rule);
-  }
-}
-
-.form {
-  position: relative;
-  display: grid;
-  gap: 1.25rem;
+/* What to expect, as a quiet list: availability, response time, languages and the address to copy. */
+.contact-facts {
   margin: 0;
+  border-top: 1px solid var(--rule);
 }
 
-@media (min-width: 40rem) {
-  .form {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .form-wide {
-    grid-column: 1 / -1;
-  }
-}
-
-.form-field {
+.contact-facts > div {
   display: grid;
-  gap: 0.55rem;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 0.9rem;
+  border-bottom: 1px solid var(--rule);
 }
 
-.form-field label,
-.topics legend {
-  color: var(--muted);
-  font: 500 0.75rem/1 var(--mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.form input:not([type="radio"]),
-.form textarea {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--rule);
-  border-radius: 0.65rem;
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
-  line-height: 1.5;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form textarea {
-  min-height: 9.5rem;
-  resize: vertical;
-}
-
-.form input::placeholder,
-.form textarea::placeholder {
+.contact-facts dt {
   color: var(--faint);
-  opacity: 1;
-}
-
-.form input:not([type="radio"]):hover,
-.form textarea:hover {
-  border-color: var(--faint);
-}
-
-.form input:not([type="radio"]):focus-visible,
-.form textarea:focus-visible {
-  outline: none;
-  border-color: var(--glow);
-  box-shadow: 0 0 0 3px var(--selection);
-}
-
-.topics {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.topics legend {
-  margin-bottom: 0.7rem;
-  padding: 0;
-}
-
-.topics legend span {
-  margin-left: 0.4rem;
-  color: var(--faint);
-  font-family: var(--sans);
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.topic-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.topic {
-  position: relative;
-}
-
-.topic input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.topic span {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.55rem 0.9rem;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--bg);
-  color: var(--muted);
   font-size: 0.875rem;
-  line-height: 1.2;
-  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
-}
-
-.topic:hover span {
-  border-color: var(--faint);
-  color: var(--text);
-}
-
-.topic input:checked + span {
-  border-color: var(--glow);
-  background: var(--light);
-  color: var(--text);
-}
-
-.topic input:focus-visible + span {
-  outline: 2px solid var(--glow);
-  outline-offset: 2px;
-}
-
-/* A field people never see: bots that fill in every input give themselves away. */
-.form-trap {
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem 1.5rem;
-}
-
-.send {
-  padding: 0.95rem 1.6rem;
-  border: 0;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--bg);
-  font: 600 1rem/1 var(--sans);
-  letter-spacing: -0.005em;
-  cursor: pointer;
-  transition: transform 0.25s var(--ease), opacity 0.2s;
-}
-
-.send:hover {
-  transform: translateY(-1px);
-}
-
-.send:disabled {
-  opacity: 0.6;
-  cursor: progress;
-  transform: none;
-}
-
-.form-status {
-  margin: 0;
-  color: var(--muted);
-  text-wrap: pretty;
-}
-
-.form[data-state="sent"] .form-status {
-  color: var(--accent);
-}
-
-.form[data-state="error"] .form-status {
-  color: var(--error);
-}
-
-.form-note {
-  margin: 0;
-  color: var(--faint);
-  font-size: 0.8125rem;
   line-height: 1.5;
 }
 
-.form-note a {
-  color: var(--muted);
-  text-decoration-color: var(--rule-strong);
-  text-underline-offset: 0.2em;
-}
-
-.form-note a:hover {
-  color: var(--text);
-  text-decoration-color: var(--glow);
-}
-
-/* Direct contact: the address to copy, the response time and the languages */
-
-.direct {
-  padding: 1.25rem;
-  border: 1px solid var(--rule);
-  border-radius: 1rem;
-  background: var(--chip);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  container-type: inline-size;
-}
-
-.direct-items {
-  display: grid;
-  gap: 1.25rem;
-}
-
-@container (min-width: 34rem) {
-  .direct-items {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-.direct-item {
-  display: grid;
-  align-content: start;
-  gap: 0.5rem;
-}
-
-.direct-label {
-  margin: 0;
-  color: var(--faint);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.direct-value {
+.contact-facts dd {
   margin: 0;
   font-size: 0.9375rem;
   line-height: 1.5;
+}
+
+/* The address sits under its label, so it always has room. */
+.contact-facts > .contact-email {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.6rem;
+  padding-bottom: 0.5rem;
 }
 
 .email-chip {
@@ -1686,10 +1517,11 @@ a:hover > .arrow-right {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  max-width: 21rem;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--rule-strong);
   border-radius: 0.7rem;
-  background: var(--bg);
+  background: var(--field);
   color: var(--text);
   font: 400 0.9375rem/1.2 var(--mono);
   text-decoration: none;
@@ -1737,7 +1569,7 @@ a:hover > .arrow-right {
 
 .copy-hint {
   min-height: 1.4em;
-  margin: 0;
+  margin: 0.45rem 0 0;
   color: var(--faint);
   font-size: 0.8125rem;
   line-height: 1.4;
@@ -1745,6 +1577,244 @@ a:hover > .arrow-right {
 
 .copy-hint[data-copied] {
   color: var(--accent);
+}
+
+/* The form: a lit glass panel over the glyphs. The light that follows the pointer passes underneath it. */
+.form {
+  isolation: isolate;
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 1.4rem 1.25rem 1.5rem;
+  background:
+    radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--mint-glow) 13%, transparent), transparent 55%),
+    radial-gradient(90% 110% at 100% 100%, color-mix(in srgb, var(--cyan-glow) 8%, transparent), transparent 60%),
+    var(--glass);
+  -webkit-backdrop-filter: blur(8px) saturate(1.3);
+  backdrop-filter: blur(8px) saturate(1.3);
+}
+
+/* Inside the panel, a soft light follows the pointer, or sits in the corner while someone types. */
+.form::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(24rem circle at var(--sx, 20%) var(--sy, 0%), color-mix(in srgb, var(--mint-glow) 14%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.form:hover::after,
+.form:focus-within::after {
+  opacity: 1;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.form-field label span {
+  margin-left: 0.35rem;
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.form input:not([type="hidden"]),
+.form select,
+.form textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.65rem;
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.3s;
+}
+
+.form textarea {
+  min-height: 9.5rem;
+  resize: vertical;
+}
+
+.form input::placeholder,
+.form textarea::placeholder {
+  color: var(--faint);
+  opacity: 1;
+}
+
+.form input:hover,
+.form select:hover,
+.form textarea:hover {
+  border-color: var(--faint);
+}
+
+.form input:focus-visible,
+.form select:focus-visible,
+.form textarea:focus-visible {
+  outline: none;
+  border-color: var(--glow);
+  box-shadow: 0 0 0 3px var(--selection), 0 0 1.75rem -0.4rem color-mix(in srgb, var(--mint-glow) 45%, transparent);
+}
+
+/* The topic menu looks like the other fields, with its own arrow. */
+.select {
+  position: relative;
+}
+
+.form select {
+  padding-right: 2.75rem;
+  appearance: none;
+  cursor: pointer;
+}
+
+.form select:has(option[value=""]:checked) {
+  color: var(--faint);
+}
+
+.form option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.select svg {
+  position: absolute;
+  top: 50%;
+  right: 1.1rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: -0.375rem;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* A field people never see: bots that fill in every input give themselves away. */
+.form-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-actions {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.send {
+  width: 100%;
+  padding: 1rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: var(--bevel);
+  color: var(--on-accent);
+  font: 600 1rem/1 var(--sans);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), opacity 0.2s, box-shadow 0.3s;
+}
+
+.send:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--bevel), var(--lift);
+}
+
+.send:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+}
+
+.form-note {
+  margin: 0;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.form-note a {
+  color: var(--muted);
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 0.2em;
+}
+
+.form-note a:hover {
+  color: var(--text);
+  text-decoration-color: var(--glow);
+}
+
+.form-status {
+  margin: 0;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.form-status:empty {
+  display: none;
+}
+
+.form[data-state="sent"] .form-status {
+  color: var(--accent);
+}
+
+.form[data-state="error"] .form-status {
+  color: var(--error);
+}
+
+@media (min-width: 40rem) {
+  .form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 2rem;
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    backdrop-filter: blur(14px) saturate(1.3);
+  }
+
+  .form-wide {
+    grid-column: 1 / -1;
+  }
+
+  .form-actions {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  .send {
+    width: auto;
+  }
+}
+
+/* Desktops: what to expect on the left, the form on the right. */
+@media (min-width: 64rem) {
+  .contact-main {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .form {
+    padding: 2.25rem;
+  }
 }
 
 /* Footer */

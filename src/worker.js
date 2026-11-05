@@ -6,7 +6,7 @@ const INBOX = "contact@mariohdz.com";
 const SENDER = { email: "form@notify.mariohdz.com", name: "mariohdz.com" };
 const LIMITS = { name: 100, email: 254, message: 5000 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// What the topic buttons on the form send, and how each one reads in my inbox.
+// What the topic menu on the form sends, and how each one reads in my inbox.
 const TOPICS = {
   website: "Website",
   email: "Email and domain",
