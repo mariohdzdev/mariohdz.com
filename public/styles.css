@@ -27,6 +27,7 @@
   --light: rgba(18, 176, 106, 0.1);
   --chip: rgba(241, 244, 248, 0.75);
   --selection: rgba(18, 176, 106, 0.2);
+  --error: #b42318;
   --sun: none;
   --moon: block;
   --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
@@ -50,6 +51,7 @@
     --light: rgba(130, 251, 156, 0.1);
     --chip: rgba(11, 12, 22, 0.7);
     --selection: rgba(130, 251, 156, 0.25);
+    --error: #ff9f9f;
     --sun: block;
     --moon: none;
   }
@@ -68,6 +70,7 @@
   --light: rgba(130, 251, 156, 0.1);
   --chip: rgba(11, 12, 22, 0.7);
   --selection: rgba(130, 251, 156, 0.25);
+  --error: #ff9f9f;
   --sun: block;
   --moon: none;
 }
@@ -504,16 +507,21 @@ a {
     padding-top: 0.75rem;
   }
 
-  #help .label {
+  /* When a section opens with a list, the label lines up with the number of the first item. */
+  .section-grid:has(> div > .points:first-child) > .label {
     padding-top: calc(1.4rem + 1px);
   }
 }
 
-.prose {
+.prose,
+.section-intro,
+.section-note {
   max-width: 42rem;
 }
 
-.prose p {
+.prose p,
+.section-intro,
+.section-note {
   margin: 0;
   font-size: var(--read);
   line-height: 1.5;
@@ -530,9 +538,33 @@ a {
   color: var(--accent);
 }
 
-/* How I can help */
+.section-intro {
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
 
-.help-list {
+.section-note {
+  margin-top: clamp(0.5rem, 2vw, 1.25rem);
+}
+
+.section-note strong {
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.section-note a {
+  color: var(--text);
+  text-decoration-color: var(--glow);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.section-note a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Numbered points: how I can help, what I've built and how I work */
+
+.points {
   display: grid;
   gap: 0 clamp(2rem, 4vw, 3.5rem);
   margin: 0;
@@ -541,18 +573,18 @@ a {
 }
 
 @media (min-width: 40rem) {
-  .help-list {
+  .points {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.help-item {
+.point {
   position: relative;
   padding: 1.4rem 0 2.25rem;
   border-top: 1px solid var(--rule);
 }
 
-.help-item::before {
+.point::before {
   content: "";
   position: absolute;
   inset: -1px 0 auto;
@@ -563,11 +595,11 @@ a {
   transition: transform 0.6s var(--ease);
 }
 
-.help-item:hover::before {
+.point:hover::before {
   transform: scaleX(1);
 }
 
-.help-num {
+.point-num {
   display: block;
   margin-bottom: 1rem;
   font-size: 0.75rem;
@@ -577,11 +609,11 @@ a {
   transition: color 0.3s;
 }
 
-.help-item:hover .help-num {
+.point:hover .point-num {
   color: var(--accent);
 }
 
-.help-item h3 {
+.point h3 {
   margin: 0 0 0.6rem;
   font-size: var(--read);
   font-weight: 500;
@@ -589,7 +621,7 @@ a {
   letter-spacing: -0.015em;
 }
 
-.help-item p {
+.point p {
   max-width: 30rem;
   margin: 0;
   color: var(--muted);
@@ -597,29 +629,25 @@ a {
   text-wrap: pretty;
 }
 
-.help-more {
-  max-width: 42rem;
-  margin: clamp(0.5rem, 2vw, 1.25rem) 0 0;
-  font-size: var(--read);
-  line-height: 1.5;
-  letter-spacing: -0.012em;
-  text-wrap: pretty;
-}
-
-.help-more strong {
+.point-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.help-more a {
+.point-link:hover {
   color: var(--text);
-  text-decoration-color: var(--glow);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
 }
 
-.help-more a:hover {
-  text-decoration-thickness: 2px;
+.point-link:hover .arrow {
+  transform: translate(2px, -2px);
 }
 
 /* Contact */
@@ -633,38 +661,142 @@ a {
   text-wrap: pretty;
 }
 
-.email-row {
+.form {
+  position: relative;
+  display: grid;
+  gap: 1.25rem 1.5rem;
+  max-width: 44rem;
+  margin: 0 0 2rem;
+}
+
+@media (min-width: 40rem) {
+  .form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-field {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.form-field label {
+  font: 500 0.75rem/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.65rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form textarea {
+  min-height: 9.5rem;
+  resize: vertical;
+}
+
+.form input::placeholder,
+.form textarea::placeholder {
+  color: var(--faint);
+  opacity: 1;
+}
+
+.form input:hover,
+.form textarea:hover {
+  border-color: var(--faint);
+}
+
+.form input:focus-visible,
+.form textarea:focus-visible {
+  outline: none;
+  border-color: var(--glow);
+  box-shadow: 0 0 0 3px var(--selection);
+}
+
+/* A field people never see: bots that fill in every input give themselves away. */
+.form-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem 1.5rem;
-  margin: 0 0 2.25rem;
 }
 
-.email {
-  position: relative;
-  font-size: clamp(1.75rem, 0.9rem + 4vw, 4rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  text-decoration: none;
-  overflow-wrap: anywhere;
+.send {
+  padding: 0.95rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--bg);
+  font: 600 1rem/1 var(--sans);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), opacity 0.2s;
 }
 
-.email::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 -0.08em;
-  height: 2px;
-  background: var(--glow);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s var(--ease);
+.send:hover {
+  transform: translateY(-1px);
 }
 
-.email:hover::after,
-.email:focus-visible::after {
-  transform: scaleX(1);
+.send:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+}
+
+.form-status {
+  margin: 0;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.form[data-state="sent"] .form-status {
+  color: var(--accent);
+}
+
+.form[data-state="error"] .form-status {
+  color: var(--error);
+}
+
+.email-alt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+.email-alt a {
+  color: var(--text);
+  text-decoration-color: var(--glow);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.email-alt a:hover {
+  text-decoration-thickness: 2px;
 }
 
 .copy {
@@ -694,22 +826,6 @@ a {
 .copy[data-copied] {
   color: var(--accent);
   border-color: var(--accent);
-}
-
-.elsewhere {
-  margin: 0;
-  color: var(--muted);
-}
-
-.elsewhere a {
-  color: var(--text);
-  text-decoration-color: var(--glow);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-}
-
-.elsewhere a:hover {
-  text-decoration-thickness: 2px;
 }
 
 /* Footer */

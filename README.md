@@ -2,7 +2,7 @@
 
 The source of [mariohdz.com](https://mariohdz.com), my personal site.
 
-Plain HTML, CSS and a little JavaScript in `public/`, served as static assets by a Cloudflare Worker. No build step, no dependencies and no cookies. The fonts are served from the same domain, and visits are counted with Cloudflare Web Analytics, which doesn't use cookies either.
+Plain HTML, CSS and a little JavaScript in `public/`, served by a Cloudflare Worker (`src/worker.js`) that also sends the contact form to my inbox. No build step, no dependencies and no cookies. The fonts are served from the same domain, and visits are counted with Cloudflare Web Analytics, which doesn't use cookies either.
 
 ## Run it locally
 
@@ -10,7 +10,13 @@ Plain HTML, CSS and a little JavaScript in `public/`, served as static assets by
 npx wrangler@4.151.3 dev
 ```
 
-Then open <http://localhost:8787>.
+Then open <http://localhost:8787>. Locally the contact form doesn't send real email: Wrangler logs each message and saves its text under `.wrangler/tmp/email/`.
+
+## Contact form
+
+The form posts to `/api/contact`. The Worker checks the fields, quietly drops anything that fills in a hidden field people never see, and sends the message to contact@mariohdz.com with the visitor's address as Reply-To. It works without JavaScript too; with JavaScript the page shows the result in place.
+
+Sending uses Cloudflare Email Service through the `send_email` binding, set in `wrangler.jsonc` to deliver only to contact@mariohdz.com and only from form@notify.mariohdz.com. Automatic mail goes out from the `notify` subdomain so it stays apart from my own inbox: its records and its DMARC policy live on that subdomain and leave the main domain's mail setup alone. For it to work, notify.mariohdz.com has to be onboarded in Email Sending (Workers Paid plan) and contact@mariohdz.com has to be a verified destination address.
 
 ## Link preview image
 

@@ -1,11 +1,21 @@
 {
   "name": "mariohdz-com",
+  "main": "src/worker.js",
   "compatibility_date": "2026-10-15",
   "assets": {
     "directory": "./public",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },
+  // The contact form can only send to this verified address, from this sender.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "destination_address": "contact@mariohdz.com",
+      "allowed_sender_addresses": ["form@notify.mariohdz.com"]
+    }
+  ],
   "routes": [
     { "pattern": "mariohdz.com", "custom_domain": true }
   ],

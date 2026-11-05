@@ -346,6 +346,46 @@ for (const button of document.querySelectorAll("[data-copy]")) {
   });
 }
 
+/* Contact form: sends in place, without leaving the page. Without JavaScript it posts normally. */
+
+const contactForm = document.querySelector("[data-contact]");
+
+if (contactForm) {
+  const status = contactForm.querySelector("[data-form-status]");
+  const button = contactForm.querySelector('button[type="submit"]');
+  const idleLabel = button.textContent;
+  const fallback = "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.";
+
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = new FormData(contactForm);
+    const name = String(data.get("name") || "").trim();
+    const email = String(data.get("email") || "").trim();
+    delete contactForm.dataset.state;
+    status.textContent = "";
+    button.disabled = true;
+    button.textContent = "Sending…";
+    try {
+      const response = await fetch(contactForm.action, {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) throw new Error(result.message || fallback);
+      contactForm.reset();
+      contactForm.dataset.state = "sent";
+      status.textContent = `Thanks, ${name.split(/\s+/)[0]}. Your message is on its way, and I’ll reply to ${email}.`;
+    } catch (error) {
+      contactForm.dataset.state = "error";
+      status.textContent = error instanceof TypeError ? fallback : error.message;
+    } finally {
+      button.disabled = false;
+      button.textContent = idleLabel;
+    }
+  });
+}
+
 /* Theme */
 
 const toggle = document.querySelector("[data-theme-toggle]");
