@@ -16,39 +16,40 @@
 
 :root {
   color-scheme: light;
-  --bg: #f5f5f4;
-  --text: #0c0c0d;
-  --muted: #5d5d65;
-  --faint: #8a8a92;
-  --rule: #e1e1e4;
-  --accent: #c2410c;
-  --glow: #ff5a1f;
-  --glyph: rgba(12, 12, 13, 0.13);
-  --light: rgba(255, 106, 43, 0.12);
-  --chip: rgba(245, 245, 244, 0.75);
-  --selection: rgba(255, 90, 31, 0.22);
+  --bg: #f1f4f8;
+  --text: #0b0c16;
+  --muted: #4a5170;
+  --faint: #646b8a;
+  --rule: #dce2eb;
+  --accent: #0c7c50;
+  --glow: #12b06a;
+  --glyph: rgba(11, 12, 22, 0.13);
+  --light: rgba(18, 176, 106, 0.1);
+  --chip: rgba(241, 244, 248, 0.75);
+  --selection: rgba(18, 176, 106, 0.2);
   --sun: none;
   --moon: block;
   --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
   --edge: max(1.5rem, (100% - 72rem) / 2);
+  --read: clamp(1.1875rem, 1rem + 0.55vw, 1.4375rem);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0a0a0b;
-    --text: #f2f2f3;
-    --muted: #a1a1aa;
-    --faint: #6e6e77;
-    --rule: #222226;
-    --accent: #ff7a45;
-    --glow: #ff6a2b;
-    --glyph: rgba(242, 242, 243, 0.12);
-    --light: rgba(255, 106, 43, 0.14);
-    --chip: rgba(10, 10, 11, 0.7);
-    --selection: rgba(255, 106, 43, 0.32);
+    --bg: #0b0c16;
+    --text: #ddf7ff;
+    --muted: #b5c5db;
+    --faint: #7d82a8;
+    --rule: #1f2338;
+    --accent: #82fb9c;
+    --glow: #82fb9c;
+    --glyph: rgba(181, 197, 219, 0.12);
+    --light: rgba(130, 251, 156, 0.1);
+    --chip: rgba(11, 12, 22, 0.7);
+    --selection: rgba(130, 251, 156, 0.25);
     --sun: block;
     --moon: none;
   }
@@ -56,17 +57,17 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0a0b;
-  --text: #f2f2f3;
-  --muted: #a1a1aa;
-  --faint: #6e6e77;
-  --rule: #222226;
-  --accent: #ff7a45;
-  --glow: #ff6a2b;
-  --glyph: rgba(242, 242, 243, 0.12);
-  --light: rgba(255, 106, 43, 0.14);
-  --chip: rgba(10, 10, 11, 0.7);
-  --selection: rgba(255, 106, 43, 0.32);
+  --bg: #0b0c16;
+  --text: #ddf7ff;
+  --muted: #b5c5db;
+  --faint: #7d82a8;
+  --rule: #1f2338;
+  --accent: #82fb9c;
+  --glow: #82fb9c;
+  --glyph: rgba(181, 197, 219, 0.12);
+  --light: rgba(130, 251, 156, 0.1);
+  --chip: rgba(11, 12, 22, 0.7);
+  --selection: rgba(130, 251, 156, 0.25);
   --sun: block;
   --moon: none;
 }
@@ -233,6 +234,8 @@ a {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  /* clip, unlike hidden, doesn't make a scroll container, so sticky labels inside still follow the page. */
+  overflow: clip;
 }
 
 .hero::before,
@@ -480,39 +483,152 @@ a {
   color: var(--faint);
 }
 
-.prose {
-  max-width: 46rem;
+/* Each section label sits in its own column on wide screens, like the headings of a manual page. */
+
+.section-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.lead {
-  margin: 0 0 2rem;
-  font-size: clamp(1.375rem, 1.05rem + 1.3vw, 2.125rem);
-  font-weight: 450;
-  line-height: 1.32;
-  letter-spacing: -0.022em;
+@media (min-width: 56rem) {
+  .section-grid {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    column-gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .section-grid > .label {
+    position: sticky;
+    top: 2rem;
+    margin: 0;
+    padding-top: 0.75rem;
+  }
+
+  #help .label {
+    padding-top: calc(1.4rem + 1px);
+  }
+}
+
+.prose {
+  max-width: 42rem;
+}
+
+.prose p {
+  margin: 0;
+  font-size: var(--read);
+  line-height: 1.5;
+  letter-spacing: -0.012em;
   text-wrap: pretty;
 }
 
-.lead em {
+.prose p + p {
+  margin-top: 1.1em;
+}
+
+.prose em {
   font-style: normal;
   color: var(--accent);
 }
 
-.prose p:not(.lead) {
-  max-width: 38rem;
+/* How I can help */
+
+.help-list {
+  display: grid;
+  gap: 0 clamp(2rem, 4vw, 3.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 40rem) {
+  .help-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.help-item {
+  position: relative;
+  padding: 1.4rem 0 2.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.help-item::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 1px;
+  background: var(--glow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.help-item:hover::before {
+  transform: scaleX(1);
+}
+
+.help-num {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--faint);
+  transition: color 0.3s;
+}
+
+.help-item:hover .help-num {
+  color: var(--accent);
+}
+
+.help-item h3 {
+  margin: 0 0 0.6rem;
+  font-size: var(--read);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+
+.help-item p {
+  max-width: 30rem;
   margin: 0;
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.6;
   text-wrap: pretty;
+}
+
+.help-more {
+  max-width: 42rem;
+  margin: clamp(0.5rem, 2vw, 1.25rem) 0 0;
+  font-size: var(--read);
+  line-height: 1.5;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+}
+
+.help-more strong {
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.help-more a {
+  color: var(--text);
+  text-decoration-color: var(--glow);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.help-more a:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* Contact */
 
 .contact-text {
-  max-width: 34rem;
+  max-width: 36rem;
   margin: 0 0 1.75rem;
-  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
-  line-height: 1.45;
+  font-size: var(--read);
+  line-height: 1.5;
   letter-spacing: -0.012em;
   text-wrap: pretty;
 }
