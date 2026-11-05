@@ -2,7 +2,7 @@
 
 The source of [mariohdz.com](https://mariohdz.com), my personal site.
 
-Plain HTML, CSS and a little JavaScript in `public/`, served as static assets by a Cloudflare Worker. No build step, no dependencies and no cookies. The fonts are served from the same domain.
+Plain HTML, CSS and a little JavaScript in `public/`, served as static assets by a Cloudflare Worker. No build step, no dependencies and no cookies. The fonts are served from the same domain, and visits are counted with Cloudflare Web Analytics, which doesn't use cookies either.
 
 ## Run it locally
 
