@@ -16,25 +16,31 @@
 </head>
 <body>
   <header class="bar">
-    <a class="bar-home mono" href="/" data-shield>mariohdz<span>.com</span></a>
-    <nav class="bar-nav mono" aria-label="Elsewhere">
-      <button class="theme-toggle" type="button" data-theme-toggle data-shield aria-label="Switch theme">
-        <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
-        <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
-      </button>
-    </nav>
+    <div class="bar-inner">
+      <a class="brand mono" href="/" data-shield>mariohdz<span>.com</span></a>
+      <div class="bar-tools">
+        <a class="lang mono" href="/es/" hreflang="es" lang="es" aria-label="Versión en español" data-shield>ES</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+          <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
+        </button>
+        <a class="bar-cta" href="/#contact"><span class="long">Start a project</span><span class="short">Contact</span></a>
+      </div>
+    </div>
   </header>
 
   <main>
     <section class="hero" aria-labelledby="title">
       <canvas class="field" aria-hidden="true"></canvas>
-      <div class="wrap hero-inner">
-        <p class="status mono"><span class="dot" aria-hidden="true"></span><span data-shield>Error 404</span></p>
-        <h1 id="title" class="name">
-          <span class="line"><span data-shield>Page not</span></span>
-          <span class="line"><span data-shield>found</span></span>
-        </h1>
-        <p class="tagline mono"><span data-shield>There’s nothing at this address. <a href="/">Go to the home page</a>.</span></p>
+      <div class="hero-inner">
+        <div class="hero-id">
+          <p class="status mono"><span class="dot" aria-hidden="true"></span><span data-shield>Error 404</span></p>
+          <h1 id="title" class="name">
+            <span class="line"><span data-shield>Page not</span></span>
+            <span class="line"><span data-shield>found</span></span>
+          </h1>
+          <p class="tagline mono"><span data-shield>There’s nothing at this address. <a href="/">Go to the home page</a>.</span></p>
+        </div>
       </div>
     </section>
   </main>

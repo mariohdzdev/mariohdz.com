@@ -6,6 +6,50 @@ const INBOX = "contact@mariohdz.com";
 const SENDER = { email: "form@notify.mariohdz.com", name: "mariohdz.com" };
 const LIMITS = { name: 100, email: 254, message: 5000 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// What the topic buttons on the form send, and how each one reads in my inbox.
+const TOPICS = {
+  website: "Website",
+  email: "Email and domain",
+  ai: "AI and automation",
+  computers: "Computers and privacy",
+  other: "Something else",
+};
+
+// The English and Spanish pages post the same form; a hidden field says which one the visitor used.
+const TEXT = {
+  en: {
+    unreadable: "Your message couldn’t be read. Please try again.",
+    name: "Please add your name.",
+    longName: "Please use a shorter name.",
+    email: "Please check your email address.",
+    message: "Please tell me what you need.",
+    longMessage: "Please keep your message under 5,000 characters.",
+    failed: "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.",
+    sentTitle: "Message sent",
+    sentText: "Thanks for writing. I’ll reply to the email address you left within one business day.",
+    errorTitle: "Not sent yet",
+    goBack: "Go back and check the form.",
+    home: "Back to the site",
+    homeUrl: "/",
+    page: "English",
+  },
+  es: {
+    unreadable: "No se pudo leer tu mensaje. Inténtalo de nuevo.",
+    name: "Escribe tu nombre.",
+    longName: "Usa un nombre más corto.",
+    email: "Revisa tu dirección de correo.",
+    message: "Cuéntame qué necesitas.",
+    longMessage: "El mensaje no puede pasar de 5000 caracteres.",
+    failed: "No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme a contact@mariohdz.com.",
+    sentTitle: "Mensaje enviado",
+    sentText: "Gracias por escribir. Te responderé en un día laborable a la dirección que dejaste.",
+    errorTitle: "Aún no se ha enviado",
+    goBack: "Vuelve atrás y revisa el formulario.",
+    home: "Volver al sitio",
+    homeUrl: "/es/",
+    page: "Spanish",
+  },
+};
 
 export default {
   async fetch(request, env) {
@@ -23,14 +67,17 @@ export default {
 async function handleContact(request, env) {
   // The page sends the form with fetch and asks for JSON; without JavaScript the browser posts it as a normal form.
   const wantsJson = (request.headers.get("Accept") || "").includes("application/json");
-  const reply = wantsJson ? jsonReply : pageReply;
 
   let form;
   try {
     form = await request.formData();
   } catch {
-    return reply(400, "Your message couldn’t be read. Please try again.");
+    return respond(wantsJson, "en", 400, TEXT.en.unreadable);
   }
+
+  const lang = form.get("lang") === "es" ? "es" : "en";
+  const text = TEXT[lang];
+  const reply = (status, message) => respond(wantsJson, lang, status, message);
 
   // Bots fill in the hidden field; people never see it. Pretend it worked so they move on.
   if (String(form.get("website") || "").trim()) return reply(200);
@@ -38,24 +85,29 @@ async function handleContact(request, env) {
   const name = clean(form.get("name")).replace(/\s+/g, " ");
   const email = clean(form.get("email"));
   const message = clean(form.get("message"));
+  const topic = TOPICS[clean(form.get("topic"))];
 
-  if (!name) return reply(400, "Please add your name.");
-  if (name.length > LIMITS.name) return reply(400, "Please use a shorter name.");
-  if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) return reply(400, "Please check your email address.");
-  if (!message) return reply(400, "Please tell me what you need.");
-  if (message.length > LIMITS.message) return reply(400, "Please keep your message under 5,000 characters.");
+  if (!name) return reply(400, text.name);
+  if (name.length > LIMITS.name) return reply(400, text.longName);
+  if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) return reply(400, text.email);
+  if (!message) return reply(400, text.message);
+  if (message.length > LIMITS.message) return reply(400, text.longMessage);
+
+  const details = [`${name} <${email}>`];
+  if (topic) details.push(`Topic: ${topic}`);
+  details.push(`Sent from the ${text.page} contact form on mariohdz.com`);
 
   try {
     await env.EMAIL.send({
       from: SENDER,
       to: INBOX,
       replyTo: { email, name },
-      subject: `${name} via mariohdz.com`,
-      text: `${message}\n\n-- \n${name} <${email}>\nSent from the contact form on mariohdz.com`,
+      subject: topic ? `${topic}: ${name} via mariohdz.com` : `${name} via mariohdz.com`,
+      text: `${message}\n\n-- \n${details.join("\n")}`,
     });
   } catch (error) {
     console.error("Contact form email failed", error?.code, error?.message);
-    return reply(502, "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.");
+    return reply(502, text.failed);
   }
 
   return reply(200);
@@ -69,20 +121,23 @@ function clean(value) {
     .trim();
 }
 
+function respond(wantsJson, lang, status, message) {
+  return wantsJson ? jsonReply(status, message) : pageReply(status, message, lang);
+}
+
 function jsonReply(status, message) {
   const body = status === 200 ? { ok: true } : { ok: false, message };
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 }
 
 // A plain page for browsers without JavaScript, styled by the site's own stylesheet.
-function pageReply(status, message) {
+function pageReply(status, message, lang) {
+  const text = TEXT[lang];
   const sent = status === 200;
-  const title = sent ? "Message sent" : "Not sent yet";
-  const text = sent
-    ? "Thanks for writing. I’ll reply to the email address you left."
-    : `${message} Go back and check the form.`;
+  const title = sent ? text.sentTitle : text.errorTitle;
+  const body = sent ? text.sentText : `${message} ${text.goBack}`;
   const html = `<!doctype html>
-<html lang="en">
+<html lang="${lang}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -94,9 +149,11 @@ function pageReply(status, message) {
 <body>
   <main>
     <section class="hero">
-      <div class="wrap hero-inner">
-        <h1 class="name">${title}</h1>
-        <p class="tagline mono">${text} <a href="/">Back to the site</a>.</p>
+      <div class="hero-inner">
+        <div class="hero-id">
+          <h1 class="name">${title}</h1>
+          <p class="tagline mono">${body} <a href="${text.homeUrl}">${text.home}</a>.</p>
+        </div>
       </div>
     </section>
   </main>

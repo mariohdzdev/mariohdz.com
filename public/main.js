@@ -1,9 +1,34 @@
-// The glyph field, the decoding text, the copy button and the theme toggle.
+// The glyph field, the decoding text, the header and the section index,
+// the copy button, the contact form and the theme toggle.
 
 const root = document.documentElement;
 const motion = root.classList.contains("motion");
 const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
 const systemDark = matchMedia("(prefers-color-scheme: dark)");
+const spanish = root.lang.startsWith("es");
+const copyKeys = /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘C" : "Ctrl+C";
+
+const TEXT = spanish
+  ? {
+      copyHint: finePointer ? "Haz clic para copiar" : "Toca para copiar",
+      copied: "Copiado al portapapeles",
+      selected: finePointer ? `Seleccionado. Pulsa ${copyKeys} para copiarlo` : "Seleccionado. Toca Copiar en el menú",
+      sending: "Enviando…",
+      sent: (name, email) => `Gracias, ${name}. Tu mensaje va en camino y te responderé a ${email} en un día laborable.`,
+      failed: "No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme a contact@mariohdz.com.",
+      toLight: "Cambiar al tema claro",
+      toDark: "Cambiar al tema oscuro",
+    }
+  : {
+      copyHint: finePointer ? "Click to copy" : "Tap to copy",
+      copied: "Copied to clipboard",
+      selected: finePointer ? `Selected. Press ${copyKeys} to copy it` : "Selected. Tap Copy in the menu",
+      sending: "Sending…",
+      sent: (name, email) => `Thanks, ${name}. Your message is on its way, and I’ll reply to ${email} within one business day.`,
+      failed: "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.",
+      toLight: "Switch to light theme",
+      toDark: "Switch to dark theme",
+    };
 
 const GLYPHS = "01<>/\\|{}[]()+=-_*~:;.#$%&@!?";
 const MONO = '"Geist Mono", ui-monospace, monospace';
@@ -69,13 +94,17 @@ class GlyphField {
     const range = document.createRange();
     const pad = 6;
     for (const element of document.querySelectorAll("[data-shield]")) {
+      // The header is fixed, so it's measured where it sits when the page is at the top, not where it floats now.
+      const shift = element.closest(".bar") ? window.scrollY : 0;
       range.selectNodeContents(element);
       for (const rect of range.getClientRects()) {
-        if (rect.bottom < origin.top || rect.top > origin.bottom) continue;
+        const top = rect.top - shift;
+        const bottom = rect.bottom - shift;
+        if (bottom < origin.top || top > origin.bottom) continue;
         const c0 = Math.max(0, Math.floor((rect.left - origin.left - pad) / this.cellW));
         const c1 = Math.min(this.cols - 1, Math.floor((rect.right - origin.left + pad) / this.cellW));
-        const r0 = Math.max(0, Math.floor((rect.top - origin.top - pad) / this.cellH));
-        const r1 = Math.min(this.rows - 1, Math.floor((rect.bottom - origin.top + pad) / this.cellH));
+        const r0 = Math.max(0, Math.floor((top - origin.top - pad) / this.cellH));
+        const r1 = Math.min(this.rows - 1, Math.floor((bottom - origin.top + pad) / this.cellH));
         for (let row = r0; row <= r1; row++) {
           this.shield.fill(0.15, row * this.cols + c0, row * this.cols + c1 + 1);
         }
@@ -210,7 +239,7 @@ function frame(now) {
 let twinkleTimer = 0;
 
 function setTwinkle(on) {
-  if (on && motion && !twinkleTimer) {
+  if (on && motion && !twinkleTimer && fields.length) {
     twinkleTimer = setInterval(() => {
       for (const field of fields) {
         if (field.visible && field.cols) field.twinkle(finePointer ? 2 : 4);
@@ -223,7 +252,7 @@ function setTwinkle(on) {
   }
 }
 
-if (motion) {
+if (motion && fields.length) {
   addEventListener(
     "pointermove",
     (event) => {
@@ -274,11 +303,15 @@ const sizes = new ResizeObserver(() => {
 });
 
 // Text resolves from random glyphs, left to right, like output arriving.
-function decode(element, duration) {
-  const text = element.dataset.text ?? element.textContent;
+// A new call on the same element takes over from one still running.
+const decoding = new WeakMap();
+
+function decode(element, duration, text = element.dataset.text ?? element.textContent) {
   element.dataset.text = text;
   element.style.opacity = "1";
-  if (!motion) {
+  const run = {};
+  decoding.set(element, run);
+  if (!motion || !duration) {
     element.textContent = text;
     return;
   }
@@ -287,6 +320,7 @@ function decode(element, duration) {
   const start = performance.now();
   let tick = 0;
   const step = (now) => {
+    if (decoding.get(element) !== run) return;
     const progress = (now - start) / duration;
     if (progress >= 1) {
       element.textContent = text;
@@ -322,29 +356,98 @@ if (motion) {
       for (const field of fields) if (field.host.contains(element)) field.refresh();
     });
   });
+} else {
+  reveals.forEach((element) => element.classList.add("is-in"));
 }
 
-/* Copy the email address */
+/* Header: transparent over the hero, solid once the page moves */
 
-for (const button of document.querySelectorAll("[data-copy]")) {
-  const label = button.querySelector("[data-copy-label]");
-  let timer = 0;
-  button.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(button.dataset.copy);
-    } catch {
-      location.href = `mailto:${button.dataset.copy}`;
-      return;
+const bar = document.querySelector(".bar");
+const hero = document.querySelector(".hero");
+
+function updateBar() {
+  bar?.classList.toggle("is-solid", !hero || window.scrollY > 8);
+}
+
+addEventListener("scroll", updateBar, { passive: true });
+updateBar();
+
+/* Section index: the header links and the margin index follow the section being read */
+
+const spyLinks = [...document.querySelectorAll("[data-spy]")];
+const spied = [...new Set(spyLinks.map((link) => link.hash))]
+  .map((hash) => document.getElementById(hash.slice(1)))
+  .filter(Boolean);
+
+if (spied.length) {
+  let current = "";
+  const mark = () => {
+    for (const link of spyLinks) {
+      if (link.hash === current) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
     }
-    button.dataset.copied = "";
-    label.textContent = "Copied";
+  };
+  const spy = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const hash = `#${entry.target.id}`;
+        if (entry.isIntersecting) current = hash;
+        else if (current === hash) current = "";
+      }
+      mark();
+    },
+    { rootMargin: "-40% 0px -55% 0px" },
+  );
+  spied.forEach((section) => spy.observe(section));
+}
+
+/* Services: what's included folds away on phones and stays open on wider screens */
+
+const wideScreen = matchMedia("(min-width: 40rem)");
+const syncAreas = () => {
+  for (const details of document.querySelectorAll(".area-more")) details.open = wideScreen.matches;
+};
+wideScreen.addEventListener("change", syncAreas);
+syncAreas();
+
+/* Copy the email address. Without JavaScript the link opens the mail app; without clipboard access the address
+   gets selected so it can be copied by hand. */
+
+document.querySelectorAll("[data-copy]").forEach((chip, index) => {
+  const address = chip.querySelector("span") || chip;
+  const hint = chip.parentElement.querySelector("[data-copy-hint]");
+  if (hint) {
+    hint.textContent = TEXT.copyHint;
+    hint.dataset.text = TEXT.copyHint;
+    hint.id ||= `copy-hint-${index}`;
+    chip.setAttribute("aria-describedby", hint.id);
+  }
+  let timer = 0;
+  chip.addEventListener("click", async (event) => {
+    event.preventDefault();
+    let copied = false;
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(chip.dataset.copy);
+        copied = true;
+      } catch {}
+    }
+    if (copied) chip.dataset.copied = "";
+    else getSelection()?.selectAllChildren(address);
+    if (hint) {
+      hint.dataset.copied = "";
+      decode(hint, 450, copied ? TEXT.copied : TEXT.selected);
+    }
     clearTimeout(timer);
     timer = setTimeout(() => {
-      delete button.dataset.copied;
-      label.textContent = "Copy";
-    }, 1800);
+      delete chip.dataset.copied;
+      if (hint) {
+        delete hint.dataset.copied;
+        decode(hint, 450, TEXT.copyHint);
+      }
+    }, copied ? 2200 : 6000);
   });
-}
+});
 
 /* Contact form: sends in place, without leaving the page. Without JavaScript it posts normally. */
 
@@ -354,7 +457,6 @@ if (contactForm) {
   const status = contactForm.querySelector("[data-form-status]");
   const button = contactForm.querySelector('button[type="submit"]');
   const idleLabel = button.textContent;
-  const fallback = "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.";
 
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -364,7 +466,7 @@ if (contactForm) {
     delete contactForm.dataset.state;
     status.textContent = "";
     button.disabled = true;
-    button.textContent = "Sending…";
+    button.textContent = TEXT.sending;
     try {
       const response = await fetch(contactForm.action, {
         method: "POST",
@@ -372,13 +474,13 @@ if (contactForm) {
         headers: { Accept: "application/json" },
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.ok) throw new Error(result.message || fallback);
+      if (!response.ok || !result.ok) throw new Error(result.message || TEXT.failed);
       contactForm.reset();
       contactForm.dataset.state = "sent";
-      status.textContent = `Thanks, ${name.split(/\s+/)[0]}. Your message is on its way, and I’ll reply to ${email}.`;
+      status.textContent = TEXT.sent(name.split(/\s+/)[0], email);
     } catch (error) {
       contactForm.dataset.state = "error";
-      status.textContent = error instanceof TypeError ? fallback : error.message;
+      status.textContent = error instanceof TypeError ? TEXT.failed : error.message;
     } finally {
       button.disabled = false;
       button.textContent = idleLabel;
@@ -395,7 +497,7 @@ const currentTheme = () => root.dataset.theme || (systemDark.matches ? "dark" : 
 
 function applyTheme(repaint = true) {
   const dark = currentTheme() === "dark";
-  toggle?.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+  toggle?.setAttribute("aria-label", dark ? TEXT.toLight : TEXT.toDark);
   const background = getComputedStyle(root).getPropertyValue("--bg").trim();
   themeMetas.forEach((meta, i) => {
     meta.content = root.dataset.theme ? background : themeDefaults[i];

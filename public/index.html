@@ -3,13 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mario Hernández</title>
-  <meta name="description" content="Linux and AI every day. Open source whenever I can.">
+  <title>Mario Hernández · Websites, email and AI for small businesses</title>
+  <meta name="description" content="Websites, business email, AI assistants and automation for small businesses, independent professionals and U.S. companies. Replies within one business day.">
   <meta name="author" content="Mario Hernández">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#f1f4f8" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0c16" media="(prefers-color-scheme: dark)">
   <link rel="canonical" href="https://mariohdz.com/">
+  <link rel="alternate" hreflang="en" href="https://mariohdz.com/">
+  <link rel="alternate" hreflang="es" href="https://mariohdz.com/es/">
+  <link rel="alternate" hreflang="x-default" href="https://mariohdz.com/">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -19,203 +22,335 @@
   <script src="/theme.js"></script>
   <script src="/main.js" defer></script>
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Mario Hernández">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="es_ES">
   <meta property="og:url" content="https://mariohdz.com/">
-  <meta property="og:title" content="Mario Hernández">
-  <meta property="og:description" content="Linux and AI every day. Open source whenever I can.">
+  <meta property="og:title" content="Mario Hernández · Websites, email and AI for small businesses">
+  <meta property="og:description" content="Websites, business email, AI assistants and automation for small businesses, independent professionals and U.S. companies.">
   <meta property="og:image" content="https://mariohdz.com/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Mario Hernández. Linux and AI every day. Open source whenever I can.">
+  <meta property="og:image:alt" content="Mario Hernández. Websites, business email, AI and automation for small businesses and independent professionals.">
   <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://mariohdz.com/#website",
+        "url": "https://mariohdz.com/",
+        "name": "Mario Hernández",
+        "inLanguage": ["en", "es"],
+        "publisher": { "@id": "https://mariohdz.com/#mario" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://mariohdz.com/#webpage",
+        "url": "https://mariohdz.com/",
+        "name": "Mario Hernández · Websites, email and AI for small businesses",
+        "inLanguage": "en",
+        "isPartOf": { "@id": "https://mariohdz.com/#website" },
+        "about": { "@id": "https://mariohdz.com/#mario" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://mariohdz.com/#mario",
+        "name": "Mario Hernández",
+        "url": "https://mariohdz.com/",
+        "email": "contact@mariohdz.com",
+        "description": "Websites, business email, AI and automation for small businesses, independent professionals and U.S. companies.",
+        "knowsLanguage": ["en", "es"],
+        "knowsAbout": ["Web design", "Business email", "DNS", "Cloudflare", "AI assistants", "Automation", "Local AI", "Linux", "Privacy"],
+        "sameAs": ["https://github.com/mariohdzdev"],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Services",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web, domains and email", "description": "Websites designed, built and published for you, business email with SPF, DKIM and DMARC, and domains and DNS on Cloudflare." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI and automation", "description": "AI assistants set up around your documents and tools, automations and small tools, and local, private AI." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Computers, accounts and privacy", "description": "Linux desktop setup and troubleshooting, email and accounts on privacy-friendly services, and passwords and two-factor sign-in organized." } }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body id="top">
+  <a class="skip" href="#main">Skip to content</a>
+
   <header class="bar">
-    <a class="bar-home mono" href="/" data-shield>mariohdz<span>.com</span></a>
-    <nav class="bar-nav mono" aria-label="Main">
-      <a href="https://github.com/mariohdzdev" target="_blank" rel="me noopener" data-shield>GitHub<svg class="arrow" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
-      <a href="#contact" data-shield>Contact</a>
-      <button class="theme-toggle" type="button" data-theme-toggle data-shield aria-label="Switch theme">
-        <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
-        <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
-      </button>
-    </nav>
+    <div class="bar-inner">
+      <a class="brand mono" href="/" data-shield>mariohdz<span>.com</span></a>
+      <nav class="nav mono" aria-label="Main">
+        <a href="#about" data-spy data-shield>About</a>
+        <a href="#services" data-spy data-shield>Services</a>
+        <a href="#process" data-spy data-shield>Process</a>
+      </nav>
+      <div class="bar-tools">
+        <a class="lang mono" href="/es/" hreflang="es" lang="es" aria-label="Versión en español" data-shield>ES</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+          <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
+        </button>
+        <a class="bar-cta" href="#contact"><span class="long">Start a project</span><span class="short">Contact</span></a>
+      </div>
+    </div>
   </header>
 
-  <main>
+  <main id="main">
     <section class="hero" aria-labelledby="name">
       <canvas class="field" aria-hidden="true"></canvas>
-      <div class="wrap hero-inner">
-        <p class="status mono"><span class="dot" aria-hidden="true"></span><span data-shield>Open to projects</span></p>
-        <h1 id="name" class="name">
-          <span class="line"><span data-shield>Mario</span></span>
-          <span class="line"><span data-shield>Hernández</span></span>
-        </h1>
-        <p class="tagline mono">
-          <span class="sr-only">Linux and AI every day. Open source whenever I can.</span>
-          <span aria-hidden="true"><span data-decode data-shield>Linux and AI every day. Open source whenever I can.</span><span class="caret"></span></span>
-        </p>
+      <div class="hero-inner">
+        <div class="hero-id">
+          <p class="status mono"><span class="dot" aria-hidden="true"></span><span data-shield>Open to new projects</span></p>
+          <h1 id="name" class="name">
+            <span class="line"><span data-shield>Mario</span></span>
+            <span class="line"><span data-shield>Hernández</span></span>
+          </h1>
+          <p class="tagline mono">
+            <span class="sr-only">Linux and AI every day. Open source whenever I can.</span>
+            <span aria-hidden="true"><span data-decode data-shield>Linux and AI every day. Open source whenever I can.</span><span class="caret"></span></span>
+          </p>
+        </div>
+        <div class="hero-offer">
+          <p class="lead"><span data-shield>Websites, business email, AI and automation for small businesses and independent professionals. Set up properly, explained in plain words and kept in your name.</span></p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#contact">Start a project</a>
+            <a class="btn btn-ghost" href="#services">See services</a>
+          </div>
+        </div>
       </div>
       <a class="cue mono" href="#about" data-shield>Scroll<span class="cue-line" aria-hidden="true"></span></a>
     </section>
 
-    <section id="about" class="section" aria-labelledby="about-title">
-      <div class="wrap section-grid reveal">
-        <h2 id="about-title" class="label mono"><span class="sr-only">About</span><span aria-hidden="true"><span class="num">01</span><span class="sep">/</span><span data-decode>About</span></span></h2>
-        <div class="prose">
-          <p>Linux and AI are the two things I keep coming back to. I like <em>the why behind them</em>: how a system is put together and why it was designed that way. I’m not tied to one distro, model or tool. I’d rather understand what’s underneath, and I learn most by breaking things and fixing them.</p>
-          <p>I spend part of every day researching new tools, models and updates, and testing which ones are worth keeping. I run models locally and build small tools with coding agents: automations, fixes for my own setup, things that save me time.</p>
-          <p>I like owning my tools and my data, so I lean toward local, open source software. When I fix something in an open source project, I try to send the fix back so everyone benefits.</p>
-          <p>I’ve also spent more than ten years in customer service, technical support and operations, the last five working remotely with U.S. companies. That’s where I learned to explain technical things in plain words.</p>
-        </div>
-      </div>
-    </section>
+    <div class="sheet">
+      <nav class="rail mono reveal" aria-label="On this page">
+        <ol>
+          <li><a href="#about" data-spy><span class="num">01</span><span data-decode>About</span></a></li>
+          <li><a href="#services" data-spy><span class="num">02</span><span data-decode>Services</span></a></li>
+          <li><a href="#process" data-spy><span class="num">03</span><span data-decode>Process</span></a></li>
+          <li><a href="#contact" data-spy><span class="num">04</span><span data-decode>Contact</span></a></li>
+        </ol>
+        <p class="rail-status"><span class="dot" aria-hidden="true"></span>Open to new projects</p>
+      </nav>
 
-    <section id="help" class="section" aria-labelledby="help-title">
-      <div class="wrap section-grid reveal">
-        <h2 id="help-title" class="label mono"><span class="sr-only">How I can help</span><span aria-hidden="true"><span class="num">02</span><span class="sep">/</span><span data-decode>How I can help</span></span></h2>
-        <div>
-          <ul class="points">
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.1</span>
-              <h3>Websites</h3>
-              <p>Fast, simple websites like this one: designed, built and published on your own domain, with nothing you don’t need.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.2</span>
-              <h3>Email on your own domain</h3>
-              <p>An address like you@yourbusiness.com on the provider that suits you, with SPF, DKIM and DMARC set up so other servers trust your messages.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.3</span>
-              <h3>Domains, DNS and Cloudflare</h3>
-              <p>Domains, DNS records and redirects set up cleanly on Cloudflare, with each tool getting only the access it needs.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.4</span>
-              <h3>AI assistants for your work</h3>
-              <p>AI assistants set up around how you work: your documents, your instructions and the tools they’re allowed to use.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.5</span>
-              <h3>Automations and small tools</h3>
-              <p>If a task eats hours of your week, there’s often a way to hand it to a script or a small tool, from turning PDFs into spreadsheets to pulling data from an API.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.6</span>
-              <h3>Local, private AI</h3>
-              <p>AI models that run on your own computer, so your files and conversations don’t have to leave it.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.7</span>
-              <h3>Linux desktop setup and fixes</h3>
-              <p>Moving to Linux, or stuck with a desktop that won’t behave? I can set it up around how you work and track down the odd problems.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">02.8</span>
-              <h3>Privacy and accounts</h3>
-              <p>Moving your email and accounts to privacy-friendly services, with passwords, two-factor sign-in and recovery options organized properly.</p>
-            </li>
-          </ul>
-          <p class="section-note"><strong>Something else in mind?</strong> I also take on custom projects and can help you choose between options. <a href="#contact">Tell me what you need</a>, and we’ll take it from there.</p>
-        </div>
-      </div>
-    </section>
+      <div class="sheet-body">
+        <section id="about" class="section" aria-labelledby="about-title">
+          <div class="section-inner reveal">
+            <p class="eyebrow mono" aria-hidden="true"><span class="num">01</span><span class="sep">/</span><span data-decode>About</span></p>
+            <div class="about">
+              <h2 id="about-title" class="section-title">I help small businesses, independent professionals and U.S. companies get the technology behind their work right.</h2>
+              <div class="prose">
+                <p>For more than ten years I’ve worked in customer service, technical support and operations, the last five remotely with U.S. companies. That’s where I learned to listen first, explain technical things in plain words and stay with a problem until it’s actually solved.</p>
+                <p>Linux and AI are what I keep coming back to. I spend part of every day researching new tools, models and updates, and testing which ones are worth using. I like understanding why things work, and I learn most by breaking them and fixing them.</p>
+                <p>I like owning my tools and my data, and I set things up the same way for the people I work with: in their name, on software they can trust, with nothing they don’t need.</p>
+              </div>
+              <dl class="spec">
+                <div><dt class="mono">Experience</dt><dd>10+ years in customer service, support and operations</dd></div>
+                <div><dt class="mono">Remote work</dt><dd>5 years with U.S. companies</dd></div>
+                <div><dt class="mono">Focus</dt><dd>Web, email, AI and automation</dd></div>
+                <div><dt class="mono">Languages</dt><dd>English and Spanish</dd></div>
+                <div><dt class="mono">Response time</dt><dd>Within one business day</dd></div>
+                <div><dt class="mono">Ownership</dt><dd>Everything stays in your name</dd></div>
+              </dl>
+            </div>
+          </div>
+        </section>
 
-    <section id="built" class="section" aria-labelledby="built-title">
-      <div class="wrap section-grid reveal">
-        <h2 id="built-title" class="label mono"><span class="sr-only">Things I’ve built</span><span aria-hidden="true"><span class="num">03</span><span class="sep">/</span><span data-decode>Things I’ve built</span></span></h2>
-        <div>
-          <p class="section-intro">A few personal projects, from the first research to the finished result.</p>
-          <ul class="points">
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">03.1</span>
-              <h3>This website</h3>
-              <p>I designed it and set up everything around it: the domain, the hosting and automatic publishing on every change. You’re looking at the result.</p>
-              <a class="point-link mono" href="https://github.com/mariohdzdev/mariohdz.com" target="_blank" rel="noopener">Source code<svg class="arrow" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">03.2</span>
-              <h3>Email on my own domain</h3>
-              <p>I moved my email to my own domain on a privacy-focused provider and set up the records that let other servers trust it: SPF, DKIM and DMARC.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">03.3</span>
-              <h3>Bluetooth audio after sleep</h3>
-              <p>My computer’s audio kept crashing after it woke from sleep. I traced it to a Bluetooth bug the developers had already fixed but not yet released, and set up a small workaround until the fix arrives.</p>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
+        <section id="services" class="section" aria-labelledby="services-title">
+          <div class="section-inner reveal">
+            <p class="eyebrow mono" aria-hidden="true"><span class="num">02</span><span class="sep">/</span><span data-decode>Services</span></p>
+            <h2 id="services-title" class="section-title">The technology behind your work, set up properly.</h2>
+            <ul class="areas">
+              <li class="area">
+                <div class="area-head">
+                  <span class="area-num mono" aria-hidden="true">02.1</span>
+                  <h3>Web, domains and email</h3>
+                  <p class="area-sum">A professional presence on a domain you own, with email that lands in the inbox.</p>
+                </div>
+                <details class="area-more">
+                  <summary>What’s included</summary>
+                  <ul class="area-list">
+                    <li>Fast, simple websites, designed, built and published for you</li>
+                    <li>Business email like you@yourcompany.com, with SPF, DKIM and DMARC</li>
+                    <li>Domains, DNS and redirects on Cloudflare, set up cleanly</li>
+                  </ul>
+                </details>
+              </li>
+              <li class="area">
+                <div class="area-head">
+                  <span class="area-num mono" aria-hidden="true">02.2</span>
+                  <h3>AI and automation</h3>
+                  <p class="area-sum">AI that fits the way you work, and fewer hours lost to repetitive tasks.</p>
+                </div>
+                <details class="area-more">
+                  <summary>What’s included</summary>
+                  <ul class="area-list">
+                    <li>AI assistants set up around your documents, instructions and tools</li>
+                    <li>Automations and small tools, like turning PDFs into spreadsheets or pulling data from an API</li>
+                    <li>Local, private AI that keeps your files on your own computer</li>
+                  </ul>
+                </details>
+              </li>
+              <li class="area">
+                <div class="area-head">
+                  <span class="area-num mono" aria-hidden="true">02.3</span>
+                  <h3>Computers, accounts and privacy</h3>
+                  <p class="area-sum">Computers that behave and accounts you control.</p>
+                </div>
+                <details class="area-more">
+                  <summary>What’s included</summary>
+                  <ul class="area-list">
+                    <li>Linux desktop setup, moves from other systems and troubleshooting</li>
+                    <li>Email and accounts moved to privacy-friendly services</li>
+                    <li>Passwords, two-factor sign-in and recovery options, organized</li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+            <div class="custom">
+              <p><strong>Something else in mind?</strong> I also take on custom projects and can help you compare options before you commit.</p>
+              <a class="btn btn-ghost" href="#contact">Tell me what you need<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+            </div>
+          </div>
+        </section>
 
-    <section id="how" class="section" aria-labelledby="how-title">
-      <div class="wrap section-grid reveal">
-        <h2 id="how-title" class="label mono"><span class="sr-only">How I work</span><span aria-hidden="true"><span class="num">04</span><span class="sep">/</span><span data-decode>How I work</span></span></h2>
-        <div>
-          <ul class="points">
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">04.1</span>
-              <h3>The why comes first</h3>
-              <p>Before building anything, I make sure I understand what you need and why. Sometimes the right fix is smaller than it looks.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">04.2</span>
-              <h3>Research before decisions</h3>
-              <p>I compare the options before choosing a tool or an approach, so you get what fits your case, not just what’s popular.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">04.3</span>
-              <h3>Quality over speed</h3>
-              <p>AI is one of my tools, not a shortcut. I use it to do careful work, and the judgment behind every decision is mine.</p>
-            </li>
-            <li class="point">
-              <span class="point-num mono" aria-hidden="true">04.4</span>
-              <h3>Everything stays yours</h3>
-              <p>Code, accounts, domains and data stay in your name, and I explain how it all fits together in plain words.</p>
-            </li>
-          </ul>
-        </div>
+        <section id="process" class="section" aria-labelledby="process-title">
+          <div class="section-inner reveal">
+            <p class="eyebrow mono" aria-hidden="true"><span class="num">03</span><span class="sep">/</span><span data-decode>Process</span></p>
+            <h2 id="process-title" class="section-title">How we’ll work together</h2>
+            <ol class="steps">
+              <li class="step">
+                <span class="step-num mono" aria-hidden="true">01</span>
+                <h3>Understand</h3>
+                <p>We start with what you need and why. Sometimes the right fix is smaller than it looks.</p>
+              </li>
+              <li class="step">
+                <span class="step-num mono" aria-hidden="true">02</span>
+                <h3>Research</h3>
+                <p>I compare the options before choosing a tool or an approach, so you get what fits your case, not just what’s popular.</p>
+              </li>
+              <li class="step">
+                <span class="step-num mono" aria-hidden="true">03</span>
+                <h3>Build</h3>
+                <p>I do the work carefully and test it before you see it. AI is one of my tools, not a shortcut, and the judgment behind every decision is mine.</p>
+              </li>
+              <li class="step">
+                <span class="step-num mono" aria-hidden="true">04</span>
+                <h3>Hand over</h3>
+                <p>Code, accounts, domains and data stay in your name, and I explain how it all fits together in plain words.</p>
+              </li>
+            </ol>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
 
     <section id="contact" class="section contact" aria-labelledby="contact-title">
       <canvas class="field" aria-hidden="true"></canvas>
-      <div class="wrap section-grid reveal">
-        <h2 id="contact-title" class="label mono"><span class="sr-only">Contact</span><span aria-hidden="true"><span class="num">05</span><span class="sep">/</span><span data-decode>Contact</span></span></h2>
-        <div class="contact-body">
-          <p class="contact-text"><span data-shield>Tell me about your project and what you need. A few lines are enough to get started, in English or Spanish.</span></p>
-          <form class="form" action="/api/contact" method="post" data-contact data-shield>
-            <div class="form-field">
-              <label for="contact-name">Name</label>
-              <input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" required>
-            </div>
-            <div class="form-field">
-              <label for="contact-email">Email</label>
-              <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required>
-            </div>
-            <div class="form-field form-wide">
-              <label for="contact-message">What do you need?</label>
-              <textarea id="contact-message" name="message" rows="5" maxlength="5000" placeholder="What it’s for, and any deadline." required></textarea>
-            </div>
-            <div class="form-trap" aria-hidden="true">
-              <label for="contact-website">Leave this empty</label>
-              <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
-            </div>
-            <div class="form-actions form-wide">
-              <button class="send" type="submit">Send message</button>
-              <p class="form-status" role="status" aria-live="polite" data-form-status></p>
-            </div>
-          </form>
-          <p class="email-alt"><span data-shield>Prefer email? Write to <a href="mailto:contact@mariohdz.com">contact@mariohdz.com</a></span><button class="copy mono" type="button" data-copy="contact@mariohdz.com"><span data-copy-label aria-live="polite">Copy</span></button></p>
+      <div class="contact-inner reveal">
+        <p class="eyebrow mono" aria-hidden="true"><span class="num">04</span><span class="sep">/</span><span data-decode>Contact</span></p>
+        <div class="contact-main">
+          <h2 id="contact-title" class="section-title"><span data-shield>Tell me about your project.</span></h2>
+          <p class="contact-text"><span data-shield>A few lines are enough to get started, whether it’s a full project or a quick question.</span></p>
+          <div class="contact-layout">
+            <form class="form" action="/api/contact" method="post" data-contact data-shield>
+              <input type="hidden" name="lang" value="en">
+              <div class="form-field">
+                <label for="contact-name">Name</label>
+                <input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+              </div>
+              <div class="form-field">
+                <label for="contact-email">Email</label>
+                <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+              </div>
+              <fieldset class="topics form-wide">
+                <legend>What can I help with? <span>Optional</span></legend>
+                <div class="topic-list">
+                  <label class="topic"><input type="radio" name="topic" value="website"><span>Website</span></label>
+                  <label class="topic"><input type="radio" name="topic" value="email"><span>Email and domain</span></label>
+                  <label class="topic"><input type="radio" name="topic" value="ai"><span>AI and automation</span></label>
+                  <label class="topic"><input type="radio" name="topic" value="computers"><span>Computers and privacy</span></label>
+                  <label class="topic"><input type="radio" name="topic" value="other"><span>Something else</span></label>
+                </div>
+              </fieldset>
+              <div class="form-field form-wide">
+                <label for="contact-message">What do you need?</label>
+                <textarea id="contact-message" name="message" rows="5" maxlength="5000" placeholder="What it’s for, and any deadline." required></textarea>
+              </div>
+              <div class="form-trap" aria-hidden="true">
+                <label for="contact-website">Leave this empty</label>
+                <input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off">
+              </div>
+              <div class="form-actions form-wide">
+                <button class="send" type="submit">Send message</button>
+                <p class="form-status" role="status" aria-live="polite" data-form-status></p>
+              </div>
+              <p class="form-note form-wide">I’ll only use your details to reply to you. <a href="/privacy/">Privacy policy</a></p>
+            </form>
+            <aside class="direct" aria-label="Direct contact" data-shield>
+              <div class="direct-items">
+                <div class="direct-item">
+                  <p class="direct-label mono">Email</p>
+                  <a class="email-chip" href="mailto:contact@mariohdz.com" data-copy="contact@mariohdz.com">
+                    <span>contact@mariohdz.com</span>
+                    <svg class="icon-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5V4A1.5 1.5 0 0 0 9 2.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5"/></svg>
+                    <svg class="icon-check" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.5 3.2 3L13 4.5"/></svg>
+                  </a>
+                  <p class="copy-hint" data-copy-hint aria-live="polite"></p>
+                </div>
+                <div class="direct-item">
+                  <p class="direct-label mono">Response time</p>
+                  <p class="direct-value">Within one business day</p>
+                </div>
+                <div class="direct-item">
+                  <p class="direct-label mono">Languages</p>
+                  <p class="direct-value">English and Spanish</p>
+                </div>
+              </div>
+            </aside>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="foot mono">
-    <div class="wrap foot-inner">
-      <span>© 2026 Mario Hernández</span>
-      <a href="#top">Back to top</a>
+  <footer class="foot">
+    <div class="foot-inner">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <a class="brand mono" href="/">mariohdz<span>.com</span></a>
+          <p>Websites, business email, AI and automation for small businesses and independent professionals.</p>
+        </div>
+        <div class="foot-col">
+          <p class="foot-title mono">Contact</p>
+          <ul>
+            <li><a href="mailto:contact@mariohdz.com">contact@mariohdz.com</a></li>
+            <li>Replies within one business day</li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="foot-title mono">Elsewhere</p>
+          <ul>
+            <li><a href="https://github.com/mariohdzdev" target="_blank" rel="me noopener">GitHub<svg class="arrow" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg><span class="sr-only"> (opens in a new tab)</span></a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <p class="foot-title mono">Legal</p>
+          <ul>
+            <li><a href="/privacy/">Privacy policy</a></li>
+            <li><a href="/legal/">Legal notice</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-base mono">
+        <span>© 2026 Mario Hernández</span>
+        <a href="/es/" hreflang="es" lang="es">Español</a>
+        <a href="#top">Back to top</a>
+      </div>
     </div>
   </footer>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "30c94df6ea8f449082f6430f6d475a67"}'></script>
