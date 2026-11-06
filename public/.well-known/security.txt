@@ -1,0 +1,4 @@
+Contact: mailto:contact@mariohdz.com
+Expires: 2027-10-28T00:00:00Z
+Preferred-Languages: en, es
+Canonical: https://mariohdz.com/.well-known/security.txt

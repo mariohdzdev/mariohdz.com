@@ -1,0 +1,16 @@
+// MTA-STS policy for mail sent to @mariohdz.com. Proton receives the mail but doesn't host this file for
+// custom domains, so this Worker serves it at the address mail servers look for. It has no code: any other
+// address returns 404.
+{
+  "name": "mariohdz-mta-sts",
+  "compatibility_date": "2026-10-15",
+  "assets": {
+    "directory": "./public"
+  },
+  "routes": [
+    { "pattern": "mta-sts.mariohdz.com", "custom_domain": true }
+  ],
+  "workers_dev": false,
+  "preview_urls": false,
+  "send_metrics": false
+}

@@ -3,17 +3,15 @@ name: Deploy
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: deploy
-  cancel-in-progress: false
-
 jobs:
-  deploy:
+  # Runs on every push and pull request. Nothing is published unless it passes.
+  check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -25,9 +23,46 @@ jobs:
         with:
           node-version: 24
 
+      # The W3C's Nu HTML Checker, running on the Java that comes with the runner.
+      - name: Validate the HTML
+        run: npx --yes vnu-jar@26.10.12 --errors-only --skip-non-html public
+
+      - name: Check links, language pairs, the sitemap, security.txt and the MTA-STS policy
+        run: node tools/check-site.mjs
+
+      - name: Build both Workers without deploying them
+        run: |
+          npx --yes wrangler@4.151.3 deploy --dry-run --outdir "$RUNNER_TEMP/site"
+          npx --yes wrangler@4.151.3 deploy --dry-run --outdir "$RUNNER_TEMP/mta-sts" --config mta-sts/wrangler.jsonc
+        env:
+          WRANGLER_SEND_METRICS: "false"
+
+  deploy:
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
       - name: Deploy to Cloudflare
         run: npx --yes wrangler@4.151.3 deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          WRANGLER_SEND_METRICS: "false"
+
+      - name: Deploy the MTA-STS policy
+        run: npx --yes wrangler@4.151.3 deploy --config mta-sts/wrangler.jsonc
+
+      - name: Check the live site
+        run: node tools/check-live.mjs

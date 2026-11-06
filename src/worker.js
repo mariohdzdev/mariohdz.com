@@ -5,6 +5,8 @@ const INBOX = "contact@mariohdz.com";
 // Automatic mail goes out from a subdomain, so it never touches the reputation or the DMARC record of my own inbox.
 const SENDER = { email: "form@notify.mariohdz.com", name: "mariohdz.com" };
 const LIMITS = { name: 100, email: 254, message: 5000 };
+// A full form is a few kilobytes, and stays well under this even when every character is percent-encoded.
+const MAX_BODY = 64 * 1024;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // What the topic menu on the form sends, and how each one reads in my inbox.
 const TOPICS = {
@@ -24,6 +26,7 @@ const TEXT = {
     email: "Please check your email address.",
     message: "Please tell me what you need.",
     longMessage: "Please keep your message under 5,000 characters.",
+    busy: "Too many messages came from your connection just now. Please wait a minute and try again, or write to contact@mariohdz.com.",
     failed: "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.",
     sentTitle: "Message sent",
     sentText: "Thanks for writing. I’ll reply to the email address you left within one business day.",
@@ -40,6 +43,7 @@ const TEXT = {
     email: "Revisa tu dirección de correo.",
     message: "Cuéntame qué necesitas.",
     longMessage: "El mensaje no puede pasar de 5000 caracteres.",
+    busy: "Llegaron demasiados mensajes desde tu conexión hace un momento. Espera un minuto y vuelve a intentarlo, o escríbeme a contact@mariohdz.com.",
     failed: "No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme a contact@mariohdz.com.",
     sentTitle: "Mensaje enviado",
     sentText: "Gracias por escribir. Te responderé en un día laborable a la dirección que dejaste.",
@@ -67,50 +71,115 @@ export default {
 async function handleContact(request, env) {
   // The page sends the form with fetch and asks for JSON; without JavaScript the browser posts it as a normal form.
   const wantsJson = (request.headers.get("Accept") || "").includes("application/json");
-
-  let form;
-  try {
-    form = await request.formData();
-  } catch {
-    return respond(wantsJson, "en", 400, TEXT.en.unreadable);
-  }
-
-  const lang = form.get("lang") === "es" ? "es" : "en";
-  const text = TEXT[lang];
+  // Until the form is read, the page it was sent from says which language to answer in.
+  let lang = refererLang(request);
   const reply = (status, message) => respond(wantsJson, lang, status, message);
 
-  // Bots fill in the hidden field; people never see it. Pretend it worked so they move on.
-  if (String(form.get("website") || "").trim()) return reply(200);
-
-  const name = clean(form.get("name")).replace(/\s+/g, " ");
-  const email = clean(form.get("email"));
-  const message = clean(form.get("message"));
-  const topic = TOPICS[clean(form.get("topic"))];
-
-  if (!name) return reply(400, text.name);
-  if (name.length > LIMITS.name) return reply(400, text.longName);
-  if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) return reply(400, text.email);
-  if (!message) return reply(400, text.message);
-  if (message.length > LIMITS.message) return reply(400, text.longMessage);
-
-  const details = [`${name} <${email}>`];
-  if (topic) details.push(`Topic: ${topic}`);
-  details.push(`Sent from the ${text.page} contact form on mariohdz.com`);
-
   try {
-    await env.EMAIL.send({
-      from: SENDER,
-      to: INBOX,
-      replyTo: { email, name },
-      subject: topic ? `${topic}: ${name} via mariohdz.com` : `${name} via mariohdz.com`,
-      text: `${message}\n\n-- \n${details.join("\n")}`,
-    });
-  } catch (error) {
-    console.error("Contact form email failed", error?.code, error?.message);
-    return reply(502, text.failed);
-  }
+    // Generous, because offices and mobile networks put many people behind one IP address.
+    const { success } = await env.CONTACT_LIMIT.limit({ key: request.headers.get("CF-Connecting-IP") || "unknown" });
+    if (!success) {
+      log("limited", { lang }, "warn");
+      return reply(429, TEXT[lang].busy);
+    }
 
-  return reply(200);
+    const body = await readBody(request);
+    if (!body) {
+      log("too_large", { lang }, "warn");
+      return reply(413, TEXT[lang].longMessage);
+    }
+
+    let form;
+    try {
+      const type = request.headers.get("Content-Type") || "";
+      form = await new Response(body, { headers: { "Content-Type": type } }).formData();
+    } catch {
+      log("unreadable", { lang });
+      return reply(400, TEXT[lang].unreadable);
+    }
+
+    const chosen = form.get("lang");
+    if (chosen === "en" || chosen === "es") lang = chosen;
+    const text = TEXT[lang];
+
+    // Bots fill in the hidden field; people never see it. A browser or password manager could still fill it in
+    // for someone, so the message isn't dropped: it arrives marked as possible spam, for me to judge.
+    const flagged = clean(form.get("website")) !== "";
+
+    const name = clean(form.get("name")).replace(/\s+/g, " ");
+    const email = clean(form.get("email"));
+    const message = clean(form.get("message"));
+    const topicKey = clean(form.get("topic"));
+    const topic = Object.hasOwn(TOPICS, topicKey) ? TOPICS[topicKey] : "";
+
+    const invalid = (field, problem) => {
+      log("invalid", { lang, field, flagged });
+      return reply(400, problem);
+    };
+    if (!name) return invalid("name", text.name);
+    if (name.length > LIMITS.name) return invalid("name", text.longName);
+    if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) return invalid("email", text.email);
+    if (!message) return invalid("message", text.message);
+    if (message.length > LIMITS.message) return invalid("message", text.longMessage);
+
+    const details = [`${name} <${email}>`];
+    if (topic) details.push(`Topic: ${topic}`);
+    details.push(`Sent from the ${text.page} contact form on mariohdz.com`);
+    if (flagged) details.push("Possible spam: the hidden field that only bots see was filled in.");
+    const subject = `${flagged ? "[Possible spam] " : ""}${topic ? `${topic}: ` : ""}${name} via mariohdz.com`;
+
+    try {
+      const sent = await env.EMAIL.send({
+        from: SENDER,
+        to: INBOX,
+        replyTo: { email, name },
+        subject,
+        text: `${message}\n\n-- \n${details.join("\n")}`,
+      });
+      log("sent", { lang, topic: topic ? topicKey : null, flagged, messageId: sent?.messageId ?? null });
+    } catch (error) {
+      log("failed", { lang, flagged, code: error?.code ?? null, error: error?.message ?? String(error) }, "error");
+      return reply(502, text.failed);
+    }
+
+    return reply(200);
+  } catch (error) {
+    // Anything unexpected still gets an answer, and a line in the logs.
+    log("error", { lang, error: String(error?.stack || error) }, "error");
+    return reply(500, TEXT[lang].failed);
+  }
+}
+
+// One line per submission in Workers Logs, kept for seven days: what happened, never who wrote or what they said.
+function log(outcome, details, level = "log") {
+  console[level]({ form: "contact", outcome, ...details });
+}
+
+function refererLang(request) {
+  try {
+    return new URL(request.headers.get("Referer") ?? "").pathname.startsWith("/es/") ? "es" : "en";
+  } catch {
+    return "en";
+  }
+}
+
+// Reads the body only up to MAX_BODY, so an oversized request is turned away without being read in full.
+async function readBody(request) {
+  if (Number(request.headers.get("Content-Length")) > MAX_BODY) return null;
+  if (!request.body) return new Blob([]);
+  const reader = request.body.getReader();
+  const chunks = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return new Blob(chunks);
+    size += value.byteLength;
+    if (size > MAX_BODY) {
+      await reader.cancel().catch(() => {});
+      return null;
+    }
+    chunks.push(value);
+  }
 }
 
 // Trims the value and drops control characters, keeping line breaks in the message.
@@ -135,7 +204,9 @@ function pageReply(status, message, lang) {
   const text = TEXT[lang];
   const sent = status === 200;
   const title = sent ? text.sentTitle : text.errorTitle;
-  const body = sent ? text.sentText : `${message} ${text.goBack}`;
+  // Only a problem with the form itself sends the visitor back to it; the other messages say what to do.
+  const fixable = status === 400 || status === 413;
+  const body = sent ? text.sentText : fixable ? `${message} ${text.goBack}` : message;
   const html = `<!doctype html>
 <html lang="${lang}">
 <head>
