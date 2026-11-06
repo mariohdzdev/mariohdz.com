@@ -272,7 +272,7 @@ const fields = [...document.querySelectorAll("canvas.field")].map((canvas) => ne
 // and parts under the pointer. Each canvas picks the path of its ribbon with data-silk.
 const TAU = Math.PI * 2;
 const SILK_PATHS = {
-  rise: (u) => 0.9 - 0.58 * u, // About: from the bottom left up behind the principle
+  rise: (u) => 0.9 - 0.58 * u, // About and the questions: from the bottom left up to the right
   flow: (u) => 0.3 + 0.36 * u, // Services: across the band, behind the cards
   low: (u) => 0.9 - 0.1 * u, // Process: along the foot of the section, under the steps
 };
