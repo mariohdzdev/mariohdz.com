@@ -628,20 +628,11 @@ const syncFolds = () => {
 wideScreen.addEventListener("change", syncFolds);
 syncFolds();
 
-/* Service cards and the contact form: a light follows the pointer inside them, and a card's icon resolves again on the way in */
+/* Service cards: a card's icon resolves again on the way in */
 
 if (motion && finePointer) {
-  for (const card of document.querySelectorAll("[data-spot]")) {
+  for (const card of document.querySelectorAll(".area")) {
     const icon = card.querySelector(".area-icon");
-    card.addEventListener(
-      "pointermove",
-      (event) => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty("--sx", `${event.clientX - rect.left}px`);
-        card.style.setProperty("--sy", `${event.clientY - rect.top}px`);
-      },
-      { passive: true },
-    );
     card.addEventListener("pointerenter", (event) => {
       if (icon && event.pointerType === "mouse") decode(icon, 450);
     });
@@ -728,15 +719,6 @@ if (contactForm) {
   // A topic the browser kept from an earlier visit shows its sign too.
   addEventListener("pageshow", () => showTopic(false));
   showTopic(false);
-
-  // In the open menu, the light on each row follows the pointer.
-  if (topic && motion && finePointer && CSS.supports("appearance", "base-select")) {
-    topic.addEventListener(
-      "pointermove",
-      (event) => topic.style.setProperty("--px", `${event.clientX - topic.getBoundingClientRect().left}px`),
-      { passive: true },
-    );
-  }
 
   // The message box grows as it's written. Browsers that can't size it on their own get the same from here.
   const growsHere = message && !CSS.supports("field-sizing", "content");

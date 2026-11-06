@@ -1195,14 +1195,14 @@ a:hover > .arrow-right {
   pointer-events: none;
 }
 
-/* A light that follows the pointer inside the card, like the glyphs in the hero. */
+/* On hover the whole card lights up evenly as it rises, with no spot of light following the pointer. */
 .area::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(18rem circle at var(--sx, 0) var(--sy, 0), color-mix(in srgb, var(--hue) 17%, transparent), transparent 70%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--hue) 10%, transparent), color-mix(in srgb, var(--hue) 4%, transparent));
   opacity: 0;
   transition: opacity 0.5s;
   pointer-events: none;
@@ -1217,7 +1217,7 @@ a:hover > .arrow-right {
   transform: translateY(-3px);
 }
 
-/* Touch screens have no pointer to follow, so each card lights up as it comes into view. */
+/* Touch screens have no hover, so each card lights up as it comes into view. */
 @media (hover: none) {
   .is-in .area::before,
   .is-in .area::after {
@@ -1804,14 +1804,14 @@ a:hover > .arrow-right {
   backdrop-filter: blur(8px) saturate(1.3);
 }
 
-/* Inside the panel, a soft light follows the pointer, or sits in the corner while someone types. */
+/* While the pointer is over the panel, or someone types in it, the whole panel lights up a little. */
 .form::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(24rem circle at var(--sx, 20%) var(--sy, 0%), color-mix(in srgb, var(--tile-light) 12%, transparent), transparent 70%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tile-light) 6%, transparent), color-mix(in srgb, var(--tile-light) 2%, transparent));
   opacity: 0;
   transition: opacity 0.5s;
   pointer-events: none;
@@ -2158,12 +2158,10 @@ a:hover > .arrow-right {
     color: var(--plate-ink, var(--bg));
   }
 
-  /* Under the pointer a soft light follows it along the row, as it does inside the cards. */
+  /* The row under the pointer lights up evenly. */
   .form option:is(:hover, :focus-visible) {
     outline: none;
-    background:
-      radial-gradient(16rem 140% at var(--px, 35%) 50%, color-mix(in srgb, var(--platinum) 9%, transparent), transparent),
-      color-mix(in srgb, var(--platinum) 5%, transparent);
+    background: color-mix(in srgb, var(--platinum) 8%, transparent);
     color: var(--text);
   }
 
