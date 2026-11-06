@@ -348,6 +348,9 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* The header stays at the top, so whatever the page scrolls to, a section from the menu or a field
+     reached with the keyboard, stops below it. */
+  scroll-padding-top: calc(var(--head) - 1px);
 }
 
 body {
@@ -882,7 +885,6 @@ a:hover > .arrow-right {
 .section {
   padding-block: var(--space);
   border-top: 1px solid var(--rule);
-  scroll-margin-top: calc(var(--head) - 1px);
 }
 
 /* Silk: in the sections without glyphs, a ribbon of fine threads drifts slowly, folds like fabric
@@ -1120,9 +1122,12 @@ a:hover > .arrow-right {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr) minmax(0, 0.9fr);
   }
 
+  /* In its own column the statement runs past six lines, where browsers stop balancing it,
+     so pretty keeps its last word from standing alone. */
   .about .section-title {
     grid-column: auto;
     font-size: calc(var(--title) * 0.72);
+    text-wrap: pretty;
   }
 }
 
@@ -1153,6 +1158,12 @@ a:hover > .arrow-right {
   mask-image: radial-gradient(farthest-side, #000 45%, transparent);
   opacity: var(--aurora);
   pointer-events: none;
+}
+
+/* The light spreads past the edges of the screen, so the band trims it there. Otherwise phones and tablets
+   widen the whole page to fit it. clip, unlike hidden, keeps the label sticky. */
+.band {
+  overflow-x: clip;
 }
 
 .area {
@@ -1874,6 +1885,11 @@ a:hover > .arrow-right {
 .form textarea {
   min-height: 9.5rem;
   resize: vertical;
+}
+
+/* A field reached with the keyboard stops below the header with its label in view. */
+.form :is(input, select, textarea) {
+  scroll-margin-top: 2.5rem;
 }
 
 /* The message box grows with what's written, up to a point, so it needs no handle.
@@ -2604,6 +2620,21 @@ a:hover > .arrow-right {
 .motion.ready .reveal.is-in {
   opacity: 1;
   transform: none;
+}
+
+/* Windows high contrast paints the page in its own colours, without fills or shadows. The solid buttons get
+   an edge there so they still read as buttons, and the address to copy gets back the usual focus ring. */
+@media (forced-colors: active) {
+  .skip,
+  .bar-cta,
+  .send {
+    border: 1px solid;
+  }
+
+  .email-chip:focus-visible {
+    outline: 2px solid var(--glow);
+    outline-offset: 3px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
