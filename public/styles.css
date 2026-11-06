@@ -14,47 +14,56 @@
   src: url("/fonts/geist-mono-latin-wght-normal.woff2") format("woff2");
 }
 
+/* Two modes with one idea. Light: paper and ink, with charcoal bands. Dark: onyx and platinum,
+   with petrol only in the details. Both share the platinum, the burgundy counterpoint and the silk threads.
+   The mode follows the visitor's system. */
 :root {
   color-scheme: light;
-  --bg: #f1f4f8;
-  --text: #0b0c16;
-  --muted: #4a5170;
-  --faint: #646b8a;
-  --rule: #dce2eb;
-  --rule-strong: #c3cbd9;
-  --accent: #0c7c50;
-  --glow: #12b06a;
-  --glyph: rgba(11, 12, 22, 0.13);
-  --light: rgba(18, 176, 106, 0.1);
-  --chip: rgba(241, 244, 248, 0.75);
-  --header: rgba(241, 244, 248, 0.84);
-  --selection: rgba(18, 176, 106, 0.2);
-  --error: #b42318;
-  --mint: #0c7c50;
-  --cyan: #0a737b;
-  --lav: #4f5fb0;
-  --mint-glow: #12b06a;
-  --cyan-glow: #14a7b0;
-  --lav-glow: #6f83db;
+  --bg: #f8f7f4;
+  --text: #13191d;
+  --muted: #495155;
+  --faint: #656d71;
+  --rule: #dce0e3;
+  --rule-strong: #c6cbcf;
+  --accent: #232426;
+  --on-accent: #fbfaf7;
+  --glow: #404246;
+  --label: #5d646a;
+  --date: #772938;
+  --glyph-lit: #2c2e30;
+  --metal: #b9bec2;
+  --metal-hi: #e2e5e8;
+  --metal-lo: #8c9399;
+  --platinum: #8c9399;
+  --burgundy: #772938;
+  --burgundy-light: #a64355;
+  --step-from: #232426;
+  --step-to: #812a3b;
   --tile-top: #ffffff;
-  --tile-bottom: #f8fafc;
-  --glass: rgba(255, 255, 255, 0.6);
-  --glass-line: rgba(11, 12, 22, 0.08);
-  --sheen: rgba(255, 255, 255, 0.95);
-  --field: rgba(255, 255, 255, 0.72);
-  --shade: rgba(32, 44, 80, 0.16);
-  --aurora: 0.3;
-  --on-accent: #ffffff;
+  --tile-bottom: #fcfbf9;
+  --tile-light: #8c9399;
+  --tile-mix: 12%;
+  --glyph: rgba(19, 25, 29, 0.08);
+  --light: rgba(44, 46, 48, 0.05);
+  --thread: rgba(19, 25, 29, 0.12);
+  --thread-lit: rgba(19, 25, 29, 0.5);
+  --chip: rgba(248, 247, 244, 0.8);
+  --header: rgba(248, 247, 244, 0.92);
+  --selection: rgba(35, 36, 38, 0.14);
+  --error: #be241f;
+  --glass: rgba(255, 255, 255, 0.9);
+  --glass-line: rgba(19, 25, 29, 0.09);
+  --sheen: rgba(255, 255, 255, 1);
+  --field: rgba(255, 255, 255, 0.85);
+  --shade: rgba(19, 25, 29, 0.14);
+  --aurora: 0.12;
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --lift: 0 0.6rem 1.5rem -0.75rem rgba(19, 25, 29, 0.4);
   --sun: none;
   --moon: block;
   --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
-  /* The rest of the desktop theme: cyan and lavender join the mint. */
-  --hue: var(--accent);
-  --hue-glow: var(--glow);
-  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  --lift: 0 0.6rem 1.5rem -0.75rem color-mix(in srgb, var(--accent) 55%, transparent);
   --gutter: 1.25rem;
   --max: 75rem;
   --head: 3.75rem;
@@ -68,35 +77,46 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0b0c16;
-    --text: #ddf7ff;
-    --muted: #b5c5db;
-    --faint: #7d82a8;
-    --rule: #1f2338;
-    --rule-strong: #2c3150;
-    --accent: #82fb9c;
-    --glow: #82fb9c;
-    --glyph: rgba(181, 197, 219, 0.12);
-    --light: rgba(130, 251, 156, 0.1);
-    --chip: rgba(11, 12, 22, 0.7);
-    --header: rgba(11, 12, 22, 0.8);
-    --selection: rgba(130, 251, 156, 0.25);
-    --error: #ff9f9f;
-    --mint: #82fb9c;
-    --cyan: #7cf8f7;
-    --lav: #829dd4;
-    --mint-glow: #82fb9c;
-    --cyan-glow: #7cf8f7;
-    --lav-glow: #829dd4;
-    --tile-top: #151828;
-    --tile-bottom: #10121f;
-    --glass: rgba(21, 24, 40, 0.6);
-    --glass-line: rgba(221, 247, 255, 0.08);
-    --sheen: rgba(221, 247, 255, 0.07);
-    --field: rgba(9, 10, 20, 0.55);
+    --bg: #0c0c0d;
+    --text: #edeef0;
+    --muted: #bfc1c3;
+    --faint: #96989b;
+    --rule: #222324;
+    --rule-strong: #343537;
+    --accent: #e6e8ea;
+    --on-accent: #0c0c0d;
+    --glow: #cbced3;
+    --label: #c1c4c9;
+    --date: #ced1d6;
+    --glyph-lit: #e3e5e8;
+    --metal: #bbbec3;
+    --metal-hi: #f4f5f7;
+    --metal-lo: #6f7276;
+    --platinum: #d5d8db;
+    --burgundy: #7b2436;
+    --burgundy-light: #ba5566;
+    --step-from: #ced1d6;
+    --step-to: #ba5566;
+    --tile-top: #161719;
+    --tile-bottom: #121314;
+    --tile-light: #d5d8db;
+    --tile-mix: 9%;
+    --glyph: rgba(191, 193, 195, 0.08);
+    --light: rgba(58, 107, 125, 0.1);
+    --thread: rgba(213, 216, 219, 0.1);
+    --thread-lit: rgba(244, 245, 247, 0.6);
+    --chip: rgba(12, 12, 13, 0.7);
+    --header: rgba(12, 12, 13, 0.84);
+    --selection: rgba(53, 91, 106, 0.45);
+    --error: #fda19a;
+    --glass: rgba(22, 23, 25, 0.85);
+    --glass-line: rgba(237, 238, 240, 0.08);
+    --sheen: rgba(237, 238, 240, 0.06);
+    --field: rgba(6, 6, 7, 0.55);
     --shade: rgba(0, 0, 0, 0.5);
-    --aurora: 0.3;
-    --on-accent: #0b0c16;
+    --aurora: 0.1;
+    --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    --lift: 0 0.6rem 1.5rem -0.75rem rgba(0, 0, 0, 0.6);
     --sun: block;
     --moon: none;
   }
@@ -104,37 +124,181 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b0c16;
-  --text: #ddf7ff;
-  --muted: #b5c5db;
-  --faint: #7d82a8;
-  --rule: #1f2338;
-  --rule-strong: #2c3150;
-  --accent: #82fb9c;
-  --glow: #82fb9c;
-  --glyph: rgba(181, 197, 219, 0.12);
-  --light: rgba(130, 251, 156, 0.1);
-  --chip: rgba(11, 12, 22, 0.7);
-  --header: rgba(11, 12, 22, 0.8);
-  --selection: rgba(130, 251, 156, 0.25);
-  --error: #ff9f9f;
-  --mint: #82fb9c;
-  --cyan: #7cf8f7;
-  --lav: #829dd4;
-  --mint-glow: #82fb9c;
-  --cyan-glow: #7cf8f7;
-  --lav-glow: #829dd4;
-  --tile-top: #151828;
-  --tile-bottom: #10121f;
-  --glass: rgba(21, 24, 40, 0.6);
-  --glass-line: rgba(221, 247, 255, 0.08);
-  --sheen: rgba(221, 247, 255, 0.07);
-  --field: rgba(9, 10, 20, 0.55);
+  --bg: #0c0c0d;
+  --text: #edeef0;
+  --muted: #bfc1c3;
+  --faint: #96989b;
+  --rule: #222324;
+  --rule-strong: #343537;
+  --accent: #e6e8ea;
+  --on-accent: #0c0c0d;
+  --glow: #cbced3;
+  --label: #c1c4c9;
+  --date: #ced1d6;
+  --glyph-lit: #e3e5e8;
+  --metal: #bbbec3;
+  --metal-hi: #f4f5f7;
+  --metal-lo: #6f7276;
+  --platinum: #d5d8db;
+  --burgundy: #7b2436;
+  --burgundy-light: #ba5566;
+  --step-from: #ced1d6;
+  --step-to: #ba5566;
+  --tile-top: #161719;
+  --tile-bottom: #121314;
+  --tile-light: #d5d8db;
+  --tile-mix: 9%;
+  --glyph: rgba(191, 193, 195, 0.08);
+  --light: rgba(58, 107, 125, 0.1);
+  --thread: rgba(213, 216, 219, 0.1);
+  --thread-lit: rgba(244, 245, 247, 0.6);
+  --chip: rgba(12, 12, 13, 0.7);
+  --header: rgba(12, 12, 13, 0.84);
+  --selection: rgba(53, 91, 106, 0.45);
+  --error: #fda19a;
+  --glass: rgba(22, 23, 25, 0.85);
+  --glass-line: rgba(237, 238, 240, 0.08);
+  --sheen: rgba(237, 238, 240, 0.06);
+  --field: rgba(6, 6, 7, 0.55);
   --shade: rgba(0, 0, 0, 0.5);
-  --aurora: 0.3;
-  --on-accent: #0b0c16;
+  --aurora: 0.1;
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --lift: 0 0.6rem 1.5rem -0.75rem rgba(0, 0, 0, 0.6);
   --sun: block;
   --moon: none;
+}
+
+/* The bands: Services, Contact and the footer. Charcoal on paper, graphite on onyx.
+   They set their own colours, so everything inside them adapts on its own. */
+.band,
+.foot {
+  color-scheme: dark;
+  --bg: #252628;
+  --text: #f5f3ef;
+  --muted: #d6d7da;
+  --faint: #acaeb1;
+  --rule: #393b3d;
+  --rule-strong: #4c4d4f;
+  --accent: #f5f3ef;
+  --on-accent: #252628;
+  --glow: #cbd2d7;
+  --label: #cbd2d7;
+  --date: #cbd2d7;
+  --glyph-lit: #e5e8eb;
+  --metal: #bfc5ca;
+  --metal-hi: #f3f5f7;
+  --metal-lo: #747b81;
+  --platinum: #dbdfe2;
+  --burgundy: #812a3b;
+  --burgundy-light: #c05b6b;
+  --tile-top: #2f3032;
+  --tile-bottom: #2a2b2d;
+  --plate-ink: #252628;
+  --tile-light: #dbdfe2;
+  --tile-mix: 10%;
+  --glyph: rgba(214, 215, 218, 0.09);
+  --light: rgba(186, 190, 193, 0.07);
+  --thread: rgba(219, 223, 226, 0.15);
+  --thread-lit: rgba(243, 245, 247, 0.75);
+  --chip: rgba(37, 38, 40, 0.6);
+  --selection: rgba(219, 223, 226, 0.25);
+  --error: #ffaba3;
+  --glass: rgba(255, 255, 255, 0.035);
+  --glass-line: rgba(245, 243, 239, 0.1);
+  --sheen: rgba(245, 243, 239, 0.07);
+  --field: rgba(28, 29, 31, 0.6);
+  --shade: rgba(0, 0, 0, 0.45);
+  --aurora: 0.12;
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --lift: 0 0.6rem 1.5rem -0.75rem rgba(0, 0, 0, 0.55);
+  background: var(--bg);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .band,
+  :root:not([data-theme="light"]) .foot {
+    --bg: #141618;
+    --text: #edeef0;
+    --muted: #c6c7ca;
+    --faint: #9d9ea2;
+    --rule: #292c2d;
+    --rule-strong: #3a3e40;
+    --accent: #e6e8ea;
+    --on-accent: #141618;
+    --glow: #ced1d6;
+    --label: #c7cbd0;
+    --date: #ced1d6;
+    --glyph-lit: #e6e8ea;
+    --metal: #bbbec3;
+    --metal-hi: #f4f5f7;
+    --metal-lo: #6f7276;
+    --platinum: #dcdee1;
+    --burgundy: #7b2436;
+    --burgundy-light: #c05b6b;
+    --tile-top: #1e2122;
+    --tile-bottom: #1a1c1e;
+    --plate-ink: #141618;
+    --tile-light: #dcdee1;
+    --tile-mix: 9%;
+    --glyph: rgba(198, 199, 202, 0.08);
+    --light: rgba(58, 107, 125, 0.1);
+    --thread: rgba(220, 222, 225, 0.12);
+    --thread-lit: rgba(244, 245, 247, 0.65);
+    --chip: rgba(20, 22, 24, 0.6);
+    --selection: rgba(53, 91, 106, 0.45);
+    --error: #fda19a;
+    --glass: rgba(255, 255, 255, 0.035);
+    --glass-line: rgba(237, 238, 240, 0.09);
+    --sheen: rgba(237, 238, 240, 0.06);
+    --field: rgba(13, 15, 16, 0.6);
+    --shade: rgba(0, 0, 0, 0.5);
+    --aurora: 0.1;
+    --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    --lift: 0 0.6rem 1.5rem -0.75rem rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme="dark"] .band,
+:root[data-theme="dark"] .foot {
+  --bg: #141618;
+  --text: #edeef0;
+  --muted: #c6c7ca;
+  --faint: #9d9ea2;
+  --rule: #292c2d;
+  --rule-strong: #3a3e40;
+  --accent: #e6e8ea;
+  --on-accent: #141618;
+  --glow: #ced1d6;
+  --label: #c7cbd0;
+  --date: #ced1d6;
+  --glyph-lit: #e6e8ea;
+  --metal: #bbbec3;
+  --metal-hi: #f4f5f7;
+  --metal-lo: #6f7276;
+  --platinum: #dcdee1;
+  --burgundy: #7b2436;
+  --burgundy-light: #c05b6b;
+  --tile-top: #1e2122;
+  --tile-bottom: #1a1c1e;
+  --plate-ink: #141618;
+  --tile-light: #dcdee1;
+  --tile-mix: 9%;
+  --glyph: rgba(198, 199, 202, 0.08);
+  --light: rgba(58, 107, 125, 0.1);
+  --thread: rgba(220, 222, 225, 0.12);
+  --thread-lit: rgba(244, 245, 247, 0.65);
+  --chip: rgba(20, 22, 24, 0.6);
+  --selection: rgba(53, 91, 106, 0.45);
+  --error: #fda19a;
+  --glass: rgba(255, 255, 255, 0.035);
+  --glass-line: rgba(237, 238, 240, 0.09);
+  --sheen: rgba(237, 238, 240, 0.06);
+  --field: rgba(13, 15, 16, 0.6);
+  --shade: rgba(0, 0, 0, 0.5);
+  --aurora: 0.1;
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --lift: 0 0.6rem 1.5rem -0.75rem rgba(0, 0, 0, 0.6);
 }
 
 /* Four compositions: phones by default, tablets from 40rem, desktops from 64rem and wide screens from 100rem.
@@ -244,7 +408,7 @@ a {
   padding: 0.7rem 1.1rem;
   border-radius: 999px;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
   font: 600 0.875rem/1 var(--sans);
   text-decoration: none;
   transition: top 0.2s;
@@ -700,7 +864,7 @@ a:hover > .arrow-right {
   height: 1.1em;
   margin-left: 0.2em;
   vertical-align: -0.18em;
-  background: var(--glow);
+  background: var(--glyph-lit);
 }
 
 .motion .caret {
@@ -722,11 +886,36 @@ a:hover > .arrow-right {
   scroll-margin-top: calc(var(--head) - 1px);
 }
 
+/* Silk: in the sections without glyphs, a ribbon of fine threads drifts slowly, folds like fabric
+   and parts under the pointer. main.js draws it on a canvas, in the colours of the theme. */
+.silk {
+  position: relative;
+  isolation: isolate;
+}
+
+.silk-field {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* A band starts where the paper ends, so it needs no rule, and neither does the section after it. */
+.band,
+.band + .section {
+  border-top: 0;
+}
+
 .eyebrow {
   display: flex;
+  align-items: center;
   gap: 0.6rem;
   margin: 0 0 1.25rem;
-  color: var(--accent);
+  color: var(--label);
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1;
@@ -734,8 +923,18 @@ a:hover > .arrow-right {
   text-transform: uppercase;
 }
 
+/* A short bar of polished platinum before each label, like the rule on a letterhead. */
+.eyebrow::before {
+  content: "";
+  flex: none;
+  width: 1.5rem;
+  height: 1px;
+  margin-right: 0.15rem;
+  background: linear-gradient(90deg, var(--metal-lo), var(--metal-hi) 50%, var(--metal));
+}
+
 .eyebrow .num {
-  color: var(--accent);
+  color: var(--date);
 }
 
 .eyebrow .sep {
@@ -773,24 +972,45 @@ a:hover > .arrow-right {
     margin: calc(var(--space) + 0.9rem) 0 0;
   }
 
+  /* The rule over each section starts in polished platinum and settles into a plain line. */
   .section-body {
     padding-top: var(--space);
     border-top: 1px solid var(--rule);
+    border-image: linear-gradient(90deg, var(--metal-lo), var(--metal) 35%, var(--rule) 70%) 1;
+  }
+
+  .band .section-body,
+  .band + .section .section-body {
+    border-top: 0;
   }
 }
 
-/* A lit tile: the soft mint light from the top corner that marks what matters most on the page. */
+/* A lit tile marks what matters most on the page: a soft light from the top corner,
+   and an edge of polished platinum that catches it. */
 .glow {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border: 1px solid transparent;
   border-radius: 1.25rem;
   background:
-    radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--mint-glow) 16%, transparent), transparent 55%),
-    radial-gradient(90% 120% at 100% 100%, color-mix(in srgb, var(--cyan-glow) 9%, transparent), transparent 60%),
-    linear-gradient(180deg, var(--tile-top), var(--tile-bottom));
+    radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--tile-light) var(--tile-mix), transparent), transparent 55%),
+    linear-gradient(180deg, var(--tile-top), var(--tile-bottom)) border-box;
   box-shadow:
     inset 0 1px 0 var(--sheen),
-    0 1.5rem 3rem -2.5rem color-mix(in srgb, var(--mint-glow) 60%, transparent);
+    0 1.5rem 3rem -2.5rem var(--shade);
+}
+
+.glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--metal-hi), var(--metal-lo) 30%, var(--metal) 55%, var(--metal-lo) 80%, var(--metal-hi));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* About: the statement, the path that led here and the principle behind the work */
@@ -820,7 +1040,7 @@ a:hover > .arrow-right {
 
 .path-when {
   margin: 0;
-  color: var(--accent);
+  color: var(--date);
   font-size: 0.875rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -908,27 +1128,7 @@ a:hover > .arrow-right {
   }
 }
 
-/* Services: three areas, each in its own tone from the palette, over a soft aurora */
-
-[data-hue="mint"] {
-  --hue: var(--mint);
-  --hue-glow: var(--mint-glow);
-}
-
-[data-hue="cyan"] {
-  --hue: var(--cyan);
-  --hue-glow: var(--cyan-glow);
-}
-
-[data-hue="lav"] {
-  --hue: var(--lav);
-  --hue-glow: var(--lav-glow);
-}
-
-[data-hue="muted"] {
-  --hue: var(--faint);
-  --hue-glow: var(--faint);
-}
+/* Services: three areas over a soft light, all alike, with the same platinum plate and edge. */
 
 .areas {
   position: relative;
@@ -940,16 +1140,16 @@ a:hover > .arrow-right {
   list-style: none;
 }
 
-/* Three soft lights behind the cards give the glass something to frost. */
+/* A soft light behind each card gives the glass something to frost. */
 .areas::before {
   content: "";
   position: absolute;
   inset: -16% -10%;
   z-index: -1;
   background:
-    radial-gradient(34% 40% at 24% 30%, var(--mint-glow), transparent 70%),
-    radial-gradient(30% 34% at 52% 52%, var(--cyan-glow), transparent 70%),
-    radial-gradient(34% 40% at 78% 72%, var(--lav-glow), transparent 70%);
+    radial-gradient(28% 36% at 17% 45%, var(--platinum), transparent 70%),
+    radial-gradient(28% 36% at 50% 45%, var(--platinum), transparent 70%),
+    radial-gradient(28% 36% at 83% 45%, var(--platinum), transparent 70%);
   /* Fades out well before its own edges, so the lights never show a border. */
   -webkit-mask-image: radial-gradient(farthest-side, #000 45%, transparent);
   mask-image: radial-gradient(farthest-side, #000 45%, transparent);
@@ -958,6 +1158,7 @@ a:hover > .arrow-right {
 }
 
 .area {
+  --hue: var(--platinum);
   position: relative;
   isolation: isolate;
   display: grid;
@@ -970,7 +1171,7 @@ a:hover > .arrow-right {
   backdrop-filter: blur(10px) saturate(1.3);
   box-shadow:
     inset 0 1px 0 var(--sheen),
-    0 1.75rem 3rem -2.25rem color-mix(in srgb, var(--hue-glow) 55%, transparent);
+    0 1.75rem 3rem -2.25rem var(--shade);
   transition: transform 0.5s var(--ease), box-shadow 0.5s;
 }
 
@@ -998,7 +1199,7 @@ a:hover > .arrow-right {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(18rem circle at var(--sx, 0) var(--sy, 0), color-mix(in srgb, var(--hue-glow) 17%, transparent), transparent 70%);
+  background: radial-gradient(18rem circle at var(--sx, 0) var(--sy, 0), color-mix(in srgb, var(--hue) 17%, transparent), transparent 70%);
   opacity: 0;
   transition: opacity 0.5s;
   pointer-events: none;
@@ -1028,11 +1229,10 @@ a:hover > .arrow-right {
   min-width: 2.6rem;
   height: 2.6rem;
   padding: 0 0.55rem;
-  border: 1px solid color-mix(in srgb, var(--hue) 32%, transparent);
   border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--hue) 10%, transparent);
-  box-shadow: 0 0 1.75rem -0.5rem color-mix(in srgb, var(--hue-glow) 55%, transparent);
-  color: var(--hue);
+  background: linear-gradient(145deg, var(--metal-hi), var(--metal) 55%, var(--metal-lo));
+  box-shadow: 0 0 1.75rem -0.5rem color-mix(in srgb, var(--hue) 40%, transparent);
+  color: var(--plate-ink, var(--bg));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1;
@@ -1078,7 +1278,7 @@ a:hover > .arrow-right {
 
 .area-more summary::after {
   content: "+";
-  color: var(--hue);
+  color: var(--label);
   font-size: 1.125rem;
   line-height: 1;
   transition: transform 0.3s var(--ease);
@@ -1118,12 +1318,15 @@ a:hover > .arrow-right {
 
 .area-list li::before {
   content: "+";
-  color: var(--hue);
+  color: var(--label);
   font-family: var(--mono);
 }
 
-/* Custom work: many clients need something that isn't on the list, so it gets the lit tile. */
+/* Custom work: many clients need something that isn't on the list, so it gets the lit tile,
+   lit in burgundy, the warm counterpoint of the palette. */
 .custom {
+  --tile-light: var(--burgundy-light);
+  --tile-mix: 22%;
   display: grid;
   gap: 1.75rem;
   margin-top: 1.25rem;
@@ -1172,7 +1375,7 @@ a:hover > .arrow-right {
 
 .custom-list li::before {
   content: "+";
-  color: var(--accent);
+  color: var(--label);
   font-family: var(--mono);
 }
 
@@ -1307,21 +1510,21 @@ a:hover > .arrow-right {
   transition: background-color 0.5s;
 }
 
-/* The steps run from the mint to the lavender of the palette. */
+/* The steps run from the brand colour into its light. */
 .step:nth-child(1) {
-  --hue: var(--mint-glow);
+  --hue: var(--step-from);
 }
 
 .step:nth-child(2) {
-  --hue: color-mix(in srgb, var(--mint-glow) 45%, var(--cyan-glow));
+  --hue: color-mix(in oklab, var(--step-from) 65%, var(--step-to));
 }
 
 .step:nth-child(3) {
-  --hue: color-mix(in srgb, var(--cyan-glow) 65%, var(--lav-glow));
+  --hue: color-mix(in oklab, var(--step-from) 30%, var(--step-to));
 }
 
 .step:nth-child(4) {
-  --hue: var(--lav-glow);
+  --hue: var(--step-to);
 }
 
 .step::after {
@@ -1431,7 +1634,7 @@ a:hover > .arrow-right {
   }
 
   .steps::after {
-    background: linear-gradient(90deg, var(--mint-glow), var(--cyan-glow) 55%, var(--lav-glow));
+    background: linear-gradient(90deg, var(--step-from), var(--step-to));
     transform-origin: left;
   }
 
@@ -1552,11 +1755,11 @@ a:hover > .arrow-right {
 
 .email-chip .icon-check {
   display: none;
-  color: var(--accent);
+  color: var(--glow);
 }
 
 .email-chip[data-copied] {
-  border-color: var(--accent);
+  border-color: var(--glow);
 }
 
 .email-chip[data-copied] .icon-copy {
@@ -1576,7 +1779,7 @@ a:hover > .arrow-right {
 }
 
 .copy-hint[data-copied] {
-  color: var(--accent);
+  color: var(--glow);
 }
 
 /* The form: a lit glass panel over the glyphs. The light that follows the pointer passes underneath it. */
@@ -1587,8 +1790,7 @@ a:hover > .arrow-right {
   margin: 0;
   padding: 1.4rem 1.25rem 1.5rem;
   background:
-    radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--mint-glow) 13%, transparent), transparent 55%),
-    radial-gradient(90% 110% at 100% 100%, color-mix(in srgb, var(--cyan-glow) 8%, transparent), transparent 60%),
+    radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--tile-light) var(--tile-mix), transparent), transparent 55%),
     var(--glass);
   -webkit-backdrop-filter: blur(8px) saturate(1.3);
   backdrop-filter: blur(8px) saturate(1.3);
@@ -1601,7 +1803,7 @@ a:hover > .arrow-right {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(24rem circle at var(--sx, 20%) var(--sy, 0%), color-mix(in srgb, var(--mint-glow) 14%, transparent), transparent 70%);
+  background: radial-gradient(24rem circle at var(--sx, 20%) var(--sy, 0%), color-mix(in srgb, var(--tile-light) 12%, transparent), transparent 70%);
   opacity: 0;
   transition: opacity 0.5s;
   pointer-events: none;
@@ -1666,7 +1868,7 @@ a:hover > .arrow-right {
 .form textarea:focus-visible {
   outline: none;
   border-color: var(--glow);
-  box-shadow: 0 0 0 3px var(--selection), 0 0 1.75rem -0.4rem color-mix(in srgb, var(--mint-glow) 45%, transparent);
+  box-shadow: 0 0 0 3px var(--selection), 0 0 1.75rem -0.4rem color-mix(in srgb, var(--glow) 40%, transparent);
 }
 
 /* The topic menu looks like the other fields, with its own arrow. */
@@ -1775,7 +1977,7 @@ a:hover > .arrow-right {
 }
 
 .form[data-state="sent"] .form-status {
-  color: var(--accent);
+  color: var(--glow);
 }
 
 .form[data-state="error"] .form-status {

@@ -1,4 +1,4 @@
-// The glyph field, the decoding text, the header and the section index,
+// The glyph field, the silk threads, the decoding text, the header and the section index,
 // the copy button, the contact form and the theme toggle.
 
 const root = document.documentElement;
@@ -117,7 +117,7 @@ class GlyphField {
     this.measureShield();
     const style = getComputedStyle(this.host);
     this.glyphColor = style.getPropertyValue("--glyph").trim();
-    this.glowColor = style.getPropertyValue("--glow").trim();
+    this.glowColor = (style.getPropertyValue("--glyph-lit") || style.getPropertyValue("--glow")).trim();
     const ctx = this.baseCtx;
     ctx.clearRect(0, 0, this.width, this.height);
     ctx.font = `400 ${this.fontSize}px ${MONO}`;
@@ -198,6 +198,174 @@ class GlyphField {
 }
 
 const fields = [...document.querySelectorAll("canvas.field")].map((canvas) => new GlyphField(canvas));
+
+// Silk: in the sections without glyphs, a ribbon of fine threads drifts slowly, folds like fabric
+// and parts under the pointer. Each canvas picks the path of its ribbon with data-silk.
+const TAU = Math.PI * 2;
+const SILK_PATHS = {
+  rise: (u) => 0.9 - 0.58 * u, // About: from the bottom left up behind the principle
+  flow: (u) => 0.3 + 0.36 * u, // Services: across the band, behind the cards
+  low: (u) => 0.9 - 0.1 * u, // Process: along the foot of the section, under the steps
+};
+
+class SilkField {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.host = canvas.parentElement;
+    this.ctx = canvas.getContext("2d");
+    this.path = SILK_PATHS[canvas.dataset.silk] ?? SILK_PATHS.flow;
+    this.visible = false;
+    this.width = 0;
+    this.time = 0;
+    this.drawn = 0;
+    // Where the threads part, eased so they open and close smoothly.
+    this.px = 0;
+    this.py = 0;
+    this.force = 0;
+  }
+
+  resize() {
+    const { width, height } = this.canvas.getBoundingClientRect();
+    if (!width || !height) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const compact = width < 640;
+    this.width = width;
+    this.height = height;
+    this.canvas.width = Math.round(width * dpr);
+    this.canvas.height = Math.round(height * dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.dpr = dpr;
+    this.threads = compact ? 18 : 28;
+    this.gap = compact ? 5.5 : 7;
+    this.spacing = compact ? 8 : 10;
+    this.radius = compact ? 110 : 170;
+    this.measure();
+    this.refresh();
+  }
+
+  // The threads fade out behind text, so it always reads cleanly. The soft mask is drawn once per layout.
+  measure() {
+    if (!this.width) return;
+    const origin = this.canvas.getBoundingClientRect();
+    this.mask ??= document.createElement("canvas");
+    this.mask.width = this.canvas.width;
+    this.mask.height = this.canvas.height;
+    const ctx = this.mask.getContext("2d");
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.filter = "blur(10px)";
+    ctx.fillStyle = "#000";
+    const range = document.createRange();
+    for (const element of this.host.querySelectorAll("h2, h3, p, li, dt, dd, .area-icon, .btn")) {
+      range.selectNodeContents(element);
+      for (const rect of range.getClientRects()) {
+        ctx.fillRect(rect.left - origin.left - 14, rect.top - origin.top - 10, rect.width + 28, rect.height + 20);
+      }
+    }
+    if (this.color) this.draw();
+  }
+
+  refresh() {
+    if (!this.width) return;
+    const style = getComputedStyle(this.host);
+    this.color = style.getPropertyValue("--thread").trim();
+    this.lit = style.getPropertyValue("--thread-lit").trim();
+    // The same colour, fully transparent, so gradients fade without going grey.
+    this.clear = this.lit.replace(/[\d.]+\)$/, "0)");
+    this.draw();
+  }
+
+  pluck(x, y) {
+    this.px = x;
+    this.py = y;
+    this.force = 1;
+  }
+
+  // Runs every frame while the section is in view. The drift redraws at about 30 frames a second;
+  // the pointer at full rate, so the threads follow it closely.
+  step(now, x, y) {
+    const inside = x !== null;
+    if (inside && this.force < 0.02) {
+      this.px = x;
+      this.py = y;
+    } else if (inside) {
+      this.px += (x - this.px) * 0.25;
+      this.py += (y - this.py) * 0.25;
+    }
+    this.force += ((inside ? 1 : 0) - this.force) * 0.1;
+    if (this.force < 0.002 && now - this.drawn < 33) return;
+    this.drawn = now;
+    this.time = now / 1000;
+    this.draw();
+  }
+
+  draw() {
+    const { ctx, width: w, height: h, threads, gap, spacing, radius, force, px, py, time: t } = this;
+    if (!w) return;
+    ctx.clearRect(0, 0, w, h);
+    const main = new Path2D();
+    const accent = new Path2D();
+    const half = (threads - 1) / 2;
+    for (let i = 0; i < threads; i++) {
+      const path = i % 4 === 1 ? accent : main;
+      for (let x = -spacing; x <= w + spacing; x += spacing) {
+        const u = x / w;
+        // The ribbon bends, its threads gather and spread like folds, and each one ripples a little.
+        const bend = Math.sin(TAU * (u * 0.8 + t * 0.012)) * h * 0.04;
+        const fold = 0.62 + 0.38 * Math.sin(TAU * (u * 1.3 + t * 0.03) + 0.7);
+        const ripple = 3 * Math.sin(TAU * (u * 2.4 - t * 0.045) + i * 0.32);
+        let y = this.path(u) * h + bend + (i - half) * gap * fold + ripple;
+        if (force > 0.002) {
+          const dx = x - px;
+          const dy = y - py;
+          const distance = Math.hypot(dx, dy);
+          if (distance < radius) y += force * (1 - distance / radius) ** 2 * 28 * (dy / (Math.abs(dy) + 12));
+        }
+        if (x === -spacing) path.moveTo(x, y);
+        else path.lineTo(x, y);
+      }
+    }
+    ctx.lineWidth = 0.8;
+    ctx.strokeStyle = this.color;
+    ctx.stroke(main);
+    // One thread in four is drawn twice, so the ribbon has the uneven sheen of real silk.
+    ctx.stroke(accent);
+    ctx.stroke(accent);
+
+    // A slow sheen runs along the ribbon, like light across silk.
+    if (motion) {
+      const sx = ((t * 0.06) % 1.4 - 0.2) * w;
+      const sheen = ctx.createLinearGradient(sx - 240, 0, sx + 240, 0);
+      sheen.addColorStop(0, this.clear);
+      sheen.addColorStop(0.5, this.lit);
+      sheen.addColorStop(1, this.clear);
+      ctx.globalAlpha = 0.28;
+      ctx.strokeStyle = sheen;
+      ctx.stroke(main);
+      ctx.stroke(accent);
+    }
+
+    // Under the pointer the parted threads catch the light.
+    if (force > 0.01) {
+      const glow = ctx.createRadialGradient(px, py, 0, px, py, radius * 1.1);
+      glow.addColorStop(0, this.lit);
+      glow.addColorStop(1, this.clear);
+      ctx.globalAlpha = force;
+      ctx.strokeStyle = glow;
+      ctx.stroke(main);
+      ctx.stroke(accent);
+    }
+
+    if (this.mask) {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.globalAlpha = 0.92;
+      ctx.drawImage(this.mask, 0, 0, w, h);
+      ctx.globalCompositeOperation = "source-over";
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+const silks = [...document.querySelectorAll("canvas.silk-field")].map((canvas) => new SilkField(canvas));
 let pointer = null;
 let raf = 0;
 let last = 0;
@@ -232,6 +400,18 @@ function frame(now) {
     }
     busy = field.step(dt) || inside || busy;
   }
+  for (const silk of silks) {
+    if (!silk.visible || !silk.width) continue;
+    const rect = silk.canvas.getBoundingClientRect();
+    const inside =
+      pointer !== null &&
+      pointer.x >= rect.left &&
+      pointer.x < rect.right &&
+      pointer.y >= rect.top &&
+      pointer.y < rect.bottom;
+    silk.step(now, inside ? pointer.x - rect.left : null, inside ? pointer.y - rect.top : null);
+    busy = true;
+  }
   last = busy ? now : 0;
   if (busy) wake();
 }
@@ -252,7 +432,7 @@ function setTwinkle(on) {
   }
 }
 
-if (motion && fields.length) {
+if (motion && (fields.length || silks.length)) {
   addEventListener(
     "pointermove",
     (event) => {
@@ -274,6 +454,11 @@ if (motion && fields.length) {
         if (x < rect.left || x >= rect.right || y < rect.top || y >= rect.bottom) continue;
         field.ignite(x - rect.left, y - rect.top, 0.9);
       }
+      for (const silk of silks) {
+        const rect = silk.canvas.getBoundingClientRect();
+        const { clientX: x, clientY: y } = event;
+        if (x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom) silk.pluck(x - rect.left, y - rect.top);
+      }
       wake();
     },
     { passive: true },
@@ -290,8 +475,13 @@ if (motion && fields.length) {
 
 const visibility = new IntersectionObserver((entries) => {
   for (const entry of entries) {
-    const field = fields.find((candidate) => candidate.canvas === entry.target);
+    const field = [...fields, ...silks].find((candidate) => candidate.canvas === entry.target);
     if (field) field.visible = entry.isIntersecting;
+    // Text slides in as a section is revealed, so the silk measures it again once it has settled.
+    if (field instanceof SilkField && entry.isIntersecting) {
+      field.measure();
+      setTimeout(() => field.measure(), 1100);
+    }
   }
   wake();
 });
@@ -299,7 +489,7 @@ const visibility = new IntersectionObserver((entries) => {
 let resizeFrame = 0;
 const sizes = new ResizeObserver(() => {
   cancelAnimationFrame(resizeFrame);
-  resizeFrame = requestAnimationFrame(() => fields.forEach((field) => field.resize()));
+  resizeFrame = requestAnimationFrame(() => [...fields, ...silks].forEach((field) => field.resize()));
 });
 
 // Text resolves from random glyphs, left to right, like output arriving.
@@ -533,7 +723,7 @@ function applyTheme(repaint = true) {
   themeMetas.forEach((meta, i) => {
     meta.content = root.dataset.theme ? background : themeDefaults[i];
   });
-  if (repaint) fields.forEach((field) => field.refresh());
+  if (repaint) [...fields, ...silks].forEach((field) => field.refresh());
 }
 
 toggle?.addEventListener("click", () => {
@@ -552,11 +742,14 @@ systemDark.addEventListener("change", () => {
 
 root.classList.add("ready");
 applyTheme(false);
-for (const field of fields) {
+for (const field of [...fields, ...silks]) {
   visibility.observe(field.canvas);
   sizes.observe(field.canvas);
 }
-document.fonts?.ready.then(() => fields.forEach((field) => field.refresh()));
+document.fonts?.ready.then(() => {
+  fields.forEach((field) => field.refresh());
+  silks.forEach((silk) => silk.measure());
+});
 
 if (motion) {
   setTimeout(() => document.querySelectorAll(".hero [data-decode]").forEach((element) => decode(element, 1200)), 250);
