@@ -11,8 +11,13 @@ The site is in English and Spanish. Each page has its counterpart, linked with `
 | English | Spanish |
 | --- | --- |
 | `/` | `/es/` |
+| `/services/web-domains-email/` | `/es/servicios/web-dominios-correo/` |
+| `/services/ai-automation/` | `/es/servicios/ia-automatizacion/` |
+| `/services/computers-privacy/` | `/es/servicios/equipos-privacidad/` |
 | `/privacy/` | `/es/privacidad/` |
 | `/legal/` | `/es/aviso-legal/` |
+
+Each service page lists its projects with what they include, how long they take and their starting price, followed by its own questions and the same contact form as the home page, with the service's topic already chosen. The header, the contact section and the footer are copies of the home page's, so a change to them has to be made on the service pages as well. The starting prices also appear in each page's description and structured data (`minPrice`), so a new price means editing all three places in both languages.
 
 Missing pages show `public/404.html`, or `public/es/404.html` under `/es/`. Both languages share `styles.css` and `main.js`; the script picks its messages from the `lang` attribute of the page.
 

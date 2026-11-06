@@ -337,7 +337,7 @@ class SilkField {
     const ctx = mask.getContext("2d");
     const boxes = new Path2D();
     const range = document.createRange();
-    for (const element of this.host.querySelectorAll("h2, h3, p, li, dt, dd, .area-icon, .btn")) {
+    for (const element of this.host.querySelectorAll("h2, h3, p, li, dt, dd, figcaption, .area-icon, .area-link, .btn, .sibling")) {
       range.selectNodeContents(element);
       for (const rect of range.getClientRects()) {
         boxes.rect((rect.left - origin.left - 14) * scale, (rect.top - origin.top - 10) * scale, (rect.width + 28) * scale, (rect.height + 20) * scale);

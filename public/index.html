@@ -59,6 +59,7 @@
         "@id": "https://mariohdz.com/#mario",
         "name": "Mario Hernández",
         "url": "https://mariohdz.com/",
+        "image": "https://mariohdz.com/mario-hernandez.webp",
         "email": "contact@mariohdz.com",
         "description": "Websites, business email, AI and automation for small businesses, independent professionals and U.S. companies.",
         "knowsLanguage": ["en", "es"],
@@ -68,9 +69,9 @@
           "@type": "OfferCatalog",
           "name": "Services",
           "itemListElement": [
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web, domains and email", "description": "Websites designed, built and published for you, business email with SPF, DKIM and DMARC, and domains and DNS on Cloudflare." } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI and automation", "description": "AI assistants set up around your documents and tools, automations and custom tools, and local, private AI." } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Computers and privacy", "description": "Linux setup, moves from Windows or macOS and troubleshooting, email and accounts on services that respect your privacy, and passwords in a password manager with two-factor sign-in." } }
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/web-domains-email/#service", "name": "Web, domains and email", "url": "https://mariohdz.com/services/web-domains-email/", "description": "Websites designed, built and published for you, business email with SPF, DKIM and DMARC, and domains and DNS on Cloudflare." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/ai-automation/#service", "name": "AI and automation", "url": "https://mariohdz.com/services/ai-automation/", "description": "AI assistants set up around your documents and tools, automations and custom tools, and local, private AI." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/computers-privacy/#service", "name": "Computers and privacy", "url": "https://mariohdz.com/services/computers-privacy/", "description": "Linux setup, moves from Windows or macOS and troubleshooting, email and accounts on services that respect your privacy, and passwords in a password manager with two-factor sign-in." } }
           ]
         }
       }
@@ -88,6 +89,7 @@
         <a href="#services" data-spy data-shield>Services</a>
         <a href="#about" data-spy data-shield>About</a>
         <a href="#process" data-spy data-shield>Process</a>
+        <a href="#faq" data-spy data-shield>FAQ</a>
       </nav>
       <div class="bar-tools">
         <a class="lang mono" href="/es/" hreflang="es" lang="es" aria-label="ES, versión en español" data-shield>ES</a>
@@ -138,6 +140,7 @@
                   <li>Domains, DNS and redirects on Cloudflare, set up cleanly</li>
                 </ul>
               </details>
+              <a class="area-link" href="/services/web-domains-email/">Projects and prices<span class="sr-only"> for web, domains and email</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
             </li>
             <li class="area">
               <div class="area-head">
@@ -153,6 +156,7 @@
                   <li>Local, private AI that keeps your files on your own computer</li>
                 </ul>
               </details>
+              <a class="area-link" href="/services/ai-automation/">Projects and prices<span class="sr-only"> for AI and automation</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
             </li>
             <li class="area">
               <div class="area-head">
@@ -168,6 +172,7 @@
                   <li>Passwords in a password manager, with two-factor sign-in and recovery options</li>
                 </ul>
               </details>
+              <a class="area-link" href="/services/computers-privacy/">Projects and prices<span class="sr-only"> for computers and privacy</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
             </li>
           </ul>
           <div class="custom glow">
@@ -194,7 +199,12 @@
       <div class="section-inner reveal">
         <p class="eyebrow mono" aria-hidden="true"><span data-decode>About</span></p>
         <div class="section-body about">
-          <h2 id="about-title" class="section-title">I help small businesses, independent professionals and U.S. companies get their technology right.</h2>
+          <div class="about-head">
+            <figure class="portrait">
+              <img src="/mario-hernandez.webp" width="333" height="416" alt="Mario Hernández" loading="lazy" decoding="async">
+            </figure>
+            <h2 id="about-title" class="section-title">I help small businesses, independent professionals and U.S. companies get their technology right.</h2>
+          </div>
           <ul class="path">
             <li class="path-step">
               <p class="path-when">6 years</p>
@@ -218,6 +228,17 @@
               </div>
             </li>
           </ul>
+          <div class="reviews">
+            <p class="reviews-label mono">Top Rated on Upwork</p>
+            <figure class="review">
+              <blockquote><p>“He takes direction well, asks smart questions, and follows through.”</p></blockquote>
+              <figcaption>Property management company, U.S.</figcaption>
+            </figure>
+            <figure class="review">
+              <blockquote><p>“Very respectful, smart, great communication and much more. Worth every penny.”</p></blockquote>
+              <figcaption>Property management company, U.S.</figcaption>
+            </figure>
+          </div>
           <div class="principle glow">
             <p class="principle-title">You hold the keys.</p>
             <p>Domains, accounts, code and data are yours from day one, and so is every login. You decide, and I&nbsp;make sure it all works.</p>
@@ -254,6 +275,58 @@
               <p>I walk you through how it all fits together so you can run it with confidence, and I&nbsp;stay one message away.</p>
             </li>
           </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section silk" aria-labelledby="faq-title">
+      <canvas class="silk-field" data-silk="rise" aria-hidden="true"></canvas>
+      <div class="section-inner reveal">
+        <p class="eyebrow mono" aria-hidden="true"><span data-decode>FAQ</span></p>
+        <div class="section-body">
+          <h2 id="faq-title" class="section-title">Good questions.</h2>
+          <div class="faq">
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Do you work with clients across the U.S.?</h3></summary>
+              <div class="faq-a"><p>Yes. Everything is done remotely, and calls are booked during U.S. business hours, at a time that suits you.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Can you work with the tools I&nbsp;already use?</h3></summary>
+              <div class="faq-a"><p>Yes. We start from what you have, like Google Workspace, Microsoft 365 or your current website, and I’ll only suggest a change when it’s clearly worth it.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">How much does a project cost?</h3></summary>
+              <div class="faq-a"><p>Each service lists its projects with a starting price: <a href="/services/web-domains-email/">web, domains and email</a>; <a href="/services/ai-automation/">AI and automation</a>; and <a href="/services/computers-privacy/">computers and privacy</a>.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Why a fixed price instead of an hourly rate?</h3></summary>
+              <div class="faq-a"><p>So you know the total before anything starts. If a job takes longer than planned, the price stays the same.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">How do payments work?</h3></summary>
+              <div class="faq-a"><p>Half when you approve the plan, and the other half on delivery, in U.S. dollars. Payments go through Upwork, which holds each one safely until you approve the work and adds a small fee of its own. You can pay by card, PayPal or U.S. bank transfer.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Is there a monthly fee?</h3></summary>
+              <div class="faq-a"><p>No. You pay only for what you need, when you need it, and changes after delivery get a fixed price like any other job.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Can you work to a deadline?</h3></summary>
+              <div class="faq-a"><p>Yes. Mention the date in your first message, and the plan is built around it.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Do I&nbsp;need to share my passwords with you?</h3></summary>
+              <div class="faq-a"><p>No. Where a service allows it, you invite me as a user with just the access the job needs. Anything else, you sign in yourself while we work together on a call.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Do you sign NDAs?</h3></summary>
+              <div class="faq-a"><p>Yes. If you’d like one, I’ll sign it before we go into details.</p></div>
+            </details>
+            <details class="faq-item">
+              <summary><h3 class="faq-q">Do you take on custom projects and collaborations?</h3></summary>
+              <div class="faq-a"><p>Yes. Beyond the services here, I&nbsp;build custom tools and join agencies, designers and developers on projects that need web, email or AI work.</p></div>
+            </details>
+          </div>
         </div>
       </div>
     </section>
