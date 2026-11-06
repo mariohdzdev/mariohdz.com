@@ -49,6 +49,18 @@ const MONO = '"Geist Mono", ui-monospace, monospace';
 const randomIndex = () => Math.floor(Math.random() * GLYPHS.length);
 const randomGlyph = () => GLYPHS[randomIndex()];
 
+// How each glyph field fades out towards its edges, by height (0 at the top, 1 at the bottom). The fade is part
+// of the drawing itself, so the browser never has to mask the whole canvas again on every frame.
+const FADES = {
+  hero: (y) => (y < 0.55 ? 1 : Math.max(0, 1 - (y - 0.55) / 0.45)),
+  contact: (y) => Math.max(0, Math.min(1, y / 0.25, (1 - y) / 0.25)),
+};
+
+// While the page scrolls, the ambient motion waits, so every frame goes to the scroll itself.
+const SETTLE = 150;
+let scrolledAt = -Infinity;
+const scrolling = (now = performance.now()) => now - scrolledAt < SETTLE;
+
 // A grid of faint glyphs that light up around the pointer and fade out behind it.
 // The quiet grid is drawn once to an offscreen canvas; each frame only repaints lit cells.
 class GlyphField {
@@ -58,10 +70,26 @@ class GlyphField {
     this.ctx = canvas.getContext("2d");
     this.base = document.createElement("canvas");
     this.baseCtx = this.base.getContext("2d");
+    this.fadeAt = canvas.closest(".contact") ? FADES.contact : canvas.closest(".hero") ? FADES.hero : () => 1;
     this.active = new Set();
     this.visible = false;
     this.lit = false;
     this.cols = 0;
+    this.light = null;
+  }
+
+  // The soft light under the pointer is a layer of its own, moved with a transform, so following the pointer
+  // never restyles or repaints the section. It's made the first time a mouse or a pen comes over the field.
+  moveLight(x, y) {
+    if (!this.light) {
+      this.light = document.createElement("div");
+      this.light.className = "field-light";
+      this.light.setAttribute("aria-hidden", "true");
+      this.host.insertBefore(this.light, this.canvas);
+      // Its resting style is settled first, so the light fades in the first time too.
+      getComputedStyle(this.light).opacity;
+    }
+    this.light.style.transform = `translate3d(${x}px, ${y}px, 0)`;
   }
 
   resize() {
@@ -85,11 +113,15 @@ class GlyphField {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
     }
+    // Resizing a canvas resets its drawing state, so the cached font and colour are forgotten too.
+    this.fonts = [400, 500, 700].map((weight) => `${weight} ${this.fontSize}px ${MONO}`);
+    this.font = this.fill = "";
     const cols = Math.ceil(width / this.cellW);
     // When only the height changes, as when the message box grows, the glyphs already in place stay as they are.
     const kept = cols === this.cols ? { glyph: this.glyph, hot: this.hot, shade: this.shade, heat: this.heat } : null;
     this.cols = cols;
     this.rows = Math.ceil(height / this.cellH);
+    this.fade = Float32Array.from({ length: this.rows }, (_, row) => this.fadeAt(((row + 0.5) * this.cellH) / height));
     const cells = this.cols * this.rows;
     this.glyph = new Uint8Array(cells);
     this.hot = new Uint8Array(cells);
@@ -148,11 +180,16 @@ class GlyphField {
     this.glowColor = (style.getPropertyValue("--glyph-lit") || style.getPropertyValue("--glow")).trim();
     const ctx = this.baseCtx;
     ctx.clearRect(0, 0, this.width, this.height);
-    ctx.font = `400 ${this.fontSize}px ${MONO}`;
+    ctx.font = this.fonts[0];
     ctx.fillStyle = this.glyphColor;
     for (let row = 0, i = 0; row < this.rows; row++) {
+      const fade = this.fade[row];
+      if (fade <= 0) {
+        i += this.cols;
+        continue;
+      }
       for (let col = 0; col < this.cols; col++, i++) {
-        ctx.globalAlpha = this.shade[i] * this.shield[i];
+        ctx.globalAlpha = this.shade[i] * this.shield[i] * fade;
         ctx.fillText(GLYPHS[this.glyph[i]], (col + 0.5) * this.cellW, (row + 0.5) * this.cellH);
       }
     }
@@ -184,7 +221,8 @@ class GlyphField {
   twinkle(count) {
     for (let k = 0; k < count; k++) {
       const i = Math.floor(Math.random() * this.glyph.length);
-      if (this.shield[i] < 1) continue;
+      // Glyphs behind text, or where the field has faded out, would twinkle unseen.
+      if (this.shield[i] < 1 || this.fade[Math.floor(i / this.cols)] < 0.05) continue;
       this.heat[i] = Math.max(this.heat[i], 0.25 + Math.random() * 0.45);
       this.hot[i] = randomIndex();
       this.active.add(i);
@@ -207,8 +245,9 @@ class GlyphField {
 
   drawCell(i) {
     const { ctx, cellW, cellH, dpr } = this;
+    const row = Math.floor(i / this.cols);
     const x = (i % this.cols) * cellW;
-    const y = Math.floor(i / this.cols) * cellH;
+    const y = row * cellH;
     const heat = this.heat[i];
     ctx.clearRect(x, y, cellW, cellH);
     if (heat < 1) {
@@ -216,9 +255,11 @@ class GlyphField {
       ctx.drawImage(this.base, x * dpr, y * dpr, cellW * dpr, cellH * dpr, x, y, cellW, cellH);
     }
     if (heat > 0.01) {
-      ctx.globalAlpha = Math.min(1, heat * 1.25) * (this.shield[i] < 1 ? 0.3 : 1);
-      ctx.fillStyle = this.glowColor;
-      ctx.font = `${heat > 0.6 ? 700 : heat > 0.3 ? 500 : 400} ${this.fontSize}px ${MONO}`;
+      ctx.globalAlpha = Math.min(1, heat * 1.25) * (this.shield[i] < 1 ? 0.3 : 1) * this.fade[row];
+      // Setting a font or a colour means parsing it, so each is only set when it changes.
+      if (this.fill !== this.glowColor) ctx.fillStyle = this.fill = this.glowColor;
+      const font = this.fonts[heat > 0.6 ? 2 : heat > 0.3 ? 1 : 0];
+      if (this.font !== font) ctx.font = this.font = font;
       ctx.fillText(GLYPHS[this.hot[i]], x + cellW / 2, y + cellH / 2);
     }
     ctx.globalAlpha = 1;
@@ -235,6 +276,11 @@ const SILK_PATHS = {
   flow: (u) => 0.3 + 0.36 * u, // Services: across the band, behind the cards
   low: (u) => 0.9 - 0.1 * u, // Process: along the foot of the section, under the steps
 };
+// The drift moves each thread less than a pixel per frame, so 20 frames a second look as smooth as 60.
+const DRIFT = 50;
+const THREAD = 0.8;
+// Scales the alpha of an rgba() colour, so a finer line can carry the weight of a wider one.
+const strengthen = (rgba, factor) => rgba.trim().replace(/([\d.]+)\)$/, (_, alpha) => `${Math.min(1, alpha * factor).toFixed(3)})`);
 
 class SilkField {
   constructor(canvas) {
@@ -263,6 +309,12 @@ class SilkField {
     this.canvas.height = Math.round(height * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.dpr = dpr;
+    // A line no wider than a device pixel is drawn as a hairline, which costs the GPU almost nothing; a wider one
+    // goes through the full stroker, which on high-density screens cost a hundred times more on every frame.
+    // So each thread stays just under a device pixel, and its colour carries the weight of the line it replaces.
+    const device = THREAD * dpr;
+    this.lineWidth = device < 1 ? THREAD : 0.98 / dpr;
+    this.ink = device < 1 ? 1 : device / 0.98;
     this.threads = compact ? 18 : 28;
     this.gap = compact ? 5.5 : 7;
     this.spacing = compact ? 8 : 10;
@@ -271,32 +323,46 @@ class SilkField {
     this.refresh();
   }
 
-  // The threads fade out behind text, so it always reads cleanly. The soft mask is drawn once per layout.
+  // The threads fade out behind text, so it always reads cleanly, and towards the sides of the section.
+  // The mask is drawn at an eighth of the size, blurred once and stretched over the threads, which softens it
+  // further. Blurring every box at full size, as before, held up the page for most of a second.
   measure() {
     if (!this.width) return;
+    const scale = 1 / 8;
     const origin = this.canvas.getBoundingClientRect();
     this.mask ??= document.createElement("canvas");
-    this.mask.width = this.canvas.width;
-    this.mask.height = this.canvas.height;
-    const ctx = this.mask.getContext("2d");
-    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-    ctx.filter = "blur(10px)";
-    ctx.fillStyle = "#000";
+    const mask = this.mask;
+    mask.width = Math.max(1, Math.ceil(this.width * scale));
+    mask.height = Math.max(1, Math.ceil(this.height * scale));
+    const ctx = mask.getContext("2d");
+    const boxes = new Path2D();
     const range = document.createRange();
     for (const element of this.host.querySelectorAll("h2, h3, p, li, dt, dd, .area-icon, .btn")) {
       range.selectNodeContents(element);
       for (const rect of range.getClientRects()) {
-        ctx.fillRect(rect.left - origin.left - 14, rect.top - origin.top - 10, rect.width + 28, rect.height + 20);
+        boxes.rect((rect.left - origin.left - 14) * scale, (rect.top - origin.top - 10) * scale, (rect.width + 28) * scale, (rect.height + 20) * scale);
       }
     }
+    ctx.filter = "blur(0.75px)";
+    ctx.globalAlpha = 0.92;
+    ctx.fill(boxes);
+    ctx.filter = "none";
+    ctx.globalAlpha = 1;
+    const sides = ctx.createLinearGradient(0, 0, mask.width, 0);
+    sides.addColorStop(0, "#000");
+    sides.addColorStop(0.12, "rgba(0, 0, 0, 0)");
+    sides.addColorStop(0.88, "rgba(0, 0, 0, 0)");
+    sides.addColorStop(1, "#000");
+    ctx.fillStyle = sides;
+    ctx.fillRect(0, 0, mask.width, mask.height);
     if (this.color) this.draw();
   }
 
   refresh() {
     if (!this.width) return;
     const style = getComputedStyle(this.host);
-    this.color = style.getPropertyValue("--thread").trim();
-    this.lit = style.getPropertyValue("--thread-lit").trim();
+    this.color = strengthen(style.getPropertyValue("--thread"), this.ink);
+    this.lit = strengthen(style.getPropertyValue("--thread-lit"), this.ink);
     // The same colour, fully transparent, so gradients fade without going grey.
     this.clear = this.lit.replace(/[\d.]+\)$/, "0)");
     this.draw();
@@ -308,8 +374,9 @@ class SilkField {
     this.force = 1;
   }
 
-  // Runs every frame while the section is in view. The drift redraws at about 30 frames a second;
-  // the pointer at full rate, so the threads follow it closely.
+  // Runs while the section is in view. The drift redraws 20 times a second, and waits while the page scrolls;
+  // the pointer redraws at full rate, so the threads follow it closely. Returns whether the pointer still
+  // moves the threads, which needs the next frame.
   step(now, x, y) {
     const inside = x !== null;
     if (inside && this.force < 0.02) {
@@ -320,10 +387,12 @@ class SilkField {
       this.py += (y - this.py) * 0.25;
     }
     this.force += ((inside ? 1 : 0) - this.force) * 0.1;
-    if (this.force < 0.002 && now - this.drawn < 33) return;
+    const moving = this.force >= 0.002;
+    if (!moving && (now - this.drawn < DRIFT - 5 || scrolling(now))) return false;
     this.drawn = now;
     this.time = now / 1000;
     this.draw();
+    return moving;
   }
 
   draw() {
@@ -352,7 +421,7 @@ class SilkField {
         else path.lineTo(x, y);
       }
     }
-    ctx.lineWidth = 0.8;
+    ctx.lineWidth = this.lineWidth;
     ctx.strokeStyle = this.color;
     ctx.stroke(main);
     // One thread in four is drawn twice, so the ribbon has the uneven sheen of real silk.
@@ -384,8 +453,8 @@ class SilkField {
     }
 
     if (this.mask) {
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "destination-out";
-      ctx.globalAlpha = 0.92;
       ctx.drawImage(this.mask, 0, 0, w, h);
       ctx.globalCompositeOperation = "source-over";
     }
@@ -396,16 +465,31 @@ class SilkField {
 const silks = [...document.querySelectorAll("canvas.silk-field")].map((canvas) => new SilkField(canvas));
 let pointer = null;
 let raf = 0;
+let later = 0;
 let last = 0;
 
 function wake() {
   if (!raf && motion) raf = requestAnimationFrame(frame);
 }
 
+// Between frames of ambient motion the loop sleeps, instead of waking up on every refresh of the display.
+function wakeLater(delay) {
+  if (!later && motion) {
+    later = setTimeout(() => {
+      later = 0;
+      wake();
+    }, delay);
+  }
+}
+
 function frame(now) {
   raf = 0;
   const dt = last ? Math.min(64, now - last) : 16.7;
+  // Under the pointer everything follows at full rate. Twinkles fading out run at about 30 frames a second
+  // and the silk drift at 20, which look the same at a fraction of the work.
   let busy = false;
+  let fading = false;
+  let drifting = false;
   for (const field of fields) {
     if (!field.visible || !field.cols) continue;
     const rect = field.canvas.getBoundingClientRect();
@@ -419,14 +503,14 @@ function frame(now) {
       const x = pointer.x - rect.left;
       const y = pointer.y - rect.top;
       field.ignite(x, y);
-      field.host.style.setProperty("--mx", `${x}px`);
-      field.host.style.setProperty("--my", `${y}px`);
+      field.moveLight(x, y);
     }
     if (inside !== field.lit) {
       field.lit = inside;
       field.host.classList.toggle("is-lit", inside);
     }
-    busy = field.step(dt) || inside || busy;
+    if (field.step(dt)) fading = true;
+    if (inside) busy = true;
   }
   for (const silk of silks) {
     if (!silk.visible || !silk.width) continue;
@@ -437,11 +521,13 @@ function frame(now) {
       pointer.x < rect.right &&
       pointer.y >= rect.top &&
       pointer.y < rect.bottom;
-    silk.step(now, inside ? pointer.x - rect.left : null, inside ? pointer.y - rect.top : null);
-    busy = true;
+    if (silk.step(now, inside ? pointer.x - rect.left : null, inside ? pointer.y - rect.top : null)) busy = true;
+    else drifting = true;
   }
-  last = busy ? now : 0;
+  last = busy || fading ? now : 0;
   if (busy) wake();
+  else if (fading) wakeLater(33);
+  else if (drifting) wakeLater(DRIFT);
 }
 
 let twinkleTimer = 0;
@@ -449,6 +535,7 @@ let twinkleTimer = 0;
 function setTwinkle(on) {
   if (on && motion && !twinkleTimer && fields.length) {
     twinkleTimer = setInterval(() => {
+      if (scrolling()) return;
       for (const field of fields) {
         if (field.visible && field.cols) field.twinkle(finePointer ? 2 : 4);
       }
@@ -508,16 +595,22 @@ const visibility = new IntersectionObserver((entries) => {
     // Text slides in as a section is revealed, so the silk measures it again once it has settled.
     if (field instanceof SilkField && entry.isIntersecting) {
       field.measure();
-      setTimeout(() => field.measure(), 1100);
+      setTimeout(() => field.measure(), 800);
     }
   }
   wake();
 });
 
+// Only the canvases whose size changed are redrawn, as when a service folds open on a phone.
 let resizeFrame = 0;
-const sizes = new ResizeObserver(() => {
+const resized = new Set();
+const sizes = new ResizeObserver((entries) => {
+  for (const entry of entries) resized.add(entry.target);
   cancelAnimationFrame(resizeFrame);
-  resizeFrame = requestAnimationFrame(() => [...fields, ...silks].forEach((field) => field.resize()));
+  resizeFrame = requestAnimationFrame(() => {
+    for (const field of [...fields, ...silks]) if (resized.has(field.canvas)) field.resize();
+    resized.clear();
+  });
 });
 
 // Text resolves from random glyphs, left to right, like output arriving.
@@ -564,7 +657,7 @@ if (motion) {
         entry.target.querySelectorAll("[data-decode]").forEach((element) => decode(element, 700));
       }
     },
-    { rootMargin: "0px 0px -12% 0px" },
+    { rootMargin: "0px 0px -5% 0px" },
   );
   reveals.forEach((element) => {
     revealer.observe(element);
@@ -587,7 +680,14 @@ function updateBar() {
   bar?.classList.toggle("is-solid", !hero || window.scrollY > 8);
 }
 
-addEventListener("scroll", updateBar, { passive: true });
+addEventListener(
+  "scroll",
+  () => {
+    scrolledAt = performance.now();
+    updateBar();
+  },
+  { passive: true },
+);
 updateBar();
 
 /* Section index: the header links and the margin index follow the section being read */
