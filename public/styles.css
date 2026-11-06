@@ -207,6 +207,7 @@
   --glass-line: rgba(245, 243, 239, 0.1);
   --sheen: rgba(245, 243, 239, 0.07);
   --field: rgba(28, 29, 31, 0.6);
+  --field-solid: #232426;
   --shade: rgba(0, 0, 0, 0.45);
   --aurora: 0.12;
   --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -252,6 +253,7 @@
     --glass-line: rgba(237, 238, 240, 0.09);
     --sheen: rgba(237, 238, 240, 0.06);
     --field: rgba(13, 15, 16, 0.6);
+    --field-solid: #131516;
     --shade: rgba(0, 0, 0, 0.5);
     --aurora: 0.1;
     --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -295,6 +297,7 @@
   --glass-line: rgba(237, 238, 240, 0.09);
   --sheen: rgba(237, 238, 240, 0.06);
   --field: rgba(13, 15, 16, 0.6);
+  --field-solid: #131516;
   --shade: rgba(0, 0, 0, 0.5);
   --aurora: 0.1;
   --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -1681,7 +1684,7 @@ a:hover > .arrow-right {
   text-wrap: pretty;
 }
 
-/* What to expect, as a quiet list: availability, response time, languages and the address to copy. */
+/* What to expect, as a quiet record: each fact under its label, like the address to copy. */
 .contact-facts {
   margin: 0;
   border-top: 1px solid var(--rule);
@@ -1689,10 +1692,8 @@ a:hover > .arrow-right {
 
 .contact-facts > div {
   display: grid;
-  grid-template-columns: 8.5rem minmax(0, 1fr);
-  align-items: baseline;
-  gap: 1rem;
-  padding-block: 0.9rem;
+  gap: 0.2rem;
+  padding-block: 0.85rem;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -1708,11 +1709,18 @@ a:hover > .arrow-right {
   line-height: 1.5;
 }
 
-/* The address sits under its label, so it always has room. */
 .contact-facts > .contact-email {
-  grid-template-columns: minmax(0, 1fr);
   gap: 0.6rem;
   padding-bottom: 0.5rem;
+}
+
+/* Tablets give the list the whole width, so each fact sits beside its label, like a spec sheet. */
+@media (min-width: 40rem) and (max-width: 63.999rem) {
+  .contact-facts > div:not(.contact-email) {
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 1rem;
+  }
 }
 
 .email-chip {
@@ -1820,6 +1828,7 @@ a:hover > .arrow-right {
 }
 
 .form-field label {
+  grid-row: 1;
   color: var(--text);
   font-size: 0.875rem;
   font-weight: 500;
@@ -1830,6 +1839,33 @@ a:hover > .arrow-right {
   margin-left: 0.35rem;
   color: var(--faint);
   font-weight: 400;
+}
+
+/* The field being filled in catches the light on an edge of polished platinum, like the lit tiles.
+   The edge shares the field's cell in the grid, so it follows the message box as it grows. */
+.form-field > :is(input, textarea, .select),
+.form-field::after {
+  grid-area: 2 / 1;
+}
+
+.form-field::after {
+  content: "";
+  position: relative;
+  z-index: 1;
+  padding: 1px;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, var(--metal-hi), var(--metal-lo) 30%, var(--metal) 55%, var(--metal-lo) 80%, var(--metal-hi));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+
+.form-field:focus-within::after {
+  opacity: 1;
 }
 
 .form input:not([type="hidden"]),
@@ -1843,12 +1879,27 @@ a:hover > .arrow-right {
   color: var(--text);
   font: inherit;
   line-height: 1.5;
-  transition: border-color 0.2s, box-shadow 0.3s;
+  transition: border-color 0.2s, box-shadow 0.3s, padding 0.35s var(--ease);
 }
 
 .form textarea {
   min-height: 9.5rem;
   resize: vertical;
+}
+
+/* The message box grows with what's written, up to a point, so it needs no handle.
+   Where the browser can't size it on its own, main.js does and marks it with data-grows. */
+@supports (field-sizing: content) {
+  .form textarea {
+    field-sizing: content;
+    max-height: 22rem;
+    resize: none;
+  }
+}
+
+.form textarea[data-grows] {
+  max-height: 22rem;
+  resize: none;
 }
 
 .form input::placeholder,
@@ -1863,15 +1914,71 @@ a:hover > .arrow-right {
   border-color: var(--faint);
 }
 
+/* A field that needs another look says so in its own words, under it, and its edge turns to the same colour. */
+.form-field[data-invalid] > :is(input, textarea) {
+  border-color: color-mix(in srgb, var(--error) 75%, transparent);
+}
+
+.form-field[data-invalid]::after {
+  background: var(--error);
+}
+
+.form-field:focus-within > :is(input, textarea),
+.form-field:focus-within select {
+  border-color: transparent;
+}
+
 .form input:focus-visible,
 .form select:focus-visible,
 .form textarea:focus-visible {
   outline: none;
-  border-color: var(--glow);
-  box-shadow: 0 0 0 3px var(--selection), 0 0 1.75rem -0.4rem color-mix(in srgb, var(--glow) 40%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--platinum) 10%, transparent),
+    0 0 1.75rem -0.5rem color-mix(in srgb, var(--platinum) 35%, transparent);
 }
 
-/* The topic menu looks like the other fields, with its own arrow. */
+.form-field[data-invalid] > :focus-visible {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--error) 12%, transparent),
+    0 0 1.75rem -0.5rem color-mix(in srgb, var(--error) 30%, transparent);
+}
+
+.field-error {
+  grid-row: 3;
+  margin: 0;
+  color: var(--error);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.motion .field-error {
+  animation: settle 0.35s var(--ease);
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(-0.3rem);
+  }
+}
+
+/* Browsers paint autofilled fields in their own colours; these keep the field's own. */
+.form input:-webkit-autofill {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  box-shadow: inset 0 0 0 3rem var(--field-solid);
+}
+
+.form input:-webkit-autofill:focus-visible {
+  box-shadow:
+    inset 0 0 0 3rem var(--field-solid),
+    0 0 0 3px color-mix(in srgb, var(--platinum) 10%, transparent),
+    0 0 1.75rem -0.5rem color-mix(in srgb, var(--platinum) 35%, transparent);
+}
+
+/* The topic menu looks like the other fields, with its own arrow. Once a topic is chosen,
+   its sign resolves on a platinum plate at the start of the field, like the text across the site. */
 .select {
   position: relative;
 }
@@ -1882,6 +1989,10 @@ a:hover > .arrow-right {
   cursor: pointer;
 }
 
+.select[data-glyph] select {
+  padding-left: 3.6rem;
+}
+
 .form select:has(option[value=""]:checked) {
   color: var(--faint);
 }
@@ -1889,6 +2000,34 @@ a:hover > .arrow-right {
 .form option {
   background: var(--bg);
   color: var(--text);
+}
+
+.select-glyph {
+  position: absolute;
+  top: 50%;
+  left: 0.6rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2rem;
+  margin-top: -1rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(145deg, var(--metal-hi), var(--metal) 55%, var(--metal-lo));
+  box-shadow: 0 0 1.25rem -0.4rem color-mix(in srgb, var(--platinum) 45%, transparent);
+  color: var(--plate-ink, var(--bg));
+  font: 600 0.8125rem/1 var(--mono);
+  letter-spacing: -0.04em;
+  white-space: pre;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.25s, transform 0.4s var(--ease);
+  pointer-events: none;
+}
+
+.select[data-glyph] .select-glyph {
+  opacity: 1;
+  transform: none;
 }
 
 .select svg {
@@ -1903,7 +2042,147 @@ a:hover > .arrow-right {
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: transform 0.3s var(--ease);
   pointer-events: none;
+}
+
+/* Where the browser lets the page draw the open menu (Chrome, Edge and Safari 27), it becomes a panel of
+   graphite with a polished platinum edge, and each topic carries its sign from the same alphabet as the glyphs.
+   Other browsers keep their own list, with the same plate in the field once a topic is chosen. */
+@supports (appearance: base-select) {
+  .form select,
+  .form select::picker(select) {
+    appearance: base-select;
+  }
+
+  .form select::picker-icon {
+    display: none;
+  }
+
+  .select:has(select:open) svg {
+    transform: rotate(180deg);
+  }
+
+  .form select::picker(select) {
+    width: anchor-size(width);
+    margin-block: 0.5rem;
+    padding: 0.375rem;
+    border: 1px solid transparent;
+    border-radius: 0.95rem;
+    background:
+      radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--tile-light) var(--tile-mix), transparent), transparent 55%) padding-box,
+      linear-gradient(180deg, var(--tile-top), var(--tile-bottom)) padding-box,
+      linear-gradient(135deg, var(--metal-hi), var(--metal-lo) 30%, var(--metal) 55%, var(--metal-lo) 80%, var(--metal-hi)) border-box;
+    box-shadow:
+      inset 0 1px 0 var(--sheen),
+      0 1.75rem 3rem -1.25rem var(--shade);
+    color: var(--text);
+    position-try-order: normal;
+    position-try-fallbacks: flip-block;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.3s var(--ease), display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+  }
+
+  .form select:open::picker(select) {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .form select:open::picker(select) {
+      opacity: 0;
+    }
+  }
+
+  /* With motion, the panel settles into place as it opens. */
+  .motion .form select::picker(select) {
+    transform: translateY(-0.35rem);
+  }
+
+  .motion .form select:open::picker(select) {
+    transform: none;
+  }
+
+  @starting-style {
+    .motion .form select:open::picker(select) {
+      transform: translateY(-0.35rem);
+    }
+  }
+
+  .form option {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-height: 2.75rem;
+    padding: 0.375rem 0.9rem 0.375rem 0.375rem;
+    border-radius: 0.625rem;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  /* "Choose a topic" names the empty field; the open menu only lists the topics. */
+  .form option[value=""] {
+    display: none;
+  }
+
+  /* Each sign sits on a plate, engraved at rest and polished under the pointer or once chosen. */
+  .form option::before {
+    content: attr(data-glyph);
+    content: attr(data-glyph) / "";
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 0.5rem;
+    background: linear-gradient(145deg, var(--metal-hi), var(--metal) 55%, var(--metal-lo)) border-box;
+    box-shadow:
+      inset 0 0 0 2rem var(--tile-top),
+      0 0 1.25rem -0.4rem transparent;
+    color: var(--platinum);
+    font: 600 0.8125rem/1 var(--mono);
+    letter-spacing: -0.04em;
+    white-space: pre;
+    transition: box-shadow 0.35s var(--ease), color 0.25s, border-color 0.25s;
+  }
+
+  .form option:is(:hover, :focus-visible, :checked)::before {
+    border-color: transparent;
+    box-shadow:
+      inset 0 0 0 2rem color-mix(in srgb, var(--tile-top) 0%, transparent),
+      0 0 1.25rem -0.4rem color-mix(in srgb, var(--platinum) 45%, transparent);
+    color: var(--plate-ink, var(--bg));
+  }
+
+  /* Under the pointer a soft light follows it along the row, as it does inside the cards. */
+  .form option:is(:hover, :focus-visible) {
+    outline: none;
+    background:
+      radial-gradient(16rem 140% at var(--px, 35%) 50%, color-mix(in srgb, var(--platinum) 9%, transparent), transparent),
+      color-mix(in srgb, var(--platinum) 5%, transparent);
+    color: var(--text);
+  }
+
+  .form option:checked {
+    color: var(--text);
+  }
+
+  /* The chosen topic is ticked at the end of its row with a fine platinum check. */
+  .form option::checkmark {
+    order: 1;
+    width: 0.4rem;
+    height: 0.75rem;
+    margin: -0.2rem 0.2rem 0 auto;
+    border: solid var(--platinum);
+    border-width: 0 1.5px 1.5px 0;
+    content: "";
+    content: "" / "";
+    transform: rotate(45deg);
+  }
 }
 
 /* A field people never see: bots that fill in every input give themselves away. */
@@ -1976,12 +2255,128 @@ a:hover > .arrow-right {
   display: none;
 }
 
-.form[data-state="sent"] .form-status {
-  color: var(--glow);
-}
-
 .form[data-state="error"] .form-status {
   color: var(--error);
+}
+
+/* Once the message is on its way, the panel keeps its size and the fields give way to a confirmation,
+   centred in the panel: a check drawn on a platinum plate, who it's for and when the reply comes. */
+.form > * {
+  transition: opacity 0.35s 0.1s, visibility 0s;
+}
+
+.form[data-state="sent"] > :not(.form-done) {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s, visibility 0s 0.25s;
+}
+
+.form-done {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: inherit;
+  text-align: center;
+}
+
+.form-done[hidden] {
+  display: none;
+}
+
+.form-done-plate {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.8rem;
+  background: linear-gradient(145deg, var(--metal-hi), var(--metal) 55%, var(--metal-lo));
+  box-shadow: 0 0 2rem -0.5rem color-mix(in srgb, var(--platinum) 50%, transparent);
+  color: var(--plate-ink, var(--bg));
+}
+
+.form-done-plate svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.form-done-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+/* The title takes focus so screen readers announce it; it isn't something to click, so it shows no ring. */
+.form-done-title:focus {
+  outline: none;
+}
+
+.form-done-text {
+  max-width: 30rem;
+  margin: 0 0 1.75rem;
+  color: var(--muted);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.form-done-again {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 500 0.9375rem/1.4 var(--sans);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 0.3em;
+  cursor: pointer;
+  transition: text-decoration-color 0.2s;
+}
+
+.form-done-again:hover {
+  text-decoration-color: var(--glow);
+}
+
+.form-done-again:hover > .arrow-right {
+  transform: translateX(3px);
+}
+
+.motion .form-done-plate {
+  animation: emerge 0.6s var(--ease) both;
+}
+
+.motion .form-done-plate path {
+  stroke-dasharray: 15;
+  animation: draw 0.5s 0.3s var(--ease) both;
+}
+
+.motion .form-done > :not(.form-done-plate) {
+  animation: settle 0.6s 0.15s var(--ease) both;
+}
+
+@keyframes emerge {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 15;
+  }
 }
 
 @media (min-width: 40rem) {

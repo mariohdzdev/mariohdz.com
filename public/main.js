@@ -15,6 +15,13 @@ const TEXT = spanish
       selected: finePointer ? `Seleccionado. Pulsa ${copyKeys} para copiarlo` : "Seleccionado. Toca Copiar en el menú",
       sending: "Enviando…",
       sent: (name, email) => `Gracias, ${name}. Tu mensaje va en camino y te responderé a ${email} en un día laborable.`,
+      sentTitle: "Mensaje enviado.",
+      writeAgain: "Escribir otro mensaje",
+      missing: {
+        name: "Escribe tu nombre.",
+        email: "Revisa tu dirección de correo.",
+        message: "Cuéntame qué necesitas.",
+      },
       failed: "No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme a contact@mariohdz.com.",
       toLight: "Cambiar al tema claro",
       toDark: "Cambiar al tema oscuro",
@@ -25,6 +32,13 @@ const TEXT = spanish
       selected: finePointer ? `Selected. Press ${copyKeys} to copy it` : "Selected. Tap Copy in the menu",
       sending: "Sending…",
       sent: (name, email) => `Thanks, ${name}. Your message is on its way, and I’ll reply to ${email} within one business day.`,
+      sentTitle: "Message sent.",
+      writeAgain: "Write another message",
+      missing: {
+        name: "Please add your name.",
+        email: "Please check your email address.",
+        message: "Please tell me what you need.",
+      },
       failed: "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.",
       toLight: "Switch to light theme",
       toDark: "Switch to dark theme",
@@ -71,7 +85,10 @@ class GlyphField {
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
     }
-    this.cols = Math.ceil(width / this.cellW);
+    const cols = Math.ceil(width / this.cellW);
+    // When only the height changes, as when the message box grows, the glyphs already in place stay as they are.
+    const kept = cols === this.cols ? { glyph: this.glyph, hot: this.hot, shade: this.shade, heat: this.heat } : null;
+    this.cols = cols;
     this.rows = Math.ceil(height / this.cellH);
     const cells = this.cols * this.rows;
     this.glyph = new Uint8Array(cells);
@@ -80,10 +97,21 @@ class GlyphField {
     this.heat = new Float32Array(cells);
     this.shield = new Float32Array(cells);
     for (let i = 0; i < cells; i++) {
-      this.glyph[i] = this.hot[i] = randomIndex();
-      this.shade[i] = 0.3 + Math.random() * 0.7;
+      if (kept && i < kept.glyph.length) {
+        this.glyph[i] = kept.glyph[i];
+        this.hot[i] = kept.hot[i];
+        this.shade[i] = kept.shade[i];
+        this.heat[i] = kept.heat[i];
+      } else {
+        this.glyph[i] = this.hot[i] = randomIndex();
+        this.shade[i] = 0.3 + Math.random() * 0.7;
+      }
     }
-    this.active.clear();
+    if (kept) {
+      for (const i of this.active) if (i >= cells) this.active.delete(i);
+    } else {
+      this.active.clear();
+    }
     this.refresh();
   }
 
@@ -659,9 +687,12 @@ document.querySelectorAll("[data-copy]").forEach((chip, index) => {
   });
 });
 
-/* Contact form: sends in place, without leaving the page. Without JavaScript it posts normally. */
+/* Contact form: checks the fields and sends in place, without leaving the page.
+   Without JavaScript the browser checks the fields and posts the form normally. */
 
 const contactForm = document.querySelector("[data-contact]");
+// The same check the Worker makes, so an address is never accepted here and turned away there.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Once a message is on its way, the glyphs around the button light up in a wide burst behind the glass.
 function celebrate(element) {
@@ -677,9 +708,121 @@ if (contactForm) {
   const status = contactForm.querySelector("[data-form-status]");
   const button = contactForm.querySelector('button[type="submit"]');
   const idleLabel = button.textContent;
+  const topic = contactForm.querySelector('select[name="topic"]');
+  const message = contactForm.querySelector('textarea[name="message"]');
+
+  // The chosen topic's sign resolves on a platinum plate at the start of the field, like the text across the site.
+  const topicBox = topic?.closest(".select");
+  const sign = topicBox?.querySelector(".select-glyph")?.appendChild(document.createElement("span"));
+  const showTopic = (animate) => {
+    if (!sign) return;
+    const glyph = topic.selectedOptions[0]?.dataset.glyph;
+    if (!glyph) {
+      delete topicBox.dataset.glyph;
+      return;
+    }
+    topicBox.dataset.glyph = glyph;
+    decode(sign, animate ? 450 : 0, glyph);
+  };
+  topic?.addEventListener("change", () => showTopic(true));
+  // A topic the browser kept from an earlier visit shows its sign too.
+  addEventListener("pageshow", () => showTopic(false));
+  showTopic(false);
+
+  // In the open menu, the light on each row follows the pointer.
+  if (topic && motion && finePointer && CSS.supports("appearance", "base-select")) {
+    topic.addEventListener(
+      "pointermove",
+      (event) => topic.style.setProperty("--px", `${event.clientX - topic.getBoundingClientRect().left}px`),
+      { passive: true },
+    );
+  }
+
+  // The message box grows as it's written. Browsers that can't size it on their own get the same from here.
+  const growsHere = message && !CSS.supports("field-sizing", "content");
+  const fitMessage = () => {
+    if (!growsHere) return;
+    message.style.height = "auto";
+    message.style.height = `${message.scrollHeight + 2}px`;
+  };
+  if (growsHere) {
+    message.dataset.grows = "";
+    message.addEventListener("input", fitMessage);
+  }
+
+  // The page checks the fields itself, so each note appears under its field, in the page's language and style,
+  // instead of the browser's own bubble.
+  contactForm.noValidate = true;
+  const checks = {
+    name: (value) => value.trim() !== "",
+    email: (value) => EMAIL_PATTERN.test(value.trim()),
+    message: (value) => value.trim() !== "",
+  };
+  const controls = [...contactForm.elements].filter((control) => Object.hasOwn(checks, control.name));
+
+  function check(control) {
+    const field = control.closest(".form-field");
+    let note = field.querySelector(".field-error");
+    if (checks[control.name](control.value)) {
+      note?.remove();
+      delete field.dataset.invalid;
+      control.removeAttribute("aria-invalid");
+      control.removeAttribute("aria-describedby");
+      return true;
+    }
+    if (!note) {
+      note = document.createElement("p");
+      note.className = "field-error";
+      note.id = `${control.id}-error`;
+      field.append(note);
+    }
+    note.textContent = TEXT.missing[control.name];
+    field.dataset.invalid = "";
+    control.setAttribute("aria-invalid", "true");
+    control.setAttribute("aria-describedby", note.id);
+    return false;
+  }
+
+  // A field that was flagged is checked again as it's corrected.
+  contactForm.addEventListener("input", (event) => {
+    const control = event.target;
+    if (controls.includes(control) && control.closest(".form-field").dataset.invalid !== undefined) check(control);
+  });
+
+  // Once the message is on its way, a confirmation takes the place of the fields, and the title takes focus
+  // so screen readers announce it.
+  let done = null;
+  function confirmSent(name, email) {
+    if (!done) {
+      done = document.createElement("div");
+      done.className = "form-done";
+      done.innerHTML =
+        '<span class="form-done-plate" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3 8.5 3.2 3L13 4.5"/></svg></span>' +
+        '<h3 class="form-done-title" tabindex="-1" aria-describedby="form-done-text"></h3>' +
+        '<p class="form-done-text" id="form-done-text"></p>' +
+        '<button class="form-done-again" type="button"><span></span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></button>';
+      done.querySelector(".form-done-title").textContent = TEXT.sentTitle;
+      done.querySelector(".form-done-again span").textContent = TEXT.writeAgain;
+      done.querySelector(".form-done-again").addEventListener("click", () => {
+        done.hidden = true;
+        delete contactForm.dataset.state;
+        controls[0]?.focus();
+      });
+      contactForm.append(done);
+    }
+    done.querySelector(".form-done-text").textContent = TEXT.sent(name, email);
+    done.hidden = false;
+    contactForm.dataset.state = "sent";
+    done.querySelector(".form-done-title").focus({ preventScroll: true });
+  }
 
   contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const invalid = controls.filter((control) => !check(control));
+    if (invalid.length) {
+      invalid[0].focus();
+      return;
+    }
     const data = new FormData(contactForm);
     const name = String(data.get("name") || "").trim();
     const email = String(data.get("email") || "").trim();
@@ -696,8 +839,9 @@ if (contactForm) {
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(result.message || TEXT.failed);
       contactForm.reset();
-      contactForm.dataset.state = "sent";
-      status.textContent = TEXT.sent(name.split(/\s+/)[0], email);
+      showTopic(false);
+      fitMessage();
+      confirmSent(name.split(/\s+/)[0], email);
       celebrate(button);
     } catch (error) {
       contactForm.dataset.state = "error";
