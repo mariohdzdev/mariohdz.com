@@ -95,11 +95,12 @@ The `magick` step shrinks each file to about a third of its size without a visib
 
 ## Deploy
 
-Every push to `main` deploys the site with GitHub Actions (`.github/workflows/deploy.yml`), in three steps:
+Every push to `main` deploys the site with GitHub Actions (`.github/workflows/deploy.yml`), in four steps:
 
 1. **Check.** The HTML goes through the W3C's Nu HTML Checker, `tools/build.mjs --check` confirms the shared parts match `tools/site.mjs`, and `tools/check-site.mjs` checks every internal link and anchor, that each page is paired with its counterpart in the other language, the sitemap, `security.txt` and the MTA-STS policy. Both Workers are built without being deployed. Pull requests, like Dependabot's, stop here.
 2. **Deploy.** Wrangler deploys the site and then the MTA-STS Worker.
 3. **Check the live site.** `tools/check-live.mjs` confirms that every file in `public/` is the one from this commit, that the headers in `public/_headers` are sent, that missing pages, www and plain HTTP answer as they should, and that both forms' APIs turn down an empty form, which sends nothing.
+4. **Tell the search engines.** `tools/indexnow.mjs` sends the pages that changed since the previous push to [IndexNow](https://www.indexnow.org/), which passes them on to Bing and the other search engines that use it, so they read them again within hours. Google doesn't use IndexNow; it reads the sitemap. The key in `public/938ad7d4b44766e8ed1319cb39ecf58c.txt` is public on purpose: it shows the request comes from whoever runs the site. When the key file is new, or the workflow is started by hand, every page in the sitemap is sent. If IndexNow doesn't answer, the step leaves a warning instead of failing the run, because the site is already live.
 
 The workflow reads two repository secrets: `CLOUDFLARE_API_TOKEN`, a token that can only edit Workers scripts and the Workers routes of mariohdz.com, and `CLOUDFLARE_ACCOUNT_ID`.
 

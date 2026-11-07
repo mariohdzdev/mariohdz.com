@@ -53,9 +53,11 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       WRANGLER_SEND_METRICS: "false"
     steps:
+      # The whole history, so the last step can tell which pages changed since the previous push.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -69,3 +71,10 @@ jobs:
 
       - name: Check the live site
         run: node tools/check-live.mjs
+
+      # The site is already live by now, so a search engine that doesn't answer leaves a warning, not a failed run.
+      - name: Tell search engines which pages changed
+        run: node tools/indexnow.mjs "$BEFORE"
+        continue-on-error: true
+        env:
+          BEFORE: ${{ github.event.before }}
