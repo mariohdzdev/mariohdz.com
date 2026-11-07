@@ -16,6 +16,22 @@ const TOPICS = {
   computers: "Computers and privacy",
   other: "Something else",
 };
+// What a card's "Start this project" button sends, and how each project reads in my inbox.
+const PROJECTS = {
+  "launch-package": "Launch package",
+  website: "A website for your business",
+  "one-page": "A one-page website",
+  "business-email": "Business email on your domain",
+  deliverability: "Email that reaches the inbox",
+  "domain-recovery": "Your domain and accounts, back in your name",
+  "ai-assistant": "An AI assistant for your business",
+  automation: "Automating a repetitive task",
+  "private-ai": "Private AI on your own computer",
+  linux: "Moving a computer to Linux",
+  "secure-accounts": "Secure accounts for your team",
+  "check-up": "Tech check-up",
+  "care-plan": "Care plan",
+};
 
 // The English and Spanish pages post the same form; a hidden field says which one the visitor used.
 const TEXT = {
@@ -111,6 +127,8 @@ async function handleContact(request, env) {
     const message = clean(form.get("message"));
     const topicKey = clean(form.get("topic"));
     const topic = Object.hasOwn(TOPICS, topicKey) ? TOPICS[topicKey] : "";
+    const projectKey = clean(form.get("project"));
+    const project = Object.hasOwn(PROJECTS, projectKey) ? PROJECTS[projectKey] : "";
 
     const invalid = (field, problem) => {
       log("invalid", { lang, field, flagged });
@@ -123,10 +141,13 @@ async function handleContact(request, env) {
     if (message.length > LIMITS.message) return invalid("message", text.longMessage);
 
     const details = [`${name} <${email}>`];
+    if (project) details.push(`Project: ${project}`);
     if (topic) details.push(`Topic: ${topic}`);
     details.push(`Sent from the ${text.page} contact form on mariohdz.com`);
     if (flagged) details.push("Possible spam: the hidden field that only bots see was filled in.");
-    const subject = `${flagged ? "[Possible spam] " : ""}${topic ? `${topic}: ` : ""}${name} via mariohdz.com`;
+    // The project, when a card started one, says more than the topic, so it leads the subject.
+    const about = project || topic;
+    const subject = `${flagged ? "[Possible spam] " : ""}${about ? `${about}: ` : ""}${name} via mariohdz.com`;
 
     try {
       const sent = await env.EMAIL.send({
@@ -136,7 +157,7 @@ async function handleContact(request, env) {
         subject,
         text: `${message}\n\n-- \n${details.join("\n")}`,
       });
-      log("sent", { lang, topic: topic ? topicKey : null, flagged, messageId: sent?.messageId ?? null });
+      log("sent", { lang, topic: topic ? topicKey : null, project: project ? projectKey : null, flagged, messageId: sent?.messageId ?? null });
     } catch (error) {
       log("failed", { lang, flagged, code: error?.code ?? null, error: error?.message ?? String(error) }, "error");
       return reply(502, text.failed);

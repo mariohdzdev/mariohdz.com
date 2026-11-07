@@ -820,6 +820,34 @@ if (contactForm) {
   addEventListener("pageshow", () => showTopic(false));
   showTopic(false);
 
+  // "Start this project" on a card fills in the form below with that project: its topic, its name above
+  // the message and a hint of what to tell. Without JavaScript the button only leads to the form.
+  const project = contactForm.querySelector('input[name="project"]');
+  const projectNote = contactForm.querySelector("[data-form-project]");
+  const projectName = projectNote?.querySelector("strong");
+  const defaultHint = message?.placeholder ?? "";
+  const showProject = (key, name, hint, topicKey) => {
+    if (!project) return;
+    project.value = key;
+    if (projectNote) {
+      projectName.textContent = name;
+      projectNote.hidden = !key;
+    }
+    if (message) message.placeholder = hint || defaultHint;
+    if (topic && topicKey !== undefined && topic.value !== topicKey) {
+      topic.value = topicKey;
+      showTopic(true);
+    }
+  };
+  // After a message is sent, the form goes back to the project the page itself is about, if any.
+  const resetProject = () => showProject(project?.defaultValue ?? "", projectNote?.dataset.default ?? "", "");
+  document.querySelectorAll("a[data-project]").forEach((link) => {
+    link.addEventListener("click", () => {
+      const { project: key, projectName: name, hint, topic: topicKey } = link.dataset;
+      showProject(key, name, hint, topicKey);
+    });
+  });
+
   // The message box grows as it's written. Browsers that can't size it on their own get the same from here.
   const growsHere = message && !CSS.supports("field-sizing", "content");
   const fitMessage = () => {
@@ -921,6 +949,7 @@ if (contactForm) {
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(result.message || TEXT.failed);
       contactForm.reset();
+      resetProject();
       showTopic(false);
       fitMessage();
       confirmSent(name.split(/\s+/)[0], email);

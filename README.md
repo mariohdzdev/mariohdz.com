@@ -11,13 +11,15 @@ The site is in English and Spanish. Each page has its counterpart, linked with `
 | English | Spanish |
 | --- | --- |
 | `/` | `/es/` |
+| `/pricing/` | `/es/precios/` |
 | `/services/web-domains-email/` | `/es/servicios/web-dominios-correo/` |
+| `/services/web-domains-email/email-deliverability/` | `/es/servicios/web-dominios-correo/correo-a-la-bandeja/` |
 | `/services/ai-automation/` | `/es/servicios/ia-automatizacion/` |
 | `/services/computers-privacy/` | `/es/servicios/equipos-privacidad/` |
 | `/privacy/` | `/es/privacidad/` |
 | `/legal/` | `/es/aviso-legal/` |
 
-Each service page lists its projects with what they include, how long they take and their starting price, followed by its own questions and the same contact form as the home page, with the service's topic already chosen. The header, the contact section and the footer are copies of the home page's, so a change to them has to be made on the service pages as well. The starting prices also appear in each page's description and structured data (`minPrice`), so a new price means editing all three places in both languages.
+Each service page lists its projects as cards: what each one is for and includes, what its price covers, what's needed from the client and what they pay on their own, how long it takes, its starting price, a button that starts it and, folded away, why it matters. Its own questions and the same contact form as the home page follow. The prices page brings every project, extra, the tech check-up and the care plan together, and `email-deliverability` is the first page of its own for a single project. The header, the contact section and the footer are copies of the home page's, so a change to them has to be made on the other pages as well. A starting price appears on its card, in the page's description and structured data (`minPrice`) and on the prices page, so a new price means editing all four places in both languages.
 
 Missing pages show `public/404.html`, or `public/es/404.html` under `/es/`. Both languages share `styles.css` and `main.js`; the script picks its messages from the `lang` attribute of the page.
 
@@ -35,7 +37,7 @@ Before pushing, `node tools/check-site.mjs` runs the same link, language and fil
 
 ## Contact form
 
-The form posts to `/api/contact`. The Worker checks the fields and sends the message to contact@mariohdz.com with the visitor's address as Reply-To. The topic the visitor picks, if any, goes in the subject, and a hidden `lang` field tells the Worker which language to answer in. It works without JavaScript too; with JavaScript the page shows the result in place.
+The form posts to `/api/contact`. The Worker checks the fields and sends the message to contact@mariohdz.com with the visitor's address as Reply-To. A card's "Start this project" button fills in a hidden `project` field, and the project, or else the topic the visitor picks, goes in the subject. The Worker only accepts the projects and topics it lists, so a new card needs its key added there. A hidden `lang` field tells the Worker which language to answer in. It works without JavaScript too; with JavaScript the page shows the result in place.
 
 Three protections, none of which someone filling in the form should notice:
 

@@ -485,11 +485,11 @@ a:hover > .arrow-right {
 }
 
 .nav a:hover,
-.nav a[aria-current="true"] {
+.nav a[aria-current] {
   color: var(--text);
 }
 
-.nav a[aria-current="true"]::after {
+.nav a[aria-current]::after {
   transform: scaleX(1);
 }
 
@@ -1344,6 +1344,23 @@ a:hover > .arrow-right {
   font-size: 1.0625rem;
   line-height: 1.55;
   text-wrap: pretty;
+}
+
+/* Under the button, a smaller way in for those who aren't sure yet. */
+.custom-intro .custom-more {
+  margin: 1.4rem 0 0;
+  font-size: 0.9375rem;
+}
+
+.custom-more a {
+  color: var(--green);
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.custom-more a:hover {
+  text-decoration-thickness: 2px;
 }
 
 .custom-label {
@@ -2932,6 +2949,21 @@ a:hover > .arrow-right {
   letter-spacing: 0;
 }
 
+/* A price that repeats each month says so after the figure. */
+.project-price .per {
+  margin: 0 0 0 0.3rem;
+}
+
+/* On the prices page, a heading sets the check-up and the care plan apart from the lists above. */
+.price-subtitle {
+  margin: clamp(3.5rem, 7vw, 5rem) 0 1.5rem;
+  font-size: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
 .projects-note {
   max-width: 46rem;
   margin: 1.75rem 0 0;
@@ -2941,6 +2973,300 @@ a:hover > .arrow-right {
   text-wrap: pretty;
 }
 
+.projects-note a {
+  color: var(--green);
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.projects-note a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* The card that brings several projects together gets an edge of jade metal, like the custom work tile. */
+.project-featured::before {
+  background: var(--jade-edge);
+  opacity: 0.85;
+}
+
+/* What the price covers, what's needed from the client and what they'll pay on their own,
+   as a short spec sheet under what's included. */
+.project-terms {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--rule-strong);
+}
+
+.project-terms > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.project-terms dt {
+  color: var(--faint);
+  font: 500 0.6875rem/1.4 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.project-terms dd {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* Each card starts its own project: the button fills in the form below with it. */
+.project-start {
+  justify-content: center;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.875rem;
+}
+
+/* Why it matters, with the advice that goes with it, folds away at the foot of each card. */
+.project-why summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--rule-strong);
+  color: var(--muted);
+  font: 500 0.75rem/1.2 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.project-why summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-why summary::after {
+  content: "+";
+  color: var(--label);
+  font-size: 1.125rem;
+  line-height: 1;
+  transition: transform 0.3s var(--ease);
+}
+
+.project-why summary:hover {
+  color: var(--text);
+}
+
+.project-why summary:hover::after,
+.project-why[open] summary::after {
+  color: var(--green);
+}
+
+.project-why[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.project-why-body {
+  padding-top: 0.9rem;
+}
+
+.project-why-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.project-why-body p + p {
+  margin-top: 0.75rem;
+}
+
+.project-why-body strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.project-why-body a {
+  color: var(--green);
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.project-why-body a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.motion .project-why[open] .project-why-body {
+  animation: unfold 0.45s var(--ease);
+}
+
+/* What every project includes, as three quiet facts under the cards. */
+.includes {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.includes-title,
+.price-label {
+  margin: 0;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.includes-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.includes-list li {
+  display: grid;
+  gap: 0.2rem;
+  padding-block: 0.9rem 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.includes-list strong {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.includes-list span {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@media (min-width: 40rem) {
+  .includes-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1.75rem;
+  }
+}
+
+/* Price lists: each project with how long it takes and where its price starts, like a menu. */
+.price-groups {
+  display: grid;
+  gap: clamp(2.75rem, 5vw, 3.75rem);
+  max-width: 52rem;
+}
+
+.price-group h3 {
+  margin: 0 0 1rem;
+  font-size: 1.3125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.price-group h3 a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.price-group h3 a:hover {
+  color: var(--green);
+}
+
+.price-group .price-label {
+  margin-bottom: 0.9rem;
+}
+
+.price-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.price-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.3rem 1rem;
+  padding-block: 0.95rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.price-name {
+  grid-column: 1 / -1;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.45;
+  text-decoration: none;
+  text-wrap: pretty;
+}
+
+a.price-name {
+  transition: color 0.2s;
+}
+
+a.price-name:hover {
+  color: var(--green);
+}
+
+.price-name small {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.price-time {
+  color: var(--faint);
+  font: 500 0.8125rem/1.4 var(--mono);
+  letter-spacing: 0.02em;
+}
+
+.price-amount {
+  justify-self: end;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.price-amount span {
+  margin-right: 0.3rem;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Extras have no timeline, so the name and the price share one line. */
+.price-list-short .price-name {
+  grid-column: auto;
+}
+
+@media (min-width: 40rem) {
+  .price-list li {
+    grid-template-columns: minmax(0, 1fr) 8.5rem 8.5rem;
+  }
+
+  .price-name {
+    grid-column: auto;
+  }
+
+  .price-list-short li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
 @media (min-width: 40rem) {
   .projects {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2948,23 +3274,119 @@ a:hover > .arrow-right {
   }
 
   .project {
-    grid-row: span 4;
+    grid-row: span 7;
     grid-template-rows: subgrid;
     padding: 1.75rem 1.5rem 1.5rem;
   }
+
+  .project-start {
+    justify-self: start;
+  }
 }
 
-/* Tablets: with three projects, the last one takes the whole row. */
-@media (min-width: 40rem) and (max-width: 63.999rem) {
+/* Two by two up to wide screens: with three projects, the last one takes the whole row. */
+@media (min-width: 40rem) and (max-width: 99.999rem) {
   .project:nth-child(3):last-child {
     grid-column: 1 / -1;
   }
 }
 
-@media (min-width: 64rem) {
-  .projects:has(> :nth-child(3):last-child) {
+/* Wide screens fit three cards in a row. */
+@media (min-width: 100rem) {
+  .projects:has(> :nth-child(3):last-child),
+  .projects:has(> :nth-child(6):last-child) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+/* A project's own page: its price and timeline under the lead, the signs that call for it,
+   and why it matters, told in plain words. */
+.page-meta {
+  margin: 0;
+  color: var(--faint);
+  font: 500 0.8125rem/1.6 var(--mono);
+  letter-spacing: 0.02em;
+}
+
+.page-meta strong {
+  color: var(--text);
+  font: 600 1.125rem/1 var(--sans);
+  letter-spacing: -0.015em;
+}
+
+.signs {
+  max-width: 46rem;
+  padding-top: 0;
+}
+
+.signs li {
+  font-size: 1.0625rem;
+}
+
+.explain {
+  display: grid;
+  gap: 2.25rem;
+  max-width: 48rem;
+}
+
+.explain > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.explain > p a {
+  color: var(--green);
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.explain > p a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.explain > .section-title {
+  margin-bottom: 0.25rem;
+}
+
+.explain .principle {
+  margin-top: 0;
+}
+
+.path-when.mono {
+  letter-spacing: 0.06em;
+}
+
+/* The project on its own page, summed up in the lit tile: what it is and its price on one side,
+   the terms on the other. */
+.custom .page-meta {
+  margin: -0.5rem 0 1.5rem;
+  font-size: 0.8125rem;
+}
+
+.custom .project-terms {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* The project a card started, named above the message. */
+.form-project {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.form-project strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.form-project[hidden] {
+  display: none;
 }
 
 /* The other two services, at the end of each service page. */
