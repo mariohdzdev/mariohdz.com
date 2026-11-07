@@ -20,8 +20,8 @@ export const MORE = {
     },
     custom: {
       mine: "Proyecto a medida",
-      en: { name: "Something made for you", scope: "A web app, an internal tool or a process to automate" },
-      es: { name: "Algo hecho a tu medida", scope: "Una app web, una herramienta interna o un proceso que automatizar" },
+      en: { name: "Something made for you", scope: "A web app, an internal tool or anything not on this list" },
+      es: { name: "Algo hecho a tu medida", scope: "Una app web, una herramienta interna o algo que no esté en la lista" },
     },
     unsure: {
       mine: "Aún no lo sabe",
@@ -29,6 +29,22 @@ export const MORE = {
       es: { name: "Aún no lo sé", scope: "Cuéntame qué pasa y te diré por dónde empezar" },
     },
   },
+};
+
+// Short names for the line that sums up the choice on phones, where the full names don't fit side by side.
+export const SHORT = {
+  "launch-package": { en: "Launch package", es: "Paquete de arranque" },
+  website: { en: "Business website", es: "Web para tu negocio" },
+  "one-page": { en: "One-page website", es: "Web de una página" },
+  "business-email": { en: "Business email", es: "Correo profesional" },
+  deliverability: { en: "Reaching the inbox", es: "Llegar a la bandeja" },
+  "domain-recovery": { en: "Your domain back", es: "Recuperar tu dominio" },
+  "ai-assistant": { en: "AI assistant", es: "Asistente de IA" },
+  automation: { en: "Task automation", es: "Automatizar una tarea" },
+  "private-ai": { en: "Private AI", es: "IA privada" },
+  "check-up": { en: "Tech check-up", es: "Revisión técnica" },
+  custom: { en: "Made for you", es: "A tu medida" },
+  unsure: { en: "Not sure yet", es: "Aún no lo sé" },
 };
 
 const project = (key) => PROJECTS[key] ?? MORE.projects[key];
@@ -73,7 +89,6 @@ export const ITEMS = {
   photos: { mine: "Fotos propias", en: ["Photos of your own", "Of your work, your team or your place"], es: ["Fotos propias", "De tu trabajo, tu equipo o tu local"] },
   mailbox: { mine: "Correo con su dominio", en: ["Email on your domain", "An address like hello@yourbusiness.com"], es: ["Correo con tu dominio", "Una dirección como hola@tunegocio.com"] },
   site: { mine: "Web", en: ["A website", "Even an old one"], es: ["Una web", "Aunque sea antigua"] },
-  plan: { mine: "Plan de correo", en: ["An email plan", "Like Google Workspace or Microsoft 365"], es: ["Un plan de correo", "Como Google Workspace o Microsoft 365"] },
   old: { mine: "Mensajes que conservar", en: ["Old messages to keep", "From the address you use today"], es: ["Mensajes antiguos que conservar", "De la dirección que usas hoy"] },
   list: { mine: "Lista de buzones", en: ["A list of who needs an address", "People, or shared ones like billing@"], es: ["La lista de quién necesita dirección", "Personas, o compartidas como facturas@"] },
   senders: { mine: "Lista de lo que envía correo", en: ["A list of what sends email for you", "Your mailbox, website forms, newsletters, invoices or a CRM"], es: ["La lista de lo que envía correo por ti", "Tu buzón, los formularios de la web, boletines, facturas o un CRM"] },
@@ -92,11 +107,15 @@ export const ITEMS = {
   files: { mine: "Archivos", en: ["The files it will work with", "Contracts, financial records or client data"], es: ["Los archivos con los que trabajará", "Contratos, registros financieros o datos de clientes"] },
 };
 
+// What step 2 stops asking once another answer makes it moot: without a domain there's no account to reach
+// and no address on it. public/start.js folds these away, and the Worker reads them as a no.
+export const UNLESS = { access: ["domain", "no"], mailbox: ["domain", "no"] };
+
 // Step 2 asks for what every project chosen needs, each thing once, under these headings.
 export const GROUPS = [
   { items: ["domain", "access", "mailbox"], en: "Your domain and email", es: "Tu dominio y tu correo" },
   { items: ["logo", "text", "photos", "site"], en: "Your website", es: "Tu web" },
-  { items: ["plan", "old", "list", "senders", "example"], en: "Your email", es: "Tu correo" },
+  { items: ["old", "list", "senders", "example"], en: "Your email", es: "Tu correo" },
   { items: ["proof", "foothold", "reach"], en: "Getting your domain back", es: "Recuperar tu dominio" },
   { items: ["docs", "examples", "aiPlan"], en: "Your AI assistant", es: "Tu asistente de IA" },
   { items: ["steps", "appAccess", "sample"], en: "The task to automate", es: "La tarea que quieres automatizar" },
@@ -109,7 +128,7 @@ export const GROUPS = [
 
 export const KINDS = {
   web: { projects: SITES, have: ["domain", "access", "logo", "text", "photos", "mailbox"], details: ["size", "pages", "features", "mailboxes"], en: "Your website", es: "Tu web", mine: "La web" },
-  email: { projects: ["business-email"], have: ["domain", "access", "plan", "old", "list"], details: ["mailboxes", "provider"], en: "Your business email", es: "Tu correo profesional", mine: "El correo" },
+  email: { projects: ["business-email"], have: ["domain", "access", "old", "list"], details: ["mailboxes", "provider"], en: "Your business email", es: "Tu correo profesional", mine: "El correo" },
   inbox: { projects: ["deliverability"], have: ["access", "senders", "example"], details: ["issues"], en: "Email that reaches the inbox", es: "Correo que llega a la bandeja", mine: "Correo a la bandeja" },
   recovery: { projects: ["domain-recovery"], have: ["proof", "foothold", "reach"], details: ["holder"], en: "Getting your domain back", es: "Recuperar tu dominio", mine: "Recuperar el dominio" },
   assistant: { projects: ["ai-assistant"], have: ["docs", "examples", "aiPlan"], details: ["people", "confidential"], en: "Your AI assistant", es: "Tu asistente de IA", mine: "El asistente de IA" },
@@ -121,6 +140,8 @@ export const KINDS = {
 };
 
 export const kindOf = (key) => Object.keys(KINDS).find((kind) => KINDS[kind].projects.includes(key));
+// The projects of this kind a detail is limited to, or null when it applies to all of them.
+export const onlyFor = (kind, question) => question.only?.filter((key) => KINDS[kind].projects.includes(key)) ?? null;
 // What step 2 asks for these kinds of project, each thing once, in the order of the headings.
 export const itemsFor = (kinds) => GROUPS.flatMap((group) => group.items).filter((item) => kinds.some((kind) => KINDS[kind].have.includes(item)));
 
@@ -144,15 +165,14 @@ export const QUESTIONS = {
   features: {
     type: "many", mine: "Lo que debe hacer la web", en: "What should your website do?", es: "¿Qué debe hacer tu web?",
     options: [
-      option("info", "Share information", "Dar información"),
       option("form", "Take messages with a form", "Recibir mensajes con un formulario", "Formulario"),
       option("whatsapp", "A WhatsApp button", "Un botón de WhatsApp", "Botón de WhatsApp"),
       option("booking", "Bookings, with the tool you use", "Reservas, con la herramienta que ya uses", "Reservas con su herramienta"),
-      option("map", "A map and opening hours", "Mapa y horario"),
+      option("map", "A map and opening hours on the site", "Mapa y horario en la web", "Mapa y horario"),
       option("reviews", "Reviews from clients", "Reseñas de clientes"),
       option("gallery", "A gallery of your work", "Galería de trabajos"),
       option("languages", "In English and Spanish", "En español e inglés", "En dos idiomas", { extra: "languages" }),
-      option("listing", "A Google Maps listing", "Ficha en Google Maps", undefined, { extra: "listing" }),
+      option("listing", "Your business on Google Maps", "Tu negocio en Google Maps", "Ficha en Google Maps", { extra: "listing" }),
     ],
   },
   mailboxes: {
@@ -248,7 +268,7 @@ export const QUESTIONS = {
 export const COMMON = {
   when: {
     type: "one", mine: "Para cuándo", en: "When would you like it?", es: "¿Para cuándo lo quieres?",
-    options: [option("month", "This month", "Este mes"), option("soon", "In 2 or 3 months", "En 2 o 3 meses"), option("later", "No rush", "Sin prisa")],
+    options: [option("asap", "As soon as possible", "Lo antes posible"), option("soon", "In 2 or 3 months", "En 2 o 3 meses"), option("later", "No rush", "Sin prisa")],
   },
   site: {
     type: "line", max: 200, mine: "Web o dominio", en: "Your website or domain", es: "Tu web o tu dominio",
@@ -263,7 +283,7 @@ export const COMMON = {
   },
   channel: {
     type: "one", mine: "Canal", en: "How would you like to talk?", es: "¿Cómo prefieres que hablemos?",
-    options: [option("email", "By email", "Por correo"), option("call", "On a 20-minute call", "En una llamada de 20 minutos", "Quiere una llamada")],
+    options: [option("email", "By email", "Por correo"), option("call", "On a 20-minute video call", "En una videollamada de 20 minutos", "Quiere una videollamada")],
   },
   slot: {
     type: "one", mine: "Franja", en: "When suits you best?", es: "¿Cuándo te viene mejor?",
@@ -357,16 +377,21 @@ export function readStart(form) {
   const projects = pickProjects(form.getAll("project").map(clean));
   if (!projects.length) return null;
   const kinds = [...new Set(projects.map(kindOf))];
-  const have = itemsFor(kinds).map((item) => {
+  const read = (item) => {
     const answer = clean(form.get(haveName(item)));
-    return [item, ANSWERS.some((choice) => choice.value === answer) ? answer : null];
+    return ANSWERS.some((choice) => choice.value === answer) ? answer : null;
+  };
+  const have = itemsFor(kinds).map((item) => {
+    const [other, value] = UNLESS[item] ?? [];
+    return [item, other && read(other) === value ? "no" : read(item)];
   });
   const details = {};
   for (const kind of kinds) {
     details[kind] = {};
     for (const name of [...(KINDS[kind].first ?? []), ...KINDS[kind].details]) {
       const question = QUESTIONS[name];
-      if (question.only && !question.only.some((key) => projects.includes(key))) continue;
+      const only = onlyFor(kind, question);
+      if (only && !only.some((key) => projects.includes(key))) continue;
       details[kind][name] = readQuestion(form, detailName(kind, name), question);
     }
   }
@@ -499,10 +524,11 @@ export function hints(data) {
     if (details("web").pages === "unsure") add("No sabe cuántas páginas: propón una estructura en el plan.");
   }
   if (has("email")) {
-    if (missing("plan")) add("Sin plan de correo: recomiéndale uno; se paga aparte, por persona y mes.");
     if (answer.old === "yes") add("Quiere conservar mensajes: incluye la migración en el plan.");
     if (missing("list")) add("No tiene clara la lista de buzones: pregúntale quién escribe en nombre del negocio.");
-    if (details("email").provider === "free") add("Escribe desde Gmail u Outlook personal: cuéntale qué gana con su dominio.");
+    const provider = details("email").provider;
+    if (provider === "free") add("Escribe desde Gmail u Outlook personal: cuéntale qué gana con su dominio y recomiéndale un plan de correo (se paga aparte, por persona y mes).");
+    if (provider === "unsure") add("No sabe qué usa para el correo: pregúntale antes del plan; quizá necesite contratar uno (se paga aparte, por persona y mes).");
   }
   if (has("inbox")) {
     if (missing("access") && answer.domain !== "yes") add("Sin acceso al dominio no se pueden tocar sus registros: que te añada como usuario.");
@@ -536,7 +562,7 @@ export function hints(data) {
   if (data.channel === "call") {
     const when = data.slot ? ` ${optionMine(COMMON.slot, data.slot).toLowerCase()}` : "";
     const zone = data.tz ? ` Su zona: ${zoneName(data.tz)}.` : "";
-    add(`Quiere una llamada de 20 minutos: proponle dos o tres horas${when}.${zone}`);
+    add(`Quiere una videollamada de 20 minutos: proponle dos o tres horas${when} y mándale el enlace.${zone}`);
   }
   return notes;
 }

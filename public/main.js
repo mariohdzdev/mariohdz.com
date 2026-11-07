@@ -603,16 +603,28 @@ const visibility = new IntersectionObserver((entries) => {
   wake();
 });
 
-// Only the canvases whose size changed are redrawn, as when a service folds open on a phone.
+// Only the canvases whose size changed are redrawn, as when a service folds open on a phone. A new width is
+// redrawn on the next frame. A new height alone, as while part of a form eases open, is redrawn once it has
+// settled: rebuilding a canvas the size of a section on every frame of an animation would stall it, and for
+// those few hundred milliseconds the drawing simply stretches with its section.
 let resizeFrame = 0;
+let settling = 0;
 const resized = new Set();
 const sizes = new ResizeObserver((entries) => {
-  for (const entry of entries) resized.add(entry.target);
-  cancelAnimationFrame(resizeFrame);
-  resizeFrame = requestAnimationFrame(() => {
+  let wider = false;
+  for (const entry of entries) {
+    resized.add(entry.target);
+    const field = [...fields, ...silks].find((candidate) => candidate.canvas === entry.target);
+    if (!field || Math.round(entry.contentRect.width) !== Math.round(field.width ?? -1)) wider = true;
+  }
+  const redraw = () => {
     for (const field of [...fields, ...silks]) if (resized.has(field.canvas)) field.resize();
     resized.clear();
-  });
+  };
+  cancelAnimationFrame(resizeFrame);
+  clearTimeout(settling);
+  if (wider) resizeFrame = requestAnimationFrame(redraw);
+  else settling = setTimeout(() => (resizeFrame = requestAnimationFrame(redraw)), 160);
 });
 
 // Text resolves from random glyphs, left to right, like output arriving.

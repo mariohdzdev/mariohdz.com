@@ -3193,8 +3193,10 @@ a:hover > .arrow-right {
   text-wrap: pretty;
 }
 
-/* The heading of each part a project adds: a short label with the platinum bar of the site's labels. */
-.start-sub {
+/* The heading of each part a project adds: a short label with the platinum bar of the site's labels.
+   The websites of step 1, one of which is chosen, are headed the same way. */
+.start-sub,
+.start-sites-name {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -3207,7 +3209,8 @@ a:hover > .arrow-right {
   text-transform: uppercase;
 }
 
-.start-sub::before {
+.start-sub::before,
+.start-sites-name::before {
   content: "";
   flex: none;
   width: 1rem;
@@ -3426,8 +3429,9 @@ a:hover > .arrow-right {
   color: var(--text);
 }
 
-/* On the narrowest phones the price goes under the project's name, so neither gets squeezed. */
-@media (max-width: 24rem) {
+/* On phones the price goes under the project's name, so the name, what it covers and what it includes get the
+   whole width and neither gets squeezed. */
+@media (max-width: 31.999rem) {
   .choice-project {
     grid-template-columns: auto minmax(0, 1fr);
   }
@@ -3712,7 +3716,7 @@ a:hover > .arrow-right {
 }
 
 .start-done-ref {
-  margin: 0.6rem 0 1.75rem;
+  margin: 0.6rem 0 0.75rem;
   color: var(--faint);
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
@@ -3739,6 +3743,445 @@ a:hover > .arrow-right {
 
   .js .start-top {
     display: none;
+  }
+}
+
+/* Step 1 as the visitor answers it. The websites are one choice, with round marks, and can be unchosen with a
+   second tap; "not sure yet" sits apart at the end, with a round mark because it goes on its own. What the launch
+   package already includes folds into it, and a quiet line says why when one choice changes another. */
+.start-step,
+.start-group,
+.choices-projects,
+.choice-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.start-sites {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.start-sites-name {
+  margin-top: 0.35rem;
+}
+
+.choice-included {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+  color: var(--green);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.choice-included .icon-check {
+  flex: none;
+  width: 0.9rem;
+  height: 0.9rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.choice.choice-alone:has(input) .choice-mark {
+  border-radius: 50%;
+}
+
+.choice.choice-alone:has(input) .choice-mark::after {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--jade-fill);
+  transform: scale(0);
+}
+
+.choice.choice-alone:has(input:checked) .choice-mark {
+  border: 1.5px solid var(--accent);
+  background: none;
+}
+
+.choice.choice-alone:has(input:checked) .choice-mark::after {
+  transform: scale(1);
+}
+
+.start-group.start-unsure {
+  margin-top: 0.75rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* A line that says what just changed, with a way to take it back. */
+.start-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.start-undo,
+.start-bar-change {
+  padding: 0.2rem 0.1rem;
+  margin: -0.2rem -0.1rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: none;
+  color: var(--green);
+  font: 500 0.8125rem/1.4 var(--sans);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--green) 40%, transparent);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  transition: text-decoration-color 0.2s;
+}
+
+.start-undo:hover,
+.start-bar-change:hover {
+  text-decoration-color: currentColor;
+}
+
+.start-undo:focus-visible,
+.start-bar-change:focus-visible,
+.start-nudge-switch:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
+}
+
+/* Two projects that cost what the launch package costs: the package, offered with a way to switch to it. */
+.start-nudge {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  padding: 0.95rem 1.05rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--green) 6%, var(--field));
+}
+
+.start-nudge p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.start-nudge-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--green);
+  font: 600 0.8125rem/1.2 var(--sans);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.start-nudge-switch:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--green) 10%, transparent);
+}
+
+.start-nudge-switch:hover .arrow-right {
+  transform: translateX(2px);
+}
+
+.start-tip {
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px dashed var(--rule-strong);
+  border-radius: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* Folds: what shows or hides in place. The height eases open and shut (the parents stack with flex, so a fold
+   takes its gap with it), and what's folded is neither seen, reached nor sent. Without JavaScript, only what
+   is folded in the markup stays out of sight. */
+.start-fold {
+  --fold-gap: 0px;
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.start-fold-in {
+  display: block;
+  min-height: 0;
+  /* Room for a focus ring, which the clipping would otherwise cut. */
+  margin: -4px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.start-fold[data-folded] {
+  grid-template-rows: 0fr;
+  margin-top: calc(-1 * var(--fold-gap));
+  opacity: 0;
+  visibility: hidden;
+}
+
+.choices-projects > .start-fold {
+  --fold-gap: 0.5rem;
+}
+
+.start-group > .start-fold {
+  --fold-gap: 0.6rem;
+}
+
+.start-step > .start-fold {
+  --fold-gap: 1.25rem;
+}
+
+.choice-text > .start-fold {
+  --fold-gap: 0.1rem;
+}
+
+.motion .start-ready .start-fold {
+  transition: grid-template-rows 0.3s var(--ease), margin-top 0.3s var(--ease), opacity 0.24s var(--ease), visibility 0s;
+}
+
+.motion .start-ready .start-fold[data-folded] {
+  transition: grid-template-rows 0.3s var(--ease), margin-top 0.3s var(--ease), opacity 0.18s var(--ease), visibility 0s linear 0.3s;
+}
+
+/* Each step comes in with a short fade as it rises into place. */
+@keyframes start-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+.motion .start-form.is-wizard > .start-step:not([hidden]) {
+  animation: start-in 0.28s var(--ease) both;
+}
+
+/* The choice so far and its estimate: on phones and tablets a line at the top of the panel, on desktops a tile
+   under the steps. Under the total it always says that nothing is paid now. */
+.start-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.15rem 0.85rem;
+  padding: 0.7rem 0.85rem 0.7rem 0.95rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.8rem;
+  background: var(--field);
+}
+
+.start-bar-names,
+.start-bar-total {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.start-bar-total {
+  grid-column: 1 / -1;
+}
+
+.start-bar .start-from {
+  color: inherit;
+  font-size: inherit;
+}
+
+.start-bar-names {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-wrap: pretty;
+}
+
+.start-bar-total {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.start-bar-free::before {
+  content: " · ";
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.start-summary-free,
+.start-bar-free {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.start-bar-change {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+
+.start-summary {
+  display: none;
+}
+
+.start-from {
+  color: var(--faint);
+  font-size: 0.6em;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.start-summary-total {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.start-summary-lines {
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.start-summary-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.start-summary-lines li span:last-child {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.start-summary-free {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.15rem 0 0;
+  font-size: 0.875rem;
+}
+
+/* The same fine jade check as a step behind. */
+.start-summary-free::before {
+  content: "";
+  flex: none;
+  width: 0.35rem;
+  height: 0.65rem;
+  margin-left: 0.15rem;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-0.1rem) rotate(45deg);
+}
+
+@media (min-width: 64rem) {
+  .start-bar {
+    display: none !important;
+  }
+
+  .js .start-summary:not([hidden]) {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid transparent;
+    border-radius: 0.95rem;
+    background:
+      linear-gradient(180deg, var(--tile-top), var(--tile-bottom)) padding-box,
+      linear-gradient(135deg, var(--metal-hi), var(--metal-lo) 30%, var(--metal) 55%, var(--metal-lo) 80%, var(--metal-hi)) border-box;
+  }
+}
+
+/* After sending, where to look if the reply doesn't come. */
+.start-done-spam {
+  max-width: 30rem;
+  margin: 0 0 1.75rem;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* On the form's own page, the header's button to it would only reload it and lose the answers. */
+.bar-cta[aria-current="page"],
+.menu-foot .btn[aria-current="page"] {
+  display: none;
+}
+
+/* Fingers get taller answers in step 2 and a little more room around the small text buttons. */
+@media (pointer: coarse) {
+  .tri-options label {
+    min-height: 2.75rem;
+  }
+
+  .start-undo,
+  .start-bar-change {
+    padding-block: 0.6rem;
+    margin-block: -0.6rem;
+  }
+}
+
+/* Phones: a shorter opening, so the first projects show on the first screen. */
+@media (max-width: 39.999rem) {
+  .hero-page.start {
+    padding-block: calc(var(--head) + 1.75rem) 1.75rem;
+  }
+
+  .start .page-title {
+    font-size: clamp(2.25rem, 1.3rem + 4.5vw, 2.75rem);
+  }
+
+  .start .page-lead {
+    font-size: 1rem;
+  }
+
+  .start-head {
+    gap: 0.85rem;
+  }
+
+  .start-inner {
+    gap: 1.5rem;
+  }
+}
+
+/* Phones on their side: the same, a little tighter still. */
+@media (max-height: 30rem) and (orientation: landscape) {
+  .hero-page.start {
+    padding-block: calc(var(--head) + 1.25rem) 1.25rem;
+  }
+
+  .start .page-title {
+    font-size: 2.25rem;
+  }
+
+  .start-head {
+    gap: 0.6rem;
+  }
+
+  .start-inner {
+    gap: 1.25rem;
   }
 }
 

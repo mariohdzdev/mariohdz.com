@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { PRICES, PROJECTS, SERVICES, WORDS } from "./site.mjs";
-import { ANSWERS, COMMON, GROUPS, ITEMS, KINDS, MORE, QUESTIONS, ZONES, detailName, haveName, kindOf, projectName, projectPrice, projectScope } from "../src/start.mjs";
+import { ALONE, ANSWERS, COMMON, GROUPS, INCLUDED, ITEMS, KINDS, MORE, QUESTIONS, SHORT, SITES, UNLESS, ZONES, detailName, haveName, kindOf, onlyFor, projectName, projectPrice, projectScope } from "../src/start.mjs";
 
 const ROOT = "public";
 const ORIGIN = "https://mariohdz.com";
@@ -267,15 +267,21 @@ const START_WORDS = {
     progress: "Your progress",
     steps: ["What you need", "What you have", "Details", "How we continue"],
     q1: "What do you need?",
-    n1: "Choose one or more. It can change later.",
+    n1: "Choose one or more. You can change it later.",
+    sites: "Your website · choose one",
+    included: `Includes business email, up to ${PRICES.includedMailboxes} mailboxes`,
+    nudge: "Switch to the launch package",
+    inboxTip: "Your new email already comes set up to reach the inbox. Add this only if other services send email for you: newsletters, invoices or a CRM.",
+    unsureTitle: "Not sure what you need?",
+    undo: "Undo",
     q2: "What do you already have?",
     n2: "Answer what you can. “Not sure” is a fine answer, and no passwords go here.",
     customNote: "A few lines are enough. Your plan comes once the idea is clear.",
     unsureNote: "Choose everything that applies, and you’ll see where to start.",
     suggest: "A good place to start",
     q3: "A few details",
-    n3: "Only what changes the price or the timeline.",
-    q4: "How shall we continue?",
+    n3: "What shapes the price and the timeline.",
+    q4: "How would you like to continue?",
     n4: "Only your name and email are needed.",
     fixed: "Fixed price in your plan",
     languages: `+$${PRICES.secondLanguage.onePage} for one page, +$${PRICES.secondLanguage.upToFive} for up to five`,
@@ -289,8 +295,12 @@ const START_WORDS = {
     zonePick: "Choose your time zone",
     back: "Back",
     next: "Continue",
-    send: "Send",
-    note: 'I’ll only use your details to reply to you. <a href="/privacy/">Privacy policy</a>',
+    send: "Send request",
+    note: 'Sending your request is free and commits you to nothing. I’ll only use your details to reply to you. <a href="/privacy/">Privacy policy</a>',
+    estimate: "Your estimate",
+    free: "Nothing to pay now.",
+    change: "Change",
+    newTab: "Opens in a new tab, so your answers stay here",
     trap: "Leave this empty",
     facts: [["Response time", "Within one business day"], ["Languages", "English and Spanish"]],
     quick: "Just a quick question?",
@@ -299,14 +309,20 @@ const START_WORDS = {
     progress: "Tu avance",
     steps: ["Qué necesitas", "Qué tienes", "Detalles", "Cómo seguimos"],
     q1: "¿Qué necesitas?",
-    n1: "Elige uno o varios. Puede cambiar después.",
+    n1: "Elige uno o varios. Puedes cambiarlo después.",
+    sites: "Tu web · elige una",
+    included: `Incluye correo profesional, hasta ${PRICES.includedMailboxes} buzones`,
+    nudge: "Cambiar al paquete de arranque",
+    inboxTip: "Tu correo nuevo ya sale configurado para llegar a la bandeja. Suma esto solo si otros servicios envían correo por ti: boletines, facturas o un CRM.",
+    unsureTitle: "¿No lo tienes claro?",
+    undo: "Deshacer",
     q2: "¿Qué tienes ya?",
     n2: "Responde lo que sepas. «No sé» también es una buena respuesta, y aquí no van contraseñas.",
     customNote: "Con unas líneas basta. Tu plan llega cuando la idea esté clara.",
     unsureNote: "Marca todo lo que encaje y verás por dónde empezar.",
     suggest: "Un buen punto de partida",
     q3: "Algunos detalles",
-    n3: "Solo lo que cambia el precio o el plazo.",
+    n3: "Lo que define el precio y el plazo.",
     q4: "¿Cómo seguimos?",
     n4: "Solo hacen falta tu nombre y tu correo.",
     fixed: "Precio cerrado en tu plan",
@@ -321,8 +337,12 @@ const START_WORDS = {
     zonePick: "Elige tu zona horaria",
     back: "Atrás",
     next: "Continuar",
-    send: "Enviar",
-    note: 'Solo usaré tus datos para responderte. <a href="/es/privacidad/">Política de privacidad</a>',
+    send: "Enviar solicitud",
+    note: 'Enviar tu solicitud es gratis y no te compromete a nada. Solo usaré tus datos para responderte. <a href="/es/privacidad/">Política de privacidad</a>',
+    estimate: "Tu estimación",
+    free: "No pagas nada ahora.",
+    change: "Cambiar",
+    newTab: "Se abre en una pestaña nueva, así tus respuestas siguen aquí",
     trap: "Deja esto vacío",
     facts: [["Respuesta", "En un día laborable"], ["Idiomas", "Español e inglés"]],
     quick: "¿Solo una pregunta rápida?",
@@ -341,7 +361,7 @@ const kindsAsking = (item) => Object.keys(KINDS).filter((kind) => KINDS[kind].ha
 
 // One question of src/start.mjs as form controls: choices for one or many answers, a list to pick from,
 // or a field to fill in.
-function question(name, q, lang, { kind = "", only = q.only } = {}) {
+function question(name, q, lang, { kind = "", only = q.only, quietLegend = false } = {}) {
   const t = START_WORDS[lang];
   const field = kind ? detailName(kind, name) : name;
   const id = `start-${dashed(field)}`;
@@ -351,7 +371,7 @@ function question(name, q, lang, { kind = "", only = q.only } = {}) {
     const type = q.type === "one" ? "radio" : "checkbox";
     return [
       `<fieldset class="question" id="${id}"${onlyAttr}>`,
-      `  <legend class="question-label">${q[lang]}</legend>`,
+      `  <legend class="question-label${quietLegend ? " sr-only" : ""}">${q[lang]}</legend>`,
       hint ? `  <p class="question-hint">${hint}</p>` : [],
       `  <div class="choices${type === "checkbox" ? " choices-many" : ""}">`,
       q.options.map((choice) => {
@@ -401,13 +421,17 @@ function question(name, q, lang, { kind = "", only = q.only } = {}) {
   return [`<div class="form-field"${onlyAttr}>`, `  ${label}`, `  <input id="${id}" name="${field}" type="text" maxlength="${q.max}"${placeholder}${described}>`, hintLine, "</div>"];
 }
 
+// What shows and hides in place as the visitor answers: public/start.js opens and closes it, and the stylesheet
+// animates the height. Without JavaScript it simply stays open.
+const fold = (attrs, inner, tag = "div") => [`<${tag} class="start-fold" ${attrs}>`, `  <${tag} class="start-fold-in">`, pad(inner, 4), `  </${tag}>`, `</${tag}>`];
+
 function start(page) {
   const lang = page.lang;
   const w = WORDS[lang];
   const t = START_WORDS[lang];
 
-  // Step 1: every project is a box to tick, so several can be chosen; public/start.js keeps the ones that
-  // can't go together apart, as src/start.mjs does once the form is sent.
+  // Step 1: the projects are boxes to tick, so several can be chosen, except the websites, one of which is chosen
+  // with a round mark, and "not sure yet", which goes on its own. src/start.mjs applies the same rules once sent.
   const projectChoice = (key) => {
     const kind = kindOf(key);
     const price = projectPrice(key);
@@ -416,17 +440,52 @@ function start(page) {
     if (key === "check-up") tag = `<span class="choice-price">${w.price(price)}</span>`;
     else if (price) tag = `<span class="choice-price"><span>${w.from}</span> ${w.price(price)}</span>`;
     else if (key === "custom") tag = `<span class="choice-price choice-price-plan">${t.fixed}</span>`;
+    const site = SITES.includes(key);
+    const classes = ["choice", "choice-project", site ? "choice-site" : "", key === ALONE ? "choice-alone" : ""].filter(Boolean).join(" ");
+    // The launch package says what it already includes once it's chosen.
+    const included = INCLUDED[key]
+      ? fold('data-fold="included" data-folded', [`<span class="choice-included"><svg class="icon-check" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.5 3.2 3L13 4.5"/></svg>${t.included}</span>`], "span")
+      : [];
+    const row = [
+      `<label class="${classes}"><input type="${site ? "radio" : "checkbox"}" name="project" value="${key}" data-kind="${kind}" data-short="${SHORT[key][lang]}"${price ? ` data-price="${price}"` : ""}><span class="choice-mark" aria-hidden="true"></span>`,
+      `  <span class="choice-text"><span class="choice-name">${projectName(key, lang)}</span><span class="choice-sub">${projectScope(key, lang)}</span>`,
+      pad(included, 4),
+      `  </span>${tag}</label>`,
+    ];
+    // What the launch package includes folds away into it while the package is chosen.
+    return Object.values(INCLUDED).flat().includes(key) ? fold(`data-fold="${key}"`, row) : row;
+  };
+  const notice = (name) => fold(`data-fold="notice-${name}" data-folded`, [`<p class="start-notice"><span data-notice-text></span> <button class="start-undo" type="button" data-undo>${t.undo}</button></p>`]);
+  const groupName = (glyph, name) => `<p class="start-group-name"><span class="area-icon mono" aria-hidden="true">${escape(glyph)}</span><span>${name}</span></p>`;
+  const group = (glyph, name, keys) => {
+    const sites = keys.filter((key) => SITES.includes(key));
+    const rest = keys.filter((key) => !SITES.includes(key) && key !== ALONE);
+    const after = (key) => {
+      // Two projects that cost the same as the launch package, and an inbox project the new email may not need.
+      if (key === "business-email") return fold('data-fold="nudge" data-folded', ['<div class="start-nudge">', "  <p data-nudge-text></p>", `  <button class="start-nudge-switch" type="button" data-nudge-switch>${t.nudge}${ARROW}</button>`, "</div>"]);
+      if (key === "deliverability") return fold('data-fold="tip-inbox" data-folded', [`<p class="start-tip">${t.inboxTip}</p>`]);
+      return [];
+    };
     return [
-      `<label class="choice choice-project"><input type="checkbox" name="project" value="${key}" data-kind="${kind}"${price ? ` data-price="${price}"` : ""}><span class="choice-mark" aria-hidden="true"></span>`,
-      `  <span class="choice-text"><span class="choice-name">${projectName(key, lang)}</span><span class="choice-sub">${projectScope(key, lang)}</span></span>${tag}</label>`,
+      '<div class="start-group">',
+      `  ${groupName(glyph, name)}`,
+      sites.length
+        ? pad(['<div class="start-sites" role="radiogroup" aria-labelledby="start-sites-name">', `  <p class="start-sites-name" id="start-sites-name">${t.sites}</p>`, '  <div class="choices choices-projects">', pad(sites.map(projectChoice), 4), "  </div>", "</div>", notice("sites")], 2)
+        : [],
+      '  <div class="choices choices-projects">',
+      pad(rest.map((key) => [projectChoice(key), after(key)]), 4),
+      "  </div>",
+      "</div>",
     ];
   };
-  const group = (glyph, name, keys) => [
-    '<div class="start-group">',
-    `  <p class="start-group-name"><span class="area-icon mono" aria-hidden="true">${escape(glyph)}</span><span>${name}</span></p>`,
+  // "Not sure yet" sits apart, at the end: it goes on its own.
+  const unsure = [
+    '<div class="start-group start-unsure">',
+    `  ${groupName("?", t.unsureTitle)}`,
     '  <div class="choices choices-projects">',
-    pad(keys.map(projectChoice), 4),
+    pad(projectChoice(ALONE), 4),
     "  </div>",
+    pad(notice("unsure"), 2),
     "</div>",
   ];
 
@@ -435,7 +494,7 @@ function start(page) {
     const name = haveName(item);
     const id = dashed(name);
     const [what, hint] = ITEMS[item][lang];
-    return [
+    const row = [
       `<div class="tri" role="radiogroup" aria-labelledby="${id}" aria-describedby="${id}-hint" data-kinds="${kindsAsking(item).join(" ")}">`,
       `  <p class="tri-q"><span class="tri-name" id="${id}">${what}</span><span class="tri-hint" id="${id}-hint">${hint}</span></p>`,
       '  <div class="tri-options">',
@@ -443,6 +502,8 @@ function start(page) {
       "  </div>",
       "</div>",
     ];
+    const unless = UNLESS[item];
+    return unless ? fold(`data-unless="${haveName(unless[0])}:${unless[1]}"`, row) : row;
   };
   const haveGroups = GROUPS.map((g) => [
     `<div class="start-have" data-kinds="${[...new Set(g.items.flatMap(kindsAsking))].join(" ")}">`,
@@ -456,7 +517,7 @@ function start(page) {
     `<fieldset class="start-part" data-kinds="${kind}" aria-labelledby="start-q2-${kind}">`,
     `  <h2 class="start-q" id="start-q2-${kind}" tabindex="-1">${KINDS[kind][lang]}</h2>`,
     `  <p class="start-note">${note}</p>`,
-    pad(KINDS[kind].first.map((name) => question(name, QUESTIONS[name], lang, { kind })), 2),
+    pad(KINDS[kind].first.map((name) => question(name, QUESTIONS[name], lang, { kind, quietLegend: QUESTIONS[name][lang] === KINDS[kind][lang] })), 2),
     kind === "unsure" ? ['  <div class="start-suggest" data-start-suggest hidden>', `    <p class="start-suggest-label">${t.suggest}</p>`, '    <p class="start-suggest-name" data-start-suggest-name></p>', "  </div>"] : [],
     "</fieldset>",
   ];
@@ -476,7 +537,7 @@ function start(page) {
     .map((kind) => [
       `<fieldset class="start-kind" data-kinds="${kind}" aria-labelledby="start-d-${kind}">`,
       `  <p class="start-sub" id="start-d-${kind}">${KINDS[kind][lang]}</p>`,
-      pad(KINDS[kind].details.map((name) => question(name, QUESTIONS[name], lang, { kind })), 2),
+      pad(KINDS[kind].details.map((name) => question(name, QUESTIONS[name], lang, { kind, only: onlyFor(kind, QUESTIONS[name]) })), 2),
       "</fieldset>",
     ]);
 
@@ -485,6 +546,12 @@ function start(page) {
     `  <ol class="start-progress" aria-label="${t.progress}" data-start-progress>`,
     t.steps.map((name, i) => `    <li><button type="button" data-goto="${i + 1}"><span class="start-progress-num mono">0${i + 1}</span><span>${name}</span></button></li>`),
     "  </ol>",
+    '  <div class="start-summary" data-start-summary hidden>',
+    `    <p class="start-estimate-label">${t.estimate}</p>`,
+    '    <p class="start-summary-total" data-summary-total></p>',
+    '    <ul class="start-summary-lines" data-summary-lines></ul>',
+    `    <p class="start-summary-free">${t.free}</p>`,
+    "  </div>",
     '  <dl class="contact-facts">',
     t.facts.map(([dt, dd]) => `    <div><dt>${dt}</dt><dd>${dd}</dd></div>`),
     '    <div class="contact-email">',
@@ -506,6 +573,13 @@ function start(page) {
     `<form class="form glow start-form" action="/api/start" method="post" data-start data-prices='${JSON.stringify(PRICES)}'>`,
     `  <input type="hidden" name="lang" value="${lang}">`,
     '  <div class="start-top" aria-hidden="true"><p class="start-count mono" data-start-count></p><span class="start-line"><span data-start-line></span></span></div>',
+    '  <div class="start-bar" data-start-bar hidden>',
+    '    <p class="start-bar-names" data-bar-names></p>',
+    `    <p class="start-bar-total"><span data-bar-total></span><span class="start-bar-free">${t.free.replace(/\.$/, "")}</span></p>`,
+    `    <button class="start-bar-change" type="button" data-start-change>${t.change}</button>`,
+    "  </div>",
+    '  <p class="sr-only" aria-live="polite" data-start-live></p>',
+    `  <span id="start-new-tab" hidden>${t.newTab}</span>`,
     '  <div class="start-step" data-step="1">',
     '    <fieldset class="start-part" aria-labelledby="start-q1">',
     `      <h2 class="start-q" id="start-q1" tabindex="-1">${t.q1}</h2>`,
@@ -514,6 +588,7 @@ function start(page) {
       [
         ...SERVICES.map((service) => group(service.glyph, service[lang].name, service.projects)),
         group(MORE.glyph, MORE[lang], Object.keys(MORE.projects)),
+        unsure,
       ],
       6,
     ),
@@ -535,9 +610,7 @@ function start(page) {
     `    <h2 class="start-q" id="start-q4" tabindex="-1">${t.q4}</h2>`,
     `    <p class="start-note">${t.n4}</p>`,
     pad([question("want", COMMON.want, lang), question("channel", COMMON.channel, lang)], 4),
-    '    <div class="start-call" data-start-call>',
-    pad([question("slot", COMMON.slot, lang), question("tz", COMMON.tz, lang)], 6),
-    "    </div>",
+    pad(fold('data-fold="call"', ['<div class="start-call" data-start-call>', pad([question("slot", COMMON.slot, lang), question("tz", COMMON.tz, lang)], 2), "</div>"]), 4),
     '    <div class="start-you">',
     '      <div class="form-field">',
     `        <label for="start-name">${t.name}</label>`,
@@ -557,7 +630,7 @@ function start(page) {
     "      </div>",
     pad(question("source", COMMON.source, lang), 6).map((line, i, all) => (i === 0 ? line.replace('<div class="form-field">', '<div class="form-field form-wide">') : line)),
     "    </div>",
-    '    <div class="start-estimate" data-start-estimate aria-live="polite" hidden></div>',
+    '    <div class="start-estimate" data-start-estimate hidden></div>',
     "  </div>",
     '  <div class="form-trap" aria-hidden="true">',
     `    <label for="start-website">${t.trap}</label>`,

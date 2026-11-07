@@ -156,7 +156,7 @@
         <div class="start-head">
           <p class="eyebrow mono"><span data-decode>4 pasos · unos 3 minutos</span></p>
           <h1 id="page-title" class="page-title"><span class="line"><span data-shield>Empieza tu proyecto.</span></span></h1>
-          <p class="page-lead" data-shield>Cuéntame qué necesitas y qué tienes ya. Verás una estimación antes de enviarlo, y mi respuesta te llega por correo en un día laborable.</p>
+          <p class="page-lead" data-shield>Cuéntame qué necesitas y qué tienes ya. Verás una estimación antes de enviarlo, y mi respuesta te llega por correo en un día laborable. Aquí no pagas nada.</p>
         </div>
         <!-- build:start -->
         <div class="start-main">
@@ -167,6 +167,12 @@
               <li><button type="button" data-goto="3"><span class="start-progress-num mono">03</span><span>Detalles</span></button></li>
               <li><button type="button" data-goto="4"><span class="start-progress-num mono">04</span><span>Cómo seguimos</span></button></li>
             </ol>
+            <div class="start-summary" data-start-summary hidden>
+              <p class="start-estimate-label">Tu estimación</p>
+              <p class="start-summary-total" data-summary-total></p>
+              <ul class="start-summary-lines" data-summary-lines></ul>
+              <p class="start-summary-free">No pagas nada ahora.</p>
+            </div>
             <dl class="contact-facts">
               <div><dt>Respuesta</dt><dd>En un día laborable</dd></div>
               <div><dt>Idiomas</dt><dd>Español e inglés</dd></div>
@@ -186,47 +192,108 @@
           <form class="form glow start-form" action="/api/start" method="post" data-start data-prices='{"checkUp":300,"extraPage":375,"upToFivePages":1500,"secondLanguage":{"onePage":300,"upToFive":600},"mapsListing":150,"extraMailbox":50,"includedMailboxes":5}'>
             <input type="hidden" name="lang" value="es">
             <div class="start-top" aria-hidden="true"><p class="start-count mono" data-start-count></p><span class="start-line"><span data-start-line></span></span></div>
+            <div class="start-bar" data-start-bar hidden>
+              <p class="start-bar-names" data-bar-names></p>
+              <p class="start-bar-total"><span data-bar-total></span><span class="start-bar-free">No pagas nada ahora</span></p>
+              <button class="start-bar-change" type="button" data-start-change>Cambiar</button>
+            </div>
+            <p class="sr-only" aria-live="polite" data-start-live></p>
+            <span id="start-new-tab" hidden>Se abre en una pestaña nueva, así tus respuestas siguen aquí</span>
             <div class="start-step" data-step="1">
               <fieldset class="start-part" aria-labelledby="start-q1">
                 <h2 class="start-q" id="start-q1" tabindex="-1">¿Qué necesitas?</h2>
-                <p class="start-note">Elige uno o varios. Puede cambiar después.</p>
+                <p class="start-note">Elige uno o varios. Puedes cambiarlo después.</p>
                 <div class="start-group">
                   <p class="start-group-name"><span class="area-icon mono" aria-hidden="true">&lt;/&gt;</span><span>Web, dominios y correo</span></p>
+                  <div class="start-sites" role="radiogroup" aria-labelledby="start-sites-name">
+                    <p class="start-sites-name" id="start-sites-name">Tu web · elige una</p>
+                    <div class="choices choices-projects">
+                      <label class="choice choice-project choice-site"><input type="radio" name="project" value="launch-package" data-kind="web" data-short="Paquete de arranque" data-price="2000"><span class="choice-mark" aria-hidden="true"></span>
+                        <span class="choice-text"><span class="choice-name">Paquete de arranque</span><span class="choice-sub">Web de una página, correo profesional y tu ficha de Google</span>
+                          <span class="start-fold" data-fold="included" data-folded>
+                            <span class="start-fold-in">
+                              <span class="choice-included"><svg class="icon-check" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.5 3.2 3L13 4.5"/></svg>Incluye correo profesional, hasta 5 buzones</span>
+                            </span>
+                          </span>
+                        </span><span class="choice-price"><span>Desde</span> 2000 USD</span></label>
+                      <label class="choice choice-project choice-site"><input type="radio" name="project" value="website" data-kind="web" data-short="Web para tu negocio" data-price="3000"><span class="choice-mark" aria-hidden="true"></span>
+                        <span class="choice-text"><span class="choice-name">Una web para tu negocio</span><span class="choice-sub">Hasta cinco páginas, nueva o rediseñada</span>
+                        </span><span class="choice-price"><span>Desde</span> 3000 USD</span></label>
+                      <label class="choice choice-project choice-site"><input type="radio" name="project" value="one-page" data-kind="web" data-short="Web de una página" data-price="1500"><span class="choice-mark" aria-hidden="true"></span>
+                        <span class="choice-text"><span class="choice-name">Una web de una página</span><span class="choice-sub">Una página, nueva o rediseñada</span>
+                        </span><span class="choice-price"><span>Desde</span> 1500 USD</span></label>
+                    </div>
+                  </div>
+                  <div class="start-fold" data-fold="notice-sites" data-folded>
+                    <div class="start-fold-in">
+                      <p class="start-notice"><span data-notice-text></span> <button class="start-undo" type="button" data-undo>Deshacer</button></p>
+                    </div>
+                  </div>
                   <div class="choices choices-projects">
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="launch-package" data-kind="web" data-price="2000"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Paquete de arranque</span><span class="choice-sub">Web de una página y hasta 5 buzones</span></span><span class="choice-price"><span>Desde</span> 2000 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="website" data-kind="web" data-price="3000"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Una web para tu negocio</span><span class="choice-sub">Hasta cinco páginas, nueva o rediseñada</span></span><span class="choice-price"><span>Desde</span> 3000 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="one-page" data-kind="web" data-price="1500"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Una web de una página</span><span class="choice-sub">Una página, nueva o rediseñada</span></span><span class="choice-price"><span>Desde</span> 1500 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="business-email" data-kind="email" data-price="500"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Correo profesional con tu dominio</span><span class="choice-sub">Hasta 5 buzones</span></span><span class="choice-price"><span>Desde</span> 500 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="deliverability" data-kind="inbox" data-price="600"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Correo que llega a la bandeja de entrada</span><span class="choice-sub">Un dominio y los servicios que envían por él</span></span><span class="choice-price"><span>Desde</span> 600 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="domain-recovery" data-kind="recovery" data-price="400"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Tu dominio y tus cuentas, de nuevo a tu nombre</span><span class="choice-sub">Un dominio, con su web y su correo</span></span><span class="choice-price"><span>Desde</span> 400 USD</span></label>
+                    <div class="start-fold" data-fold="business-email">
+                      <div class="start-fold-in">
+                        <label class="choice choice-project"><input type="checkbox" name="project" value="business-email" data-kind="email" data-short="Correo profesional" data-price="500"><span class="choice-mark" aria-hidden="true"></span>
+                          <span class="choice-text"><span class="choice-name">Correo profesional con tu dominio</span><span class="choice-sub">Hasta 5 buzones</span>
+                          </span><span class="choice-price"><span>Desde</span> 500 USD</span></label>
+                      </div>
+                    </div>
+                    <div class="start-fold" data-fold="nudge" data-folded>
+                      <div class="start-fold-in">
+                        <div class="start-nudge">
+                          <p data-nudge-text></p>
+                          <button class="start-nudge-switch" type="button" data-nudge-switch>Cambiar al paquete de arranque<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></button>
+                        </div>
+                      </div>
+                    </div>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="deliverability" data-kind="inbox" data-short="Llegar a la bandeja" data-price="600"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Correo que llega a la bandeja de entrada</span><span class="choice-sub">Un dominio y los servicios que envían por él</span>
+                      </span><span class="choice-price"><span>Desde</span> 600 USD</span></label>
+                    <div class="start-fold" data-fold="tip-inbox" data-folded>
+                      <div class="start-fold-in">
+                        <p class="start-tip">Tu correo nuevo ya sale configurado para llegar a la bandeja. Suma esto solo si otros servicios envían correo por ti: boletines, facturas o un CRM.</p>
+                      </div>
+                    </div>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="domain-recovery" data-kind="recovery" data-short="Recuperar tu dominio" data-price="400"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Tu dominio y tus cuentas, de nuevo a tu nombre</span><span class="choice-sub">Un dominio, con su web y su correo</span>
+                      </span><span class="choice-price"><span>Desde</span> 400 USD</span></label>
                   </div>
                 </div>
                 <div class="start-group">
                   <p class="start-group-name"><span class="area-icon mono" aria-hidden="true">{ }</span><span>IA y automatización</span></p>
                   <div class="choices choices-projects">
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="ai-assistant" data-kind="assistant" data-price="950"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Un asistente de IA para tu negocio</span><span class="choice-sub">Un asistente, para un equipo o un tipo de tarea</span></span><span class="choice-price"><span>Desde</span> 950 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="automation" data-kind="automation" data-price="700"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Automatizar una tarea repetitiva</span><span class="choice-sub">Un flujo de trabajo</span></span><span class="choice-price"><span>Desde</span> 700 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="private-ai" data-kind="private" data-price="600"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">IA privada en tu propio equipo</span><span class="choice-sub">Un equipo</span></span><span class="choice-price"><span>Desde</span> 600 USD</span></label>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="ai-assistant" data-kind="assistant" data-short="Asistente de IA" data-price="950"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Un asistente de IA para tu negocio</span><span class="choice-sub">Un asistente, para un equipo o un tipo de tarea</span>
+                      </span><span class="choice-price"><span>Desde</span> 950 USD</span></label>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="automation" data-kind="automation" data-short="Automatizar una tarea" data-price="700"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Automatizar una tarea repetitiva</span><span class="choice-sub">Un flujo de trabajo</span>
+                      </span><span class="choice-price"><span>Desde</span> 700 USD</span></label>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="private-ai" data-kind="private" data-short="IA privada" data-price="600"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">IA privada en tu propio equipo</span><span class="choice-sub">Un equipo</span>
+                      </span><span class="choice-price"><span>Desde</span> 600 USD</span></label>
                   </div>
                 </div>
                 <div class="start-group">
                   <p class="start-group-name"><span class="area-icon mono" aria-hidden="true">+</span><span>Otra cosa</span></p>
                   <div class="choices choices-projects">
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="check-up" data-kind="checkup" data-price="300"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Una revisión técnica</span><span class="choice-sub">Tu dominio, tu correo, tu web y tus cuentas, revisados</span></span><span class="choice-price">300 USD</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="custom" data-kind="custom"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Algo hecho a tu medida</span><span class="choice-sub">Una app web, una herramienta interna o un proceso que automatizar</span></span><span class="choice-price choice-price-plan">Precio cerrado en tu plan</span></label>
-                    <label class="choice choice-project"><input type="checkbox" name="project" value="unsure" data-kind="unsure"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Aún no lo sé</span><span class="choice-sub">Cuéntame qué pasa y te diré por dónde empezar</span></span></label>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="check-up" data-kind="checkup" data-short="Revisión técnica" data-price="300"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Una revisión técnica</span><span class="choice-sub">Tu dominio, tu correo, tu web y tus cuentas, revisados</span>
+                      </span><span class="choice-price">300 USD</span></label>
+                    <label class="choice choice-project"><input type="checkbox" name="project" value="custom" data-kind="custom" data-short="A tu medida"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Algo hecho a tu medida</span><span class="choice-sub">Una app web, una herramienta interna o algo que no esté en la lista</span>
+                      </span><span class="choice-price choice-price-plan">Precio cerrado en tu plan</span></label>
+                  </div>
+                </div>
+                <div class="start-group start-unsure">
+                  <p class="start-group-name"><span class="area-icon mono" aria-hidden="true">?</span><span>¿No lo tienes claro?</span></p>
+                  <div class="choices choices-projects">
+                    <label class="choice choice-project choice-alone"><input type="checkbox" name="project" value="unsure" data-kind="unsure" data-short="Aún no lo sé"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Aún no lo sé</span><span class="choice-sub">Cuéntame qué pasa y te diré por dónde empezar</span>
+                      </span></label>
+                  </div>
+                  <div class="start-fold" data-fold="notice-unsure" data-folded>
+                    <div class="start-fold-in">
+                      <p class="start-notice"><span data-notice-text></span> <button class="start-undo" type="button" data-undo>Deshacer</button></p>
+                    </div>
                   </div>
                 </div>
                 <p class="field-error" data-start-error="project" role="alert" hidden></p>
@@ -247,20 +314,28 @@
                         <label><input type="radio" name="have_domain" value="unsure"><span>No sé</span></label>
                       </div>
                     </div>
-                    <div class="tri" role="radiogroup" aria-labelledby="have-access" aria-describedby="have-access-hint" data-kinds="web email inbox checkup">
-                      <p class="tri-q"><span class="tri-name" id="have-access">Acceso a la cuenta de tu dominio</span><span class="tri-hint" id="have-access-hint">Donde se renueva cada año, como GoDaddy o Namecheap</span></p>
-                      <div class="tri-options">
-                        <label><input type="radio" name="have_access" value="yes"><span>Sí</span></label>
-                        <label><input type="radio" name="have_access" value="no"><span>No</span></label>
-                        <label><input type="radio" name="have_access" value="unsure"><span>No sé</span></label>
+                    <div class="start-fold" data-unless="have_domain:no">
+                      <div class="start-fold-in">
+                        <div class="tri" role="radiogroup" aria-labelledby="have-access" aria-describedby="have-access-hint" data-kinds="web email inbox checkup">
+                          <p class="tri-q"><span class="tri-name" id="have-access">Acceso a la cuenta de tu dominio</span><span class="tri-hint" id="have-access-hint">Donde se renueva cada año, como GoDaddy o Namecheap</span></p>
+                          <div class="tri-options">
+                            <label><input type="radio" name="have_access" value="yes"><span>Sí</span></label>
+                            <label><input type="radio" name="have_access" value="no"><span>No</span></label>
+                            <label><input type="radio" name="have_access" value="unsure"><span>No sé</span></label>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="tri" role="radiogroup" aria-labelledby="have-mailbox" aria-describedby="have-mailbox-hint" data-kinds="web checkup">
-                      <p class="tri-q"><span class="tri-name" id="have-mailbox">Correo con tu dominio</span><span class="tri-hint" id="have-mailbox-hint">Una dirección como hola@tunegocio.com</span></p>
-                      <div class="tri-options">
-                        <label><input type="radio" name="have_mailbox" value="yes"><span>Sí</span></label>
-                        <label><input type="radio" name="have_mailbox" value="no"><span>No</span></label>
-                        <label><input type="radio" name="have_mailbox" value="unsure"><span>No sé</span></label>
+                    <div class="start-fold" data-unless="have_domain:no">
+                      <div class="start-fold-in">
+                        <div class="tri" role="radiogroup" aria-labelledby="have-mailbox" aria-describedby="have-mailbox-hint" data-kinds="web checkup">
+                          <p class="tri-q"><span class="tri-name" id="have-mailbox">Correo con tu dominio</span><span class="tri-hint" id="have-mailbox-hint">Una dirección como hola@tunegocio.com</span></p>
+                          <div class="tri-options">
+                            <label><input type="radio" name="have_mailbox" value="yes"><span>Sí</span></label>
+                            <label><input type="radio" name="have_mailbox" value="no"><span>No</span></label>
+                            <label><input type="radio" name="have_mailbox" value="unsure"><span>No sé</span></label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -305,14 +380,6 @@
                 <div class="start-have" data-kinds="email inbox">
                   <p class="start-sub">Tu correo</p>
                   <div class="tri-list">
-                    <div class="tri" role="radiogroup" aria-labelledby="have-plan" aria-describedby="have-plan-hint" data-kinds="email">
-                      <p class="tri-q"><span class="tri-name" id="have-plan">Un plan de correo</span><span class="tri-hint" id="have-plan-hint">Como Google Workspace o Microsoft 365</span></p>
-                      <div class="tri-options">
-                        <label><input type="radio" name="have_plan" value="yes"><span>Sí</span></label>
-                        <label><input type="radio" name="have_plan" value="no"><span>No</span></label>
-                        <label><input type="radio" name="have_plan" value="unsure"><span>No sé</span></label>
-                      </div>
-                    </div>
                     <div class="tri" role="radiogroup" aria-labelledby="have-old" aria-describedby="have-old-hint" data-kinds="email">
                       <p class="tri-q"><span class="tri-name" id="have-old">Mensajes antiguos que conservar</span><span class="tri-hint" id="have-old-hint">De la dirección que usas hoy</span></p>
                       <div class="tri-options">
@@ -480,7 +547,7 @@
                 <h2 class="start-q" id="start-q2-unsure" tabindex="-1">¿Qué está pasando?</h2>
                 <p class="start-note">Marca todo lo que encaje y verás por dónde empezar.</p>
                 <fieldset class="question" id="start-unsure-symptoms">
-                  <legend class="question-label">¿Qué está pasando?</legend>
+                  <legend class="question-label sr-only">¿Qué está pasando?</legend>
                   <div class="choices choices-many">
                     <label class="choice"><input type="checkbox" name="unsure_symptoms" value="site" data-suggests="one-page"><span class="choice-mark" aria-hidden="true"></span>
                       <span class="choice-text"><span class="choice-name">Mi web se ve anticuada, o no tengo</span></span></label>
@@ -504,7 +571,7 @@
             </div>
             <div class="start-step" data-step="3">
               <h2 class="start-q" id="start-q3" tabindex="-1">Algunos detalles</h2>
-              <p class="start-note">Solo lo que cambia el precio o el plazo.</p>
+              <p class="start-note">Lo que define el precio y el plazo.</p>
               <fieldset class="start-kind" data-kinds="web" aria-labelledby="start-d-web">
                 <p class="start-sub" id="start-d-web">Tu web</p>
                 <fieldset class="question" id="start-web-size" data-only="launch-package">
@@ -532,8 +599,6 @@
                 <fieldset class="question" id="start-web-features">
                   <legend class="question-label">¿Qué debe hacer tu web?</legend>
                   <div class="choices choices-many">
-                    <label class="choice"><input type="checkbox" name="web_features" value="info"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Dar información</span></span></label>
                     <label class="choice"><input type="checkbox" name="web_features" value="form"><span class="choice-mark" aria-hidden="true"></span>
                       <span class="choice-text"><span class="choice-name">Recibir mensajes con un formulario</span></span></label>
                     <label class="choice"><input type="checkbox" name="web_features" value="whatsapp"><span class="choice-mark" aria-hidden="true"></span>
@@ -541,7 +606,7 @@
                     <label class="choice"><input type="checkbox" name="web_features" value="booking"><span class="choice-mark" aria-hidden="true"></span>
                       <span class="choice-text"><span class="choice-name">Reservas, con la herramienta que ya uses</span></span></label>
                     <label class="choice"><input type="checkbox" name="web_features" value="map"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Mapa y horario</span></span></label>
+                      <span class="choice-text"><span class="choice-name">Mapa y horario en la web</span></span></label>
                     <label class="choice"><input type="checkbox" name="web_features" value="reviews"><span class="choice-mark" aria-hidden="true"></span>
                       <span class="choice-text"><span class="choice-name">Reseñas de clientes</span></span></label>
                     <label class="choice"><input type="checkbox" name="web_features" value="gallery"><span class="choice-mark" aria-hidden="true"></span>
@@ -549,10 +614,10 @@
                     <label class="choice"><input type="checkbox" name="web_features" value="languages"><span class="choice-mark" aria-hidden="true"></span>
                       <span class="choice-text"><span class="choice-name">En español e inglés</span><span class="choice-sub" data-extra="languages">+300 USD con una página, +600 USD con hasta cinco</span></span></label>
                     <label class="choice"><input type="checkbox" name="web_features" value="listing"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Ficha en Google Maps</span><span class="choice-sub" data-extra="listing">+150 USD, incluida en el paquete de arranque</span></span></label>
+                      <span class="choice-text"><span class="choice-name">Tu negocio en Google Maps</span><span class="choice-sub" data-extra="listing">+150 USD, incluida en el paquete de arranque</span></span></label>
                   </div>
                 </fieldset>
-                <div class="form-field start-count-field" data-only="launch-package business-email">
+                <div class="form-field start-count-field" data-only="launch-package">
                   <label for="start-web-mailboxes">¿Cuántas direcciones de correo?</label>
                   <input id="start-web-mailboxes" name="web_mailboxes" type="number" inputmode="numeric" min="1" max="50" step="1" aria-describedby="start-web-mailboxes-hint">
                   <p class="field-hint" id="start-web-mailboxes-hint">Incluye hasta 5, y cada una más cuesta 50 USD</p>
@@ -560,7 +625,7 @@
               </fieldset>
               <fieldset class="start-kind" data-kinds="email" aria-labelledby="start-d-email">
                 <p class="start-sub" id="start-d-email">Tu correo profesional</p>
-                <div class="form-field start-count-field" data-only="launch-package business-email">
+                <div class="form-field start-count-field" data-only="business-email">
                   <label for="start-email-mailboxes">¿Cuántas direcciones de correo?</label>
                   <input id="start-email-mailboxes" name="email_mailboxes" type="number" inputmode="numeric" min="1" max="50" step="1" aria-describedby="start-email-mailboxes-hint">
                   <p class="field-hint" id="start-email-mailboxes-hint">Incluye hasta 5, y cada una más cuesta 50 USD</p>
@@ -686,8 +751,8 @@
                 <fieldset class="question" id="start-when">
                   <legend class="question-label">¿Para cuándo lo quieres?</legend>
                   <div class="choices">
-                    <label class="choice"><input type="radio" name="when" value="month"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Este mes</span></span></label>
+                    <label class="choice"><input type="radio" name="when" value="asap"><span class="choice-mark" aria-hidden="true"></span>
+                      <span class="choice-text"><span class="choice-name">Lo antes posible</span></span></label>
                     <label class="choice"><input type="radio" name="when" value="soon"><span class="choice-mark" aria-hidden="true"></span>
                       <span class="choice-text"><span class="choice-name">En 2 o 3 meses</span></span></label>
                     <label class="choice"><input type="radio" name="when" value="later"><span class="choice-mark" aria-hidden="true"></span>
@@ -718,42 +783,46 @@
                   <label class="choice"><input type="radio" name="channel" value="email"><span class="choice-mark" aria-hidden="true"></span>
                     <span class="choice-text"><span class="choice-name">Por correo</span></span></label>
                   <label class="choice"><input type="radio" name="channel" value="call"><span class="choice-mark" aria-hidden="true"></span>
-                    <span class="choice-text"><span class="choice-name">En una llamada de 20 minutos</span></span></label>
+                    <span class="choice-text"><span class="choice-name">En una videollamada de 20 minutos</span></span></label>
                 </div>
               </fieldset>
-              <div class="start-call" data-start-call>
-                <fieldset class="question" id="start-slot">
-                  <legend class="question-label">¿Cuándo te viene mejor?</legend>
-                  <div class="choices">
-                    <label class="choice"><input type="radio" name="slot" value="morning"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Por la mañana</span></span></label>
-                    <label class="choice"><input type="radio" name="slot" value="afternoon"><span class="choice-mark" aria-hidden="true"></span>
-                      <span class="choice-text"><span class="choice-name">Por la tarde</span></span></label>
-                  </div>
-                </fieldset>
-                <div class="form-field">
-                  <label for="start-tz">Tu zona horaria</label>
-                  <div class="select start-select">
-                    <select id="start-tz" name="tz" data-start-zone>
-                      <option value="">Elige tu zona horaria</option>
-                      <option value="America/New_York">Este de EE. UU. (Nueva York)</option>
-                      <option value="America/Chicago">Centro de EE. UU. (Chicago)</option>
-                      <option value="America/Denver">Montaña de EE. UU. (Denver)</option>
-                      <option value="America/Phoenix">Arizona</option>
-                      <option value="America/Los_Angeles">Pacífico de EE. UU. (Los Ángeles)</option>
-                      <option value="America/Anchorage">Alaska</option>
-                      <option value="Pacific/Honolulu">Hawái</option>
-                      <option value="America/Puerto_Rico">Atlántico (Puerto Rico)</option>
-                      <option value="America/Mexico_City">Ciudad de México</option>
-                      <option value="America/Tegucigalpa">Centroamérica</option>
-                      <option value="America/Bogota">Bogotá, Lima y Quito</option>
-                      <option value="America/Santo_Domingo">Santo Domingo</option>
-                      <option value="America/Caracas">Caracas</option>
-                      <option value="America/Santiago">Santiago de Chile</option>
-                      <option value="America/Argentina/Buenos_Aires">Buenos Aires</option>
-                      <option value="Europe/Madrid">Madrid</option>
-                    </select>
-                    <svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+              <div class="start-fold" data-fold="call">
+                <div class="start-fold-in">
+                  <div class="start-call" data-start-call>
+                    <fieldset class="question" id="start-slot">
+                      <legend class="question-label">¿Cuándo te viene mejor?</legend>
+                      <div class="choices">
+                        <label class="choice"><input type="radio" name="slot" value="morning"><span class="choice-mark" aria-hidden="true"></span>
+                          <span class="choice-text"><span class="choice-name">Por la mañana</span></span></label>
+                        <label class="choice"><input type="radio" name="slot" value="afternoon"><span class="choice-mark" aria-hidden="true"></span>
+                          <span class="choice-text"><span class="choice-name">Por la tarde</span></span></label>
+                      </div>
+                    </fieldset>
+                    <div class="form-field">
+                      <label for="start-tz">Tu zona horaria</label>
+                      <div class="select start-select">
+                        <select id="start-tz" name="tz" data-start-zone>
+                          <option value="">Elige tu zona horaria</option>
+                          <option value="America/New_York">Este de EE. UU. (Nueva York)</option>
+                          <option value="America/Chicago">Centro de EE. UU. (Chicago)</option>
+                          <option value="America/Denver">Montaña de EE. UU. (Denver)</option>
+                          <option value="America/Phoenix">Arizona</option>
+                          <option value="America/Los_Angeles">Pacífico de EE. UU. (Los Ángeles)</option>
+                          <option value="America/Anchorage">Alaska</option>
+                          <option value="Pacific/Honolulu">Hawái</option>
+                          <option value="America/Puerto_Rico">Atlántico (Puerto Rico)</option>
+                          <option value="America/Mexico_City">Ciudad de México</option>
+                          <option value="America/Tegucigalpa">Centroamérica</option>
+                          <option value="America/Bogota">Bogotá, Lima y Quito</option>
+                          <option value="America/Santo_Domingo">Santo Domingo</option>
+                          <option value="America/Caracas">Caracas</option>
+                          <option value="America/Santiago">Santiago de Chile</option>
+                          <option value="America/Argentina/Buenos_Aires">Buenos Aires</option>
+                          <option value="Europe/Madrid">Madrid</option>
+                        </select>
+                        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -789,7 +858,7 @@
                   </div>
                 </div>
               </div>
-              <div class="start-estimate" data-start-estimate aria-live="polite" hidden></div>
+              <div class="start-estimate" data-start-estimate hidden></div>
             </div>
             <div class="form-trap" aria-hidden="true">
               <label for="start-website">Deja esto vacío</label>
@@ -798,9 +867,9 @@
             <div class="start-nav">
               <button class="btn btn-ghost start-back" type="button" data-start-back>Atrás</button>
               <button class="btn btn-primary start-next" type="button" data-start-next>Continuar<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></button>
-              <button class="send" type="submit">Enviar</button>
+              <button class="send" type="submit">Enviar solicitud</button>
             </div>
-            <p class="form-note">Solo usaré tus datos para responderte. <a href="/es/privacidad/">Política de privacidad</a></p>
+            <p class="form-note">Enviar tu solicitud es gratis y no te compromete a nada. Solo usaré tus datos para responderte. <a href="/es/privacidad/">Política de privacidad</a></p>
             <p class="form-status" role="status" aria-live="polite" data-form-status></p>
           </form>
         </div>
