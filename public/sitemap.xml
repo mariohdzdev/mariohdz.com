@@ -29,6 +29,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mariohdz.com/pricing/"/>
   </url>
   <url>
+    <loc>https://mariohdz.com/start/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mariohdz.com/start/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mariohdz.com/es/empezar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mariohdz.com/start/"/>
+  </url>
+  <url>
+    <loc>https://mariohdz.com/es/empezar/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mariohdz.com/start/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mariohdz.com/es/empezar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mariohdz.com/start/"/>
+  </url>
+  <url>
     <loc>https://mariohdz.com/services/web-domains-email/</loc>
     <lastmod>2026-11-07</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://mariohdz.com/services/web-domains-email/"/>

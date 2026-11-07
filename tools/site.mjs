@@ -212,10 +212,23 @@ export const PROJECTS = {
   },
 };
 
+// Prices that sit outside the projects above, as the prices page lists them. The guided form at /start/ adds
+// them up for its estimate, so a change here needs the same change on the prices pages, in English and Spanish.
+export const PRICES = {
+  checkUp: 300,
+  extraPage: 375,
+  upToFivePages: 1500,
+  secondLanguage: { onePage: 300, upToFive: 600 },
+  mapsListing: 150,
+  extraMailbox: 50,
+  includedMailboxes: 5,
+};
+
 // The words of the header, the menus and the footer. Anchors are the ids of the home page's sections.
 export const WORDS = {
   en: {
     home: "/",
+    start: "/start/",
     prices: "/pricing/",
     privacy: "/privacy/",
     legal: "/legal/",
@@ -243,6 +256,7 @@ export const WORDS = {
   },
   es: {
     home: "/es/",
+    start: "/es/empezar/",
     prices: "/es/precios/",
     privacy: "/es/privacidad/",
     legal: "/es/aviso-legal/",

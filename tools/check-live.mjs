@@ -1,6 +1,6 @@
 // Checks the live site right after a deploy: every file in public/ is the one from this commit, the headers
 // in public/_headers are sent, missing pages and old addresses answer as they should, the MTA-STS policy is
-// served, and the contact form's API turns down an empty form, which sends nothing.
+// served, and both forms' APIs turn down an empty form, which sends nothing.
 // Run it from the root of the repository: node tools/check-live.mjs
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -74,12 +74,14 @@ for (const [from, to] of [
 const policyRoot = await get("https://mta-sts.mariohdz.com/");
 check(policyRoot.status === 404, `https://mta-sts.mariohdz.com/ answered ${status(policyRoot)}, not 404`);
 
-// The contact form's API only takes POST, and an empty form is turned down before anything is sent.
-const wrongMethod = await get(`${SITE}/api/contact`);
-check(wrongMethod.status === 405 && wrongMethod.headers.get("Allow") === "POST", `GET /api/contact answered ${status(wrongMethod)}, not 405`);
-const empty = await get(`${SITE}/api/contact`, { method: "POST", body: new FormData(), headers: { Accept: "application/json" } });
-const answer = await empty.json().catch(() => ({}));
-check(empty.status === 400 && answer.ok === false && answer.message, `an empty form got ${status(empty)} ${JSON.stringify(answer)}, not 400`);
+// Both forms' APIs only take POST, and an empty form is turned down before anything is sent.
+for (const api of ["/api/contact", "/api/start"]) {
+  const wrongMethod = await get(`${SITE}${api}`);
+  check(wrongMethod.status === 405 && wrongMethod.headers.get("Allow") === "POST", `GET ${api} answered ${status(wrongMethod)}, not 405`);
+  const empty = await get(`${SITE}${api}`, { method: "POST", body: new FormData(), headers: { Accept: "application/json" } });
+  const answer = await empty.json().catch(() => ({}));
+  check(empty.status === 400 && answer.ok === false && answer.message, `an empty form to ${api} got ${status(empty)} ${JSON.stringify(answer)}, not 400`);
+}
 
 if (problems.length) {
   for (const problem of problems) console.error(`::error::${problem}`);

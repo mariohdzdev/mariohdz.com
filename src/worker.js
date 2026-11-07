@@ -1,5 +1,8 @@
-// Serves the site and sends the contact form to my inbox.
-// Everything except /api/contact is a static file from public/.
+// Serves the site and sends its two forms to my inbox: the short contact form at the end of each page,
+// and the guided form at /start/ and /es/empezar/, whose questions live in src/start.mjs.
+// Everything except /api/contact and /api/start is a static file from public/.
+
+import { clean, readStart, reference, startEmail } from "./start.mjs";
 
 const INBOX = "contact@mariohdz.com";
 // Automatic mail goes out from a subdomain, so it never touches the reputation or the DMARC record of my own inbox.
@@ -7,7 +10,10 @@ const SENDER = { email: "form@notify.mariohdz.com", name: "mariohdz.com" };
 const LIMITS = { name: 100, email: 254, message: 5000 };
 // A full form is a few kilobytes, and stays well under this even when every character is percent-encoded.
 const MAX_BODY = 64 * 1024;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// An address as people really have them: a name without spaces or stray dots, @, and a domain that ends in a
+// real-looking ending (.com, .es, .co.uk…). public/main.js uses the same pattern, so the pages never accept
+// an address the Worker would turn away.
+const EMAIL_PATTERN = /^(?!\.)(?!.*\.\.)[\p{L}\p{N}.!#$%&'*+/=?^_`{|}~-]{1,64}(?<!\.)@(?=.{4,253}$)(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\.)+(?:\p{L}{2,63}|xn--[a-z0-9-]{1,59})$/iu;
 // What the topic menu on the form sends, and how each one reads in my inbox.
 const TOPICS = {
   website: "Website",
@@ -37,12 +43,15 @@ const TEXT = {
     name: "Please add your name.",
     longName: "Please use a shorter name.",
     email: "Please check your email address.",
+    noMail: "That address doesn’t seem able to receive email. Please check it.",
     message: "Please tell me what you need.",
     longMessage: "Please keep your message under 5,000 characters.",
     busy: "Too many messages came from your connection just now. Please wait a minute and try again, or write to contact@mariohdz.com.",
     failed: "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.",
     sentTitle: "Message sent",
     sentText: "Thanks for writing. I’ll reply to the email address you left within one business day.",
+    reference: (ref) => `Your reference is ${ref}.`,
+    project: "Please choose at least one, or “Not sure yet”.",
     errorTitle: "Not sent yet",
     goBack: "Go back and check the form.",
     home: "Back to the site",
@@ -54,12 +63,15 @@ const TEXT = {
     name: "Escribe tu nombre.",
     longName: "Usa un nombre más corto.",
     email: "Revisa tu dirección de correo.",
+    noMail: "Esa dirección no parece poder recibir correo. Revísala.",
     message: "Cuéntame qué necesitas.",
     longMessage: "El mensaje no puede pasar de 5000 caracteres.",
     busy: "Llegaron demasiados mensajes desde tu conexión hace un momento. Espera un minuto y vuelve a intentarlo, o escríbeme a contact@mariohdz.com.",
     failed: "No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme a contact@mariohdz.com.",
     sentTitle: "Mensaje enviado",
     sentText: "Gracias por escribir. Te responderé en un día laborable a la dirección que dejaste.",
+    reference: (ref) => `Tu referencia es ${ref}.`,
+    project: "Elige al menos una opción, o «Aún no lo sé».",
     errorTitle: "Aún no se ha enviado",
     goBack: "Vuelve atrás y revisa el formulario.",
     home: "Volver al sitio",
@@ -71,71 +83,87 @@ const TEXT = {
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
-    if (pathname === "/api/contact") {
+    const handler = { "/api/contact": handleContact, "/api/start": handleStart }[pathname];
+    if (handler) {
       if (request.method !== "POST") {
         return new Response("Method not allowed", { status: 405, headers: { Allow: "POST" } });
       }
-      return handleContact(request, env);
+      return handler(request, env);
     }
     return env.ASSETS.fetch(request);
   },
 };
 
-async function handleContact(request, env) {
+// What both forms share before their own fields are read: the rate limit, the size limit and the parsing.
+// Returns the form and the language to answer in, or the answer to send back straight away.
+async function receive(request, env, name) {
   // The page sends the form with fetch and asks for JSON; without JavaScript the browser posts it as a normal form.
   const wantsJson = (request.headers.get("Accept") || "").includes("application/json");
   // Until the form is read, the page it was sent from says which language to answer in.
   let lang = refererLang(request);
-  const reply = (status, message) => respond(wantsJson, lang, status, message);
+  const early = (status, message, outcome, level) => {
+    log(name, outcome, { lang }, level);
+    return { response: respond(wantsJson, lang, status, message) };
+  };
 
+  // Generous, because offices and mobile networks put many people behind one IP address.
+  const { success } = await env.CONTACT_LIMIT.limit({ key: request.headers.get("CF-Connecting-IP") || "unknown" });
+  if (!success) return early(429, TEXT[lang].busy, "limited", "warn");
+
+  const body = await readBody(request);
+  if (!body) return early(413, TEXT[lang].longMessage, "too_large", "warn");
+
+  let form;
   try {
-    // Generous, because offices and mobile networks put many people behind one IP address.
-    const { success } = await env.CONTACT_LIMIT.limit({ key: request.headers.get("CF-Connecting-IP") || "unknown" });
-    if (!success) {
-      log("limited", { lang }, "warn");
-      return reply(429, TEXT[lang].busy);
-    }
+    const type = request.headers.get("Content-Type") || "";
+    form = await new Response(body, { headers: { "Content-Type": type } }).formData();
+  } catch {
+    return early(400, TEXT[lang].unreadable, "unreadable");
+  }
 
-    const body = await readBody(request);
-    if (!body) {
-      log("too_large", { lang }, "warn");
-      return reply(413, TEXT[lang].longMessage);
-    }
+  const chosen = form.get("lang");
+  if (chosen === "en" || chosen === "es") lang = chosen;
+  // Bots fill in the hidden field; people never see it. A browser or password manager could still fill it in
+  // for someone, so the message isn't dropped: it arrives marked as possible spam, for me to judge.
+  const flagged = clean(form.get("website")) !== "";
+  return { form, lang, flagged, wantsJson };
+}
 
-    let form;
-    try {
-      const type = request.headers.get("Content-Type") || "";
-      form = await new Response(body, { headers: { "Content-Type": type } }).formData();
-    } catch {
-      log("unreadable", { lang });
-      return reply(400, TEXT[lang].unreadable);
-    }
+// The name, the address and the message, as both forms ask for them. Returns the field to fix, if any.
+async function person(form, text, messageRequired) {
+  const name = clean(form.get("name")).replace(/\s+/g, " ");
+  const email = clean(form.get("email"));
+  const message = clean(form.get("message"));
+  if (!name) return { field: "name", problem: text.name };
+  if (name.length > LIMITS.name) return { field: "name", problem: text.longName };
+  if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) return { field: "email", problem: text.email };
+  if (!(await receivesMail(email.slice(email.lastIndexOf("@") + 1)))) return { field: "email", problem: text.noMail };
+  if (messageRequired && !message) return { field: "message", problem: text.message };
+  if (message.length > LIMITS.message) return { field: "message", problem: text.longMessage };
+  return { name, email, message };
+}
 
-    const chosen = form.get("lang");
-    if (chosen === "en" || chosen === "es") lang = chosen;
+async function handleContact(request, env) {
+  let lang = refererLang(request);
+  try {
+    const received = await receive(request, env, "contact");
+    if (received.response) return received.response;
+    const { form, flagged, wantsJson } = received;
+    lang = received.lang;
     const text = TEXT[lang];
+    const reply = (status, message) => respond(wantsJson, lang, status, message);
 
-    // Bots fill in the hidden field; people never see it. A browser or password manager could still fill it in
-    // for someone, so the message isn't dropped: it arrives marked as possible spam, for me to judge.
-    const flagged = clean(form.get("website")) !== "";
-
-    const name = clean(form.get("name")).replace(/\s+/g, " ");
-    const email = clean(form.get("email"));
-    const message = clean(form.get("message"));
     const topicKey = clean(form.get("topic"));
     const topic = Object.hasOwn(TOPICS, topicKey) ? TOPICS[topicKey] : "";
     const projectKey = clean(form.get("project"));
     const project = Object.hasOwn(PROJECTS, projectKey) ? PROJECTS[projectKey] : "";
 
-    const invalid = (field, problem) => {
-      log("invalid", { lang, field, flagged });
-      return reply(400, problem);
-    };
-    if (!name) return invalid("name", text.name);
-    if (name.length > LIMITS.name) return invalid("name", text.longName);
-    if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) return invalid("email", text.email);
-    if (!message) return invalid("message", text.message);
-    if (message.length > LIMITS.message) return invalid("message", text.longMessage);
+    const sender = await person(form, text, true);
+    if (sender.field) {
+      log("contact", "invalid", { lang, field: sender.field, flagged });
+      return respond(wantsJson, lang, 400, sender.problem, { field: sender.field });
+    }
+    const { name, email, message } = sender;
 
     const details = [`${name} <${email}>`];
     if (project) details.push(`Project: ${project}`);
@@ -154,23 +182,107 @@ async function handleContact(request, env) {
         subject,
         text: `${message}\n\n-- \n${details.join("\n")}`,
       });
-      log("sent", { lang, topic: topic ? topicKey : null, project: project ? projectKey : null, flagged, messageId: sent?.messageId ?? null });
+      log("contact", "sent", { lang, topic: topic ? topicKey : null, project: project ? projectKey : null, flagged, messageId: sent?.messageId ?? null });
     } catch (error) {
-      log("failed", { lang, flagged, code: error?.code ?? null, error: error?.message ?? String(error) }, "error");
+      log("contact", "failed", { lang, flagged, code: error?.code ?? null, error: error?.message ?? String(error) }, "error");
       return reply(502, text.failed);
     }
 
     return reply(200);
   } catch (error) {
     // Anything unexpected still gets an answer, and a line in the logs.
-    log("error", { lang, error: String(error?.stack || error) }, "error");
-    return reply(500, TEXT[lang].failed);
+    log("contact", "error", { lang, error: String(error?.stack || error) }, "error");
+    return respond((request.headers.get("Accept") || "").includes("application/json"), lang, 500, TEXT[lang].failed);
+  }
+}
+
+// The guided form: the answers are read against src/start.mjs, and the message to my inbox says at a glance
+// what kind of client wrote, what they already have and what to do next.
+async function handleStart(request, env) {
+  let lang = refererLang(request);
+  try {
+    const received = await receive(request, env, "start");
+    if (received.response) return received.response;
+    const { form, flagged, wantsJson } = received;
+    lang = received.lang;
+    const text = TEXT[lang];
+    const reply = (status, message, extra) => respond(wantsJson, lang, status, message, extra);
+
+    const data = readStart(form);
+    if (!data) {
+      log("start", "invalid", { lang, field: "project", flagged });
+      return reply(400, text.project);
+    }
+    const sender = await person(form, text, false);
+    if (sender.field) {
+      log("start", "invalid", { lang, field: sender.field, projects: data.projects, flagged });
+      return reply(400, sender.problem, { field: sender.field });
+    }
+    const { name, email, message } = sender;
+    const business = clean(form.get("business")).replace(/\s+/g, " ").slice(0, LIMITS.name);
+    const ref = reference();
+    const mail = startEmail(data, { name, email, business, message, lang, ref, flagged });
+
+    try {
+      const sent = await env.EMAIL.send({
+        from: SENDER,
+        to: INBOX,
+        replyTo: { email, name },
+        subject: mail.subject,
+        text: mail.text,
+        html: mail.html,
+      });
+      log("start", "sent", { lang, projects: data.projects, type: mail.type, flagged, messageId: sent?.messageId ?? null });
+    } catch (error) {
+      log("start", "failed", { lang, projects: data.projects, flagged, code: error?.code ?? null, error: error?.message ?? String(error) }, "error");
+      return reply(502, text.failed);
+    }
+
+    return reply(200, null, { ref });
+  } catch (error) {
+    log("start", "error", { lang, error: String(error?.stack || error) }, "error");
+    return respond((request.headers.get("Accept") || "").includes("application/json"), lang, 500, TEXT[lang].failed);
+  }
+}
+
+// Whether an address's domain can receive mail at all: it names mail servers (MX) or, failing that, has an
+// address of its own (A or AAAA), and it doesn't say it takes no mail (a "null MX"). Only the domain is asked
+// about, of Cloudflare's public resolver. When the resolver can't answer, the address isn't held up.
+async function receivesMail(domain) {
+  let name;
+  try {
+    name = new URL(`http://${domain}`).hostname;
+  } catch {
+    return false;
+  }
+  const ask = async (type) => {
+    const response = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`, {
+      headers: { Accept: "application/dns-json" },
+      signal: AbortSignal.timeout(2500),
+    });
+    if (!response.ok) throw new Error(`DNS answered ${response.status}`);
+    return response.json();
+  };
+  try {
+    const mx = await ask("MX");
+    // 3 is NXDOMAIN: the domain doesn't exist. Any other failure leaves the address alone.
+    if (mx.Status === 3) return false;
+    if (mx.Status !== 0) return true;
+    const servers = (mx.Answer ?? []).filter((record) => record.type === 15);
+    if (servers.length) return !servers.every((record) => /^0\s+\.?$/.test(String(record.data).trim()));
+    for (const [type, code] of [["A", 1], ["AAAA", 28]]) {
+      const answer = await ask(type);
+      if ((answer.Answer ?? []).some((record) => record.type === code)) return true;
+    }
+    return false;
+  } catch {
+    return true;
   }
 }
 
 // One line per submission in Workers Logs, kept for seven days: what happened, never who wrote or what they said.
-function log(outcome, details, level = "log") {
-  console[level]({ form: "contact", outcome, ...details });
+function log(form, outcome, details, level = "log") {
+  console[level]({ form, outcome, ...details });
 }
 
 function refererLang(request) {
@@ -200,31 +312,23 @@ async function readBody(request) {
   }
 }
 
-// Trims the value and drops control characters, keeping line breaks in the message.
-function clean(value) {
-  return String(value ?? "")
-    .replace(/\r\n?/g, "\n")
-    .replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, "")
-    .trim();
+function respond(wantsJson, lang, status, message, extra = {}) {
+  return wantsJson ? jsonReply(status, message, extra) : pageReply(status, message, lang, extra);
 }
 
-function respond(wantsJson, lang, status, message) {
-  return wantsJson ? jsonReply(status, message) : pageReply(status, message, lang);
-}
-
-function jsonReply(status, message) {
-  const body = status === 200 ? { ok: true } : { ok: false, message };
+function jsonReply(status, message, extra) {
+  const body = status === 200 ? { ok: true, ...extra } : { ok: false, message, ...extra };
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 }
 
 // A plain page for browsers without JavaScript, styled by the site's own stylesheet.
-function pageReply(status, message, lang) {
+function pageReply(status, message, lang, extra) {
   const text = TEXT[lang];
   const sent = status === 200;
   const title = sent ? text.sentTitle : text.errorTitle;
   // Only a problem with the form itself sends the visitor back to it; the other messages say what to do.
   const fixable = status === 400 || status === 413;
-  const body = sent ? text.sentText : fixable ? `${message} ${text.goBack}` : message;
+  const body = sent ? `${text.sentText}${extra.ref ? ` ${text.reference(extra.ref)}` : ""}` : fixable ? `${message} ${text.goBack}` : message;
   const html = `<!doctype html>
 <html lang="${lang}">
 <head>

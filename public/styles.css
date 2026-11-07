@@ -2502,6 +2502,40 @@ a:hover > .arrow-right {
   animation: settle 0.35s var(--ease);
 }
 
+/* When an address looks mistyped, the likely one sits under it, ready to take with a click. */
+.field-suggest {
+  grid-row: 3;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.field-suggest button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--green);
+  font: 500 0.8125rem/1.4 var(--sans);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.field-suggest button:hover {
+  text-decoration-color: var(--green);
+}
+
+/* Under a note that the address can't receive mail, the likely fix is the next thing to read. */
+.form-field:has(.field-error) > .field-suggest {
+  grid-row: 4;
+}
+
+.motion .field-suggest {
+  animation: settle 0.35s var(--ease);
+}
+
 @keyframes settle {
   from {
     opacity: 0;
@@ -2947,6 +2981,764 @@ a:hover > .arrow-right {
 
   .form {
     padding: 2.25rem;
+  }
+}
+
+/* Under the contact text, the way into the guided form for those who'd rather answer a few questions. */
+.contact-guide {
+  margin: -1.25rem 0 2rem;
+}
+
+.contact-guide {
+  text-wrap: pretty;
+}
+
+/* Inline, so the arrow follows the last word when the line wraps. */
+.contact-guide .arrow-right {
+  display: inline-block;
+  margin-left: 0.45rem;
+  vertical-align: -0.05em;
+}
+
+.contact-guide a {
+  color: var(--green);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.2s;
+}
+
+.contact-guide a:hover {
+  text-decoration-color: var(--green);
+}
+
+/* Start a project: the guided form, on a band over the glyphs like Contact. On desktops the steps and what
+   to expect sit on the left and the glass panel on the right; public/start.js shows one step at a time.
+   Without JavaScript every step shows, one after another, and the form still sends. */
+
+.start {
+  padding-bottom: var(--space);
+}
+
+.start-inner {
+  gap: clamp(2.25rem, 5vh, 3.5rem);
+}
+
+.start-head {
+  display: grid;
+  gap: clamp(1.25rem, 3vh, 1.75rem);
+}
+
+.start-head .eyebrow {
+  margin: 0;
+}
+
+.start-main {
+  display: grid;
+  gap: 2.5rem;
+}
+
+/* Phones and tablets: the form first, what to expect after it. */
+.start-aside {
+  order: 1;
+}
+
+.start-progress {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.start-progress button {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.85rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  background: none;
+  color: var(--faint);
+  font: 500 0.9375rem/1.4 var(--sans);
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.start-progress button:disabled {
+  cursor: default;
+}
+
+.start-progress button:not(:disabled):hover,
+.start-progress [data-state="current"] button {
+  color: var(--text);
+}
+
+.start-progress [data-state="done"] button {
+  color: var(--muted);
+}
+
+.start-progress-num {
+  color: var(--label);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.start-progress :is([data-state="current"], [data-state="done"]) .start-progress-num {
+  color: var(--green);
+}
+
+/* A step behind is ticked with the same fine jade check as the chosen topic in the contact form. */
+.start-progress [data-state="done"] button::after {
+  content: "";
+  width: 0.4rem;
+  height: 0.75rem;
+  margin: 0 0.3rem 0 auto;
+  border: solid var(--green);
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-0.1rem) rotate(45deg);
+}
+
+.form.start-form {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-content: start;
+}
+
+.start-form [hidden] {
+  display: none !important;
+}
+
+.start-form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Where the visitor is, on phones and tablets: the step and a fine jade line that fills as it goes. */
+.start-top {
+  display: none;
+  gap: 0.65rem;
+}
+
+.js .start-top {
+  display: grid;
+}
+
+.start-count {
+  margin: 0;
+  color: var(--label);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.start-line {
+  display: block;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--rule);
+}
+
+.start-line > span {
+  display: block;
+  height: 100%;
+  background: var(--jade-line);
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease);
+}
+
+.start-step,
+.start-part,
+.start-kind,
+.start-common,
+.start-call {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* With several projects, step 2 asks for each thing once, under its own heading. */
+.start-have {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.start-q {
+  margin: 0;
+  font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+/* The question takes focus when its step opens, so screen readers announce it; it shows no ring. */
+.start-q:focus {
+  outline: none;
+}
+
+.start-note {
+  margin: -0.65rem 0 0.25rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* The heading of each part a project adds: a short label with the platinum bar of the site's labels. */
+.start-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0;
+  color: var(--label);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.start-sub::before {
+  content: "";
+  flex: none;
+  width: 1rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--metal-lo), var(--metal-hi) 50%, var(--metal));
+}
+
+/* Step 1: the projects by service, each group under its platinum plate, like the menus. */
+.start-group {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.start-group + .start-group {
+  margin-top: 0.5rem;
+}
+
+.start-group-name {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+  color: var(--label);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.start-group-name .area-icon {
+  min-width: 2.2rem;
+  height: 1.8rem;
+  padding: 0 0.4rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* A choice is a row in the colours of the fields. Chosen, it takes a jade edge and a faint jade tint,
+   and its mark fills with jade metal. */
+.choices {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* One answer per row on narrow panels. As the panel widens, pairs and many-answer lists go two by two,
+   and three answers line up in three columns, so no choice is ever left alone on a row. */
+.question .choices {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container (min-width: 24rem) {
+  .question .choices-many {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 30rem) {
+  .question .choices:is(:has(> :last-child:nth-child(2)), :has(> :last-child:nth-child(4))) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 36rem) {
+  .question .choices:has(> :last-child:nth-child(3)) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.choice {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 3rem;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid var(--field-line);
+  border-radius: 0.75rem;
+  background: var(--field);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.choice:hover {
+  border-color: var(--faint);
+}
+
+/* The real control covers its row, so the whole row answers a click or a tap, and keyboards reach it as usual. */
+.choice input,
+.tri-options input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.choice-mark {
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: 50%;
+  transition: border-color 0.2s;
+}
+
+.choice-mark::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--jade-fill);
+  transform: scale(0);
+  transition: transform 0.25s var(--ease);
+}
+
+.choice:has(input[type="checkbox"]) .choice-mark {
+  border-radius: 0.3rem;
+}
+
+.choice:has(input[type="checkbox"]) .choice-mark::after {
+  width: 0.3rem;
+  height: 0.58rem;
+  border: solid var(--on-accent);
+  border-width: 0 1.5px 1.5px 0;
+  border-radius: 0;
+  background: none;
+  transform: translateY(-0.05rem) rotate(45deg) scale(0);
+}
+
+.choice:has(input:checked) {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: color-mix(in srgb, var(--green) 7%, var(--field));
+}
+
+.choice:has(input:checked) .choice-mark {
+  border-color: var(--accent);
+}
+
+.choice:has(input[type="radio"]:checked) .choice-mark::after {
+  transform: scale(1);
+}
+
+.choice:has(input[type="checkbox"]:checked) .choice-mark {
+  border: 1px solid transparent;
+  background: var(--jade-fill) padding-box, var(--jade-edge) border-box;
+}
+
+.choice:has(input[type="checkbox"]:checked) .choice-mark::after {
+  transform: translateY(-0.05rem) rotate(45deg) scale(1);
+}
+
+/* A project already part of another one chosen waits, greyed, with a line that says so. */
+.choice:has(input:disabled) {
+  border-style: dashed;
+  background: transparent;
+  cursor: default;
+}
+
+.choice:has(input:disabled) :is(.choice-name, .choice-price, .choice-mark) {
+  opacity: 0.45;
+}
+
+.choice:has(input:disabled) input {
+  cursor: default;
+}
+
+.choice:has(input:focus-visible),
+.tri-options label:has(input:focus-visible) {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
+}
+
+.choice-text {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.choice-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.choice-sub {
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.choice-price {
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.choice-price span {
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.choice-price-plan {
+  max-width: 8rem;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  white-space: normal;
+}
+
+.choice:has(input:checked) .choice-price {
+  color: var(--text);
+}
+
+/* On the narrowest phones the price goes under the project's name, so neither gets squeezed. */
+@media (max-width: 24rem) {
+  .choice-project {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .choice-project .choice-price {
+    grid-column: 2;
+    max-width: none;
+    text-align: left;
+  }
+}
+
+/* Step 2: each thing on its own line, answered yes, no or not sure on one control. The answer chosen
+   wears the jade metal of the buttons. */
+.tri-list {
+  border-top: 1px solid var(--rule);
+}
+
+.tri {
+  display: grid;
+  gap: 0.65rem;
+  padding-block: 0.95rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.tri-q {
+  display: grid;
+  gap: 0.1rem;
+  margin: 0;
+}
+
+.tri-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.tri-hint {
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.tri-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  max-width: 19rem;
+  padding: 0.2rem;
+  border: 1px solid var(--field-line);
+  border-radius: 999px;
+  background: var(--field);
+}
+
+.tri-options label {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.6rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tri-options label:hover {
+  color: var(--text);
+}
+
+.tri-options label:has(input:checked) {
+  background: var(--jade-fill) padding-box, var(--jade-edge) border-box;
+  box-shadow: var(--bevel);
+  color: var(--on-accent);
+}
+
+/* Side by side only when the panel itself is wide enough, whatever the screen: on desktops it shares the width. */
+.start-form {
+  container-type: inline-size;
+}
+
+@container (min-width: 34rem) {
+  .tri {
+    grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+    align-items: center;
+    column-gap: 1.5rem;
+  }
+}
+
+/* A question with choices: its label above, like the fields' labels. */
+.question {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.question-label {
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.question-hint {
+  margin: -0.3rem 0 0.1rem;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.field-hint {
+  grid-row: 3;
+  margin: 0;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.form-field:has(.field-hint) > .field-error {
+  grid-row: 4;
+}
+
+.start-count-field input {
+  max-width: 8rem;
+}
+
+/* The lists of the guided form keep plain rows: their answers have no signs to show. */
+.start-select option::before {
+  content: none;
+  display: none;
+}
+
+/* Only when a call is chosen: when suits and the time zone, set apart in a quiet box. */
+.start-call {
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.95rem;
+}
+
+.start-you {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.start-form textarea {
+  min-height: 6.5rem;
+}
+
+@media (min-width: 40rem) {
+  .start-you {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* "Not sure yet": where to start, as soon as one worry is chosen. */
+.start-suggest {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.95rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--green) 6%, var(--field));
+}
+
+.start-suggest-label,
+.start-estimate-label {
+  margin: 0;
+  color: var(--label);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.start-suggest-name {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* The estimate, framed in polished platinum like the lit tiles: where it starts, what each extra adds
+   and the promise that the fixed price comes in the plan. */
+.start-estimate {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(180deg, var(--tile-top), var(--tile-bottom)) padding-box,
+    linear-gradient(135deg, var(--metal-hi), var(--metal-lo) 30%, var(--metal) 55%, var(--metal-lo) 80%, var(--metal-hi)) border-box;
+}
+
+.start-estimate-total {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.start-estimate-total span {
+  color: var(--faint);
+  font-size: 0.55em;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.start-estimate-lines {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.start-estimate-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A project's extras sit under it, set in a little. */
+.start-estimate-lines li.is-extra {
+  padding-left: 0.9rem;
+  color: var(--faint);
+}
+
+.start-estimate-note {
+  margin: 0.25rem 0 0;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* Back on the left, the way forward on the right. Without JavaScript only the send button shows. */
+.start-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.start-back,
+.start-next {
+  display: none;
+}
+
+.js .start-back,
+.js .start-next {
+  display: inline-flex;
+}
+
+.js .start-nav .send,
+.start-next {
+  width: auto;
+  margin-left: auto;
+}
+
+/* Sent: the panel shrinks to the confirmation, with the reference under it. */
+.start-form[data-state="sent"] > :not(.form-done) {
+  display: none;
+}
+
+.start-form .form-done {
+  position: static;
+  padding: 1.5rem 0;
+}
+
+.start-done .form-done-text {
+  margin-bottom: 0.4rem;
+}
+
+.start-done-ref {
+  margin: 0.6rem 0 1.75rem;
+  color: var(--faint);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 64rem) {
+  .start-main {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .start-aside {
+    position: sticky;
+    top: calc(var(--head) + 2rem);
+    order: 0;
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .js .start-progress {
+    display: block;
+  }
+
+  .js .start-top {
+    display: none;
   }
 }
 

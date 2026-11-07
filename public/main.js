@@ -23,6 +23,7 @@ const TEXT = spanish
         message: "Cuéntame qué necesitas.",
       },
       failed: "No se pudo enviar tu mensaje. Inténtalo de nuevo o escríbeme a contact@mariohdz.com.",
+      didYouMean: "¿Quisiste decir",
       toLight: "Cambiar al tema claro",
       toDark: "Cambiar al tema oscuro",
     }
@@ -40,6 +41,7 @@ const TEXT = spanish
         message: "Please tell me what you need.",
       },
       failed: "Your message couldn’t be sent. Please try again, or write to contact@mariohdz.com.",
+      didYouMean: "Did you mean",
       toLight: "Switch to light theme",
       toDark: "Switch to dark theme",
     };
@@ -851,8 +853,86 @@ document.querySelectorAll("[data-copy]").forEach((chip, index) => {
    Without JavaScript the browser checks the fields and posts the form normally. */
 
 const contactForm = document.querySelector("[data-contact]");
-// The same check the Worker makes, so an address is never accepted here and turned away there.
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// The same check the Worker makes, so an address is never accepted here and turned away there: a name without
+// spaces or stray dots, @, and a domain with a real-looking ending. public/start.js uses it too.
+const EMAIL_PATTERN = /^(?!\.)(?!.*\.\.)[\p{L}\p{N}.!#$%&'*+/=?^_`{|}~-]{1,64}(?<!\.)@(?=.{4,253}$)(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\.)+(?:\p{L}{2,63}|xn--[a-z0-9-]{1,59})$/iu;
+
+// The providers most people write from, and the endings most often mistyped, for a hint like "Did you mean
+// ana@gmail.com?". The hint never stops a message: the Worker checks that the domain can receive mail.
+const PROVIDERS = [
+  "gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "msn.com", "yahoo.com", "ymail.com",
+  "icloud.com", "me.com", "mac.com", "aol.com", "proton.me", "protonmail.com", "pm.me", "gmx.com", "mail.com",
+  "zoho.com", "comcast.net", "att.net", "verizon.net", "sbcglobal.net", "bellsouth.net", "cox.net", "charter.net",
+  "hotmail.es", "outlook.es", "yahoo.es", "live.com.mx", "hotmail.com.mx", "outlook.com.mx", "yahoo.com.mx",
+  "hotmail.com.ar", "live.com.ar", "yahoo.com.ar", "hotmail.cl", "live.cl", "outlook.cl", "hotmail.co",
+];
+const ENDINGS = { con: "com", cmo: "com", ocm: "com", vom: "com", xom: "com", cpm: "com", comm: "com", coom: "com", cim: "com", nte: "net", ner: "net", nett: "net", ogr: "org", orgg: "org" };
+
+// How many letters apart two words are, counting a swapped pair as one.
+function distance(a, b) {
+  const rows = Array.from({ length: a.length + 1 }, (_, i) => [i, ...new Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) rows[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      rows[i][j] = Math.min(rows[i - 1][j] + 1, rows[i][j - 1] + 1, rows[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) rows[i][j] = Math.min(rows[i][j], rows[i - 2][j - 2] + 1);
+    }
+  }
+  return rows[a.length][b.length];
+}
+
+// A likelier address when the provider or the ending looks mistyped, like gmial.com or .con; otherwise null.
+function emailSuggestion(value) {
+  const address = value.trim();
+  const at = address.lastIndexOf("@");
+  if (at < 1) return null;
+  const local = address.slice(0, at);
+  const domain = address.slice(at + 1).toLowerCase();
+  if (PROVIDERS.includes(domain)) return null;
+  // One letter off, or two with the same ending, so yahoo.fr isn't taken for yahoo.es.
+  const tld = (name) => name.slice(name.lastIndexOf(".") + 1);
+  if (domain.length >= 6) {
+    let best = null;
+    let gap = 3;
+    for (const provider of PROVIDERS) {
+      const apart = distance(domain, provider);
+      const close = apart === 1 || (apart === 2 && tld(provider) === tld(domain));
+      if (close && apart < gap) [best, gap] = [provider, apart];
+    }
+    if (best) return `${local}@${best}`;
+  }
+  const dot = domain.lastIndexOf(".");
+  const fixed = ENDINGS[tld(domain)];
+  return dot > 0 && fixed ? `${local}@${domain.slice(0, dot + 1)}${fixed}` : null;
+}
+
+// Under an address field, a one-click fix when the address looks mistyped. It goes away once fixed or changed.
+function offerEmailFix(input) {
+  const field = input.closest(".form-field");
+  let note = field.querySelector(".field-suggest");
+  const better = EMAIL_PATTERN.test(input.value.trim()) ? emailSuggestion(input.value) : null;
+  if (!better) {
+    note?.remove();
+    return;
+  }
+  if (!note) {
+    note = document.createElement("p");
+    note.className = "field-suggest";
+    note.setAttribute("aria-live", "polite");
+    field.append(note);
+  }
+  const fix = document.createElement("button");
+  fix.type = "button";
+  fix.textContent = better;
+  fix.addEventListener("click", () => {
+    input.value = better;
+    note.remove();
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.focus();
+  });
+  note.replaceChildren(`${TEXT.didYouMean} `, fix, "?");
+}
 
 // Once a message is on its way, the glyphs around the button light up in a wide burst behind the glass.
 function celebrate(element) {
@@ -939,15 +1019,16 @@ if (contactForm) {
   };
   const controls = [...contactForm.elements].filter((control) => Object.hasOwn(checks, control.name));
 
-  function check(control) {
+  // Puts a note under a field, or takes it away when there's nothing to say.
+  function flag(control, problem) {
     const field = control.closest(".form-field");
     let note = field.querySelector(".field-error");
-    if (checks[control.name](control.value)) {
+    if (!problem) {
       note?.remove();
       delete field.dataset.invalid;
       control.removeAttribute("aria-invalid");
       control.removeAttribute("aria-describedby");
-      return true;
+      return;
     }
     if (!note) {
       note = document.createElement("p");
@@ -955,11 +1036,16 @@ if (contactForm) {
       note.id = `${control.id}-error`;
       field.append(note);
     }
-    note.textContent = TEXT.missing[control.name];
+    note.textContent = problem;
     field.dataset.invalid = "";
     control.setAttribute("aria-invalid", "true");
     control.setAttribute("aria-describedby", note.id);
-    return false;
+  }
+
+  function check(control) {
+    const ok = checks[control.name](control.value);
+    flag(control, ok ? "" : TEXT.missing[control.name]);
+    return ok;
   }
 
   // A field that was flagged is checked again as it's corrected.
@@ -967,6 +1053,10 @@ if (contactForm) {
     const control = event.target;
     if (controls.includes(control) && control.closest(".form-field").dataset.invalid !== undefined) check(control);
   });
+
+  // A mistyped provider or ending gets a one-click fix under the address.
+  const address = contactForm.elements.email;
+  address?.addEventListener("change", () => offerEmailFix(address));
 
   // Once the message is on its way, a confirmation takes the place of the fields, and the title takes focus
   // so screen readers announce it.
@@ -1016,8 +1106,18 @@ if (contactForm) {
         headers: { Accept: "application/json" },
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.ok) throw new Error(result.message || TEXT.failed);
+      if (!response.ok || !result.ok) {
+        // A problem with one field, like an address that can't receive mail, is shown under that field.
+        const control = result.field ? contactForm.elements[result.field] : null;
+        if (control?.closest?.(".form-field") && result.message) {
+          flag(control, result.message);
+          control.focus();
+          return;
+        }
+        throw new Error(result.message || TEXT.failed);
+      }
       contactForm.reset();
+      contactForm.querySelector(".field-suggest")?.remove();
       resetProject();
       showTopic(false);
       fitMessage();
