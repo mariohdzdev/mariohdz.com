@@ -13,7 +13,6 @@ const TOPICS = {
   website: "Website",
   email: "Email and domain",
   ai: "AI and automation",
-  computers: "Computers and privacy",
   other: "Something else",
 };
 // What a card's "Start this project" button sends, and how each project reads in my inbox.
@@ -27,8 +26,6 @@ const PROJECTS = {
   "ai-assistant": "An AI assistant for your business",
   automation: "Automating a repetitive task",
   "private-ai": "Private AI on your own computer",
-  linux: "Moving a computer to Linux",
-  "secure-accounts": "Secure accounts for your team",
   "check-up": "Tech check-up",
   "care-plan": "Care plan",
 };

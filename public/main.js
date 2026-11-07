@@ -1,4 +1,4 @@
-// The glyph field, the silk threads, the decoding text, the header and the section index,
+// The glyph field, the silk threads, the decoding text, the header, its menus and the section index,
 // the copy button, the contact form and the theme toggle.
 
 const root = document.documentElement;
@@ -693,7 +693,9 @@ updateBar();
 /* Section index: the header links and the margin index follow the section being read */
 
 const spyLinks = [...document.querySelectorAll("[data-spy]")];
-const spied = [...new Set(spyLinks.map((link) => link.hash))]
+// Links name their section in their address; the button of the services panel names it in data-spy.
+const hashOf = (link) => link.hash || link.dataset.spy;
+const spied = [...new Set(spyLinks.map(hashOf))]
   .map((hash) => document.getElementById(hash.slice(1)))
   .filter(Boolean);
 
@@ -701,7 +703,7 @@ if (spied.length) {
   let current = "";
   const mark = () => {
     for (const link of spyLinks) {
-      if (link.hash === current) link.setAttribute("aria-current", "true");
+      if (hashOf(link) === current) link.setAttribute("aria-current", "true");
       else link.removeAttribute("aria-current");
     }
   };
@@ -719,14 +721,81 @@ if (spied.length) {
   spied.forEach((section) => spy.observe(section));
 }
 
-/* Services: what's included folds away on phones and stays open on wider screens */
+/* Menus: the services panel on desktops and the menu on phones and tablets. Both are details elements, so they open
+   and close without JavaScript. Here only one is open at a time, and Escape, a click outside or a link inside
+   closes it. While the menu covers the page, the page behind it stays still and out of reach of the keyboard. */
 
-const wideScreen = matchMedia("(min-width: 40rem)");
-const syncFolds = () => {
-  for (const details of document.querySelectorAll(".area-more")) details.open = wideScreen.matches;
-};
-wideScreen.addEventListener("change", syncFolds);
-syncFolds();
+const menus = [...document.querySelectorAll("details[data-menu]")];
+const behind = [document.querySelector("main"), document.querySelector(".foot")].filter(Boolean);
+const desktop = matchMedia("(min-width: 56rem)");
+
+function holdPage() {
+  const covered = menus.some((menu) => menu.open && menu.classList.contains("menu"));
+  root.classList.toggle("has-menu", covered);
+  for (const element of behind) element.inert = covered;
+}
+
+// The page is let go right away, not when the toggle event arrives, so a link to a section on the same page
+// can scroll to it.
+function close(menu) {
+  menu.open = false;
+  holdPage();
+}
+
+for (const menu of menus) {
+  const summary = menu.querySelector("summary");
+  menu.addEventListener("toggle", () => {
+    if (menu.open) for (const other of menus) if (other !== menu) other.open = false;
+    holdPage();
+  });
+  menu.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !menu.open) return;
+    close(menu);
+    summary.focus();
+  });
+  // A link inside closes the menu, so a section on the same page isn't left behind it.
+  menu.addEventListener("click", (event) => {
+    if (event.target.closest("a")) close(menu);
+  });
+  // The panel closes when the keyboard moves on past it, not when a click lands on its padding.
+  menu.addEventListener("focusout", (event) => {
+    if (menu.classList.contains("nav-services") && event.relatedTarget && !menu.contains(event.relatedTarget)) close(menu);
+  });
+}
+
+document.addEventListener("click", (event) => {
+  for (const menu of menus) if (menu.open && !menu.contains(event.target)) close(menu);
+});
+
+// Turning a tablet sideways can bring the desktop header, where the menu has no place.
+desktop.addEventListener("change", () => {
+  for (const menu of menus) close(menu);
+});
+
+// With a mouse, the services panel opens as the pointer rests on its button and closes soon after it leaves.
+// A click right after it opened that way keeps it open, instead of closing what the pointer just opened.
+const services = document.querySelector(".nav-services");
+if (services && finePointer) {
+  let timer = 0;
+  let openedAt = 0;
+  services.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "mouse") return;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (services.open) return;
+      services.open = true;
+      openedAt = performance.now();
+    }, 120);
+  });
+  services.addEventListener("pointerleave", (event) => {
+    if (event.pointerType !== "mouse") return;
+    clearTimeout(timer);
+    timer = setTimeout(() => (services.open = false), 260);
+  });
+  services.querySelector("summary").addEventListener("click", (event) => {
+    if (services.open && performance.now() - openedAt < 700) event.preventDefault();
+  });
+}
 
 /* Service cards: a card's icon resolves again on the way in */
 
@@ -966,14 +1035,14 @@ if (contactForm) {
 
 /* Theme */
 
-const toggle = document.querySelector("[data-theme-toggle]");
+const toggles = [...document.querySelectorAll("[data-theme-toggle]")];
 const themeMetas = [...document.querySelectorAll('meta[name="theme-color"]')];
 const themeDefaults = themeMetas.map((meta) => meta.content);
 const currentTheme = () => root.dataset.theme || (systemDark.matches ? "dark" : "light");
 
 function applyTheme(repaint = true) {
   const dark = currentTheme() === "dark";
-  toggle?.setAttribute("aria-label", dark ? TEXT.toLight : TEXT.toDark);
+  for (const toggle of toggles) toggle.setAttribute("aria-label", dark ? TEXT.toLight : TEXT.toDark);
   const background = getComputedStyle(root).getPropertyValue("--bg").trim();
   themeMetas.forEach((meta, i) => {
     meta.content = root.dataset.theme ? background : themeDefaults[i];
@@ -981,13 +1050,15 @@ function applyTheme(repaint = true) {
   if (repaint) [...fields, ...silks].forEach((field) => field.refresh());
 }
 
-toggle?.addEventListener("click", () => {
-  root.dataset.theme = currentTheme() === "dark" ? "light" : "dark";
-  try {
-    localStorage.setItem("theme", root.dataset.theme);
-  } catch {}
-  applyTheme();
-});
+for (const toggle of toggles) {
+  toggle.addEventListener("click", () => {
+    root.dataset.theme = currentTheme() === "dark" ? "light" : "dark";
+    try {
+      localStorage.setItem("theme", root.dataset.theme);
+    } catch {}
+    applyTheme();
+  });
+}
 
 systemDark.addEventListener("change", () => {
   if (!root.dataset.theme) applyTheme();

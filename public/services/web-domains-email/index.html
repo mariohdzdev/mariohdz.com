@@ -187,11 +187,36 @@
 <body id="top">
   <a class="skip" href="#main">Skip to content</a>
 
+  <!-- build:header -->
   <header class="bar">
     <div class="bar-inner">
       <a class="brand mono" href="/" data-shield>mariohdz<span>.com</span></a>
       <nav class="nav mono" aria-label="Main">
-        <a href="/#services" data-shield>Services</a>
+        <details class="nav-services" data-menu>
+          <summary data-shield>Services<svg class="chevron" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 3.75 5 6.25l2.5-2.5"/></svg></summary>
+          <div class="nav-panel">
+            <div class="menu-group">
+              <a class="menu-service" href="/services/web-domains-email/" aria-current="page"><span class="area-icon mono" aria-hidden="true">&lt;/&gt;</span><span>Web, domains and email</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <ul class="menu-projects">
+                <li><a href="/services/web-domains-email/launch-package/">Launch package</a></li>
+                <li><a href="/services/web-domains-email/business-website/">A website for your business</a></li>
+                <li><a href="/services/web-domains-email/one-page-website/">A one-page website</a></li>
+                <li><a href="/services/web-domains-email/business-email/">Business email on your domain</a></li>
+                <li><a href="/services/web-domains-email/email-deliverability/">Email that reaches the inbox</a></li>
+                <li><a href="/services/web-domains-email/domain-recovery/">Your domain and accounts, back in your name</a></li>
+              </ul>
+            </div>
+            <div class="menu-group">
+              <a class="menu-service" href="/services/ai-automation/"><span class="area-icon mono" aria-hidden="true">{ }</span><span>AI and automation</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <ul class="menu-projects">
+                <li><a href="/services/ai-automation/ai-assistant/">An AI assistant for your business</a></li>
+                <li><a href="/services/ai-automation/task-automation/">Automating a repetitive task</a></li>
+                <li><a href="/services/ai-automation/private-ai/">Private AI on your own computer</a></li>
+              </ul>
+            </div>
+            <a class="menu-custom glow" href="#contact"><strong>Something else in mind?</strong><span>Tell me what you need, and I’ll tell you honestly whether I&nbsp;can help.</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+          </div>
+        </details>
         <a href="/pricing/" data-shield>Prices</a>
         <a href="/#about" data-shield>About</a>
         <a href="/#process" data-shield>Process</a>
@@ -204,20 +229,61 @@
           <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
         </button>
         <a class="bar-cta" href="#contact"><span class="long">Start a project</span><span class="short">Contact</span></a>
+        <details class="menu" data-menu>
+          <summary class="menu-toggle mono" data-shield><span class="when-shut">Menu</span><span class="when-open">Close</span><span class="menu-lines" aria-hidden="true"></span></summary>
+          <div class="menu-panel">
+            <nav class="menu-nav" aria-label="Menu">
+              <p class="eyebrow mono">Services</p>
+              <div class="menu-group">
+                <a class="menu-service" href="/services/web-domains-email/" aria-current="page"><span class="area-icon mono" aria-hidden="true">&lt;/&gt;</span><span>Web, domains and email</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+                <ul class="menu-projects">
+                  <li><a href="/services/web-domains-email/launch-package/">Launch package</a></li>
+                  <li><a href="/services/web-domains-email/business-website/">A website for your business</a></li>
+                  <li><a href="/services/web-domains-email/one-page-website/">A one-page website</a></li>
+                  <li><a href="/services/web-domains-email/business-email/">Business email on your domain</a></li>
+                  <li><a href="/services/web-domains-email/email-deliverability/">Email that reaches the inbox</a></li>
+                  <li><a href="/services/web-domains-email/domain-recovery/">Your domain and accounts, back in your name</a></li>
+                </ul>
+              </div>
+              <div class="menu-group">
+                <a class="menu-service" href="/services/ai-automation/"><span class="area-icon mono" aria-hidden="true">{ }</span><span>AI and automation</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+                <ul class="menu-projects">
+                  <li><a href="/services/ai-automation/ai-assistant/">An AI assistant for your business</a></li>
+                  <li><a href="/services/ai-automation/task-automation/">Automating a repetitive task</a></li>
+                  <li><a href="/services/ai-automation/private-ai/">Private AI on your own computer</a></li>
+                </ul>
+              </div>
+              <ul class="menu-links">
+                <li><a href="/pricing/">Prices</a></li>
+                <li><a href="/#about">About</a></li>
+                <li><a href="/#process">Process</a></li>
+                <li><a href="/#faq">FAQ</a></li>
+              </ul>
+            </nav>
+            <div class="menu-foot">
+              <a class="btn btn-primary" href="#contact">Start a project<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <div class="menu-tools">
+                <a class="menu-lang" href="/es/servicios/web-dominios-correo/" hreflang="es" lang="es">Español</a>
+                <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+                  <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
+                  <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
   </header>
+  <!-- /build:header -->
 
   <main id="main">
     <section class="hero hero-page" aria-labelledby="page-title">
       <canvas class="field" aria-hidden="true"></canvas>
       <div class="hero-inner">
-        <a class="eyebrow mono page-kicker" href="/#services" data-shield><span data-decode>Services</span></a>
+        <nav class="eyebrow mono crumbs" aria-label="Breadcrumb"><a href="/#services" data-shield><span data-decode>Services</span></a></nav>
         <h1 id="page-title" class="page-title"><span class="line"><span data-shield>Web, domains and email</span></span></h1>
         <p class="page-lead" data-shield>Everything your business needs to look established online: a website that wins clients, a domain set up cleanly and email that reaches the inbox.</p>
-        <div class="actions">
-          <a class="btn btn-primary" href="#projects" data-shield>See projects and prices<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-        </div>
       </div>
     </section>
 
@@ -227,146 +293,46 @@
         <p class="eyebrow mono" aria-hidden="true"><span data-decode>Projects</span></p>
         <div class="section-body">
           <h2 id="projects-title" class="section-title">Projects and prices.</h2>
-          <ul class="projects">
+          <!-- build:projects -->
+          <ul class="projects projects-short">
             <li class="project project-featured" id="launch-package">
               <h3><a href="/services/web-domains-email/launch-package/">Launch package</a></h3>
               <p class="project-for">For a new business that needs to look established from day one, with website, domain and email in one project.</p>
-              <ul class="area-list">
-                <li>Your domain, registered in your name, and a one-page website</li>
-                <li>Business email on your domain, protected with SPF, DKIM and DMARC</li>
-                <li>Google Business Profile, if you serve a local area</li>
-              </ul>
-              <dl class="project-terms">
-                <div><dt>Price covers</dt><dd>One page, up to 5 mailboxes and two rounds of changes. With up to five pages, +$1,500.</dd></div>
-                <div><dt>From you</dt><dd>Your business name, a few lines about what you do, your logo and photos</dd></div>
-                <div><dt>Paid separately</dt><dd>Your domain, about $10–15 a year, and your email plan, per person each month</dd></div>
-              </dl>
-              <p class="project-meta"><span class="project-time">2 weeks</span><span class="project-price"><span>From</span> $2,000</span></p>
-              <a class="btn btn-primary project-start" href="#contact" data-project="launch-package" data-project-name="Launch package" data-topic="website" data-hint="Your business name, what you do, and where your clients are.">Start this project<span class="sr-only">: launch package</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-              <details class="project-why">
-                <summary>Why it matters</summary>
-                <div class="project-why-body">
-                  <p>Clients decide in seconds whether a business is real. A site at your own address, email that comes from it and a listing on Google Maps answer that before they ask. Done together, it’s one plan, one price and nothing left half set up. <a href="/services/web-domains-email/launch-package/">How it works, step by step</a>.</p>
-                  <p><strong>My advice:</strong> start with one page that says clearly what you do, and add more once you know what clients ask about.</p>
-                </div>
-              </details>
+              <p class="project-meta"><span class="project-scope">A one-page site and up to 5 mailboxes<span class="project-time">2 weeks</span></span><span class="project-price"><span>From</span> $2,000</span></p>
+              <p class="project-more" aria-hidden="true">See the details<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></p>
             </li>
             <li class="project" id="website">
               <h3><a href="/services/web-domains-email/business-website/">A website for your business</a></h3>
               <p class="project-for">For a business that needs a few pages to explain its services and win clients, built new or redesigned.</p>
-              <ul class="area-list">
-                <li>Up to five pages, designed around your services</li>
-                <li>Search basics: titles, descriptions, sitemap and Search Console</li>
-                <li>Contact form, privacy-friendly analytics and hosting in your name</li>
-              </ul>
-              <dl class="project-terms">
-                <div><dt>Price covers</dt><dd>Up to five pages and two rounds of changes</dd></div>
-                <div><dt>From you</dt><dd>Your texts or notes, your logo and photos</dd></div>
-                <div><dt>Paid separately</dt><dd>Your domain, about $10–15 a year. Hosting is free or a few dollars a month.</dd></div>
-              </dl>
-              <p class="project-meta"><span class="project-time">2 to 4 weeks</span><span class="project-price"><span>From</span> $3,000</span></p>
-              <a class="btn btn-primary project-start" href="#contact" data-project="website" data-project-name="A website for your business" data-topic="website" data-hint="What your business does, the pages you have in mind, and any deadline.">Start this project<span class="sr-only">: a website for your business</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-              <details class="project-why">
-                <summary>Why it matters</summary>
-                <div class="project-why-body">
-                  <p>Your website works while you don’t. It answers the questions clients would ask you, shows them why you’re the right choice and gives them an easy way to write, before they ever pick up the phone. <a href="/services/web-domains-email/business-website/">How it works, step by step</a>.</p>
-                  <p><strong>My advice:</strong> give each service you sell its own page. Clients find what they need faster, and so does Google.</p>
-                </div>
-              </details>
+              <p class="project-meta"><span class="project-scope">Up to five pages, new or redesigned<span class="project-time">2 to 4 weeks</span></span><span class="project-price"><span>From</span> $3,000</span></p>
+              <p class="project-more" aria-hidden="true">See the details<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></p>
             </li>
             <li class="project" id="one-page">
               <h3><a href="/services/web-domains-email/one-page-website/">A one-page website</a></h3>
               <p class="project-for">For an independent professional who needs a clear, fast page that turns visits into messages, built new or redesigned.</p>
-              <ul class="area-list">
-                <li>Design made for you, fast on any screen</li>
-                <li>A contact form that sends straight to your inbox</li>
-                <li>Domain, hosting and analytics in your name</li>
-              </ul>
-              <dl class="project-terms">
-                <div><dt>Price covers</dt><dd>One page and two rounds of changes</dd></div>
-                <div><dt>From you</dt><dd>Your texts or notes, your logo and photos</dd></div>
-                <div><dt>Paid separately</dt><dd>Your domain, about $10–15 a year. Hosting is free or a few dollars a month.</dd></div>
-              </dl>
-              <p class="project-meta"><span class="project-time">1 to 2 weeks</span><span class="project-price"><span>From</span> $1,500</span></p>
-              <a class="btn btn-primary project-start" href="#contact" data-project="one-page" data-project-name="A one-page website" data-topic="website" data-hint="What you do, who it’s for, and any deadline.">Start this project<span class="sr-only">: a one-page website</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-              <details class="project-why">
-                <summary>Why it matters</summary>
-                <div class="project-why-body">
-                  <p>Most people look you up before they reply, book or pay. One page that says who you are, what you do and how to reach you is often all it takes to turn that visit into a message. <a href="/services/web-domains-email/one-page-website/">How it works, step by step</a>.</p>
-                  <p><strong>My advice:</strong> put your main button at the top and again at the end, so nobody has to look for it.</p>
-                </div>
-              </details>
+              <p class="project-meta"><span class="project-scope">One page, new or redesigned<span class="project-time">1 to 2 weeks</span></span><span class="project-price"><span>From</span> $1,500</span></p>
+              <p class="project-more" aria-hidden="true">See the details<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></p>
             </li>
             <li class="project" id="business-email">
               <h3><a href="/services/web-domains-email/business-email/">Business email on your domain</a></h3>
               <p class="project-for">For a business still writing from a Gmail or Outlook address, or moving to a new provider.</p>
-              <ul class="area-list">
-                <li>Addresses like you@yourcompany.com on Google Workspace, Microsoft 365 or Proton Mail</li>
-                <li>SPF, DKIM and DMARC, so your messages reach the inbox</li>
-                <li>Old mail and contacts moved over, with short guides for every phone and computer</li>
-              </ul>
-              <dl class="project-terms">
-                <div><dt>Price covers</dt><dd>Up to 5 mailboxes. Each extra one, +$50.</dd></div>
-                <div><dt>From you</dt><dd>Access to your domain and your current email account</dd></div>
-                <div><dt>Paid separately</dt><dd>Your email plan, billed per person each month</dd></div>
-              </dl>
-              <p class="project-meta"><span class="project-time">1 to 2 days</span><span class="project-price"><span>From</span> $500</span></p>
-              <a class="btn btn-primary project-start" href="#contact" data-project="business-email" data-project-name="Business email on your domain" data-topic="email" data-hint="How many people need an address, and where your email is today.">Start this project<span class="sr-only">: business email on your domain</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-              <details class="project-why">
-                <summary>Why it matters</summary>
-                <div class="project-why-body">
-                  <p>An address at your own domain tells clients you’re an established business, and it stays yours if you ever change providers. A Gmail address can’t move with you; your domain can. <a href="/services/web-domains-email/business-email/">How it works, step by step</a>.</p>
-                  <p><strong>My advice:</strong> stay where your team already works. Gmail and Docs point to Google Workspace, Word and Excel to Microsoft 365, and if privacy comes first, Proton Mail.</p>
-                </div>
-              </details>
+              <p class="project-meta"><span class="project-scope">Up to 5 mailboxes<span class="project-time">1 to 2 days</span></span><span class="project-price"><span>From</span> $500</span></p>
+              <p class="project-more" aria-hidden="true">See the details<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></p>
             </li>
             <li class="project" id="deliverability">
               <h3><a href="/services/web-domains-email/email-deliverability/">Email that reaches the inbox</a></h3>
               <p class="project-for">For a business whose messages land in spam, or whose website forms never arrive.</p>
-              <ul class="area-list">
-                <li>A full check of your domain’s SPF, DKIM and DMARC</li>
-                <li>Every service that sends for you, like your CRM, newsletter or invoicing app, set up correctly</li>
-                <li>3 to 4 weeks of reports, then a stricter policy, so nobody else can send as you</li>
-              </ul>
-              <dl class="project-terms">
-                <div><dt>Price covers</dt><dd>One domain and the services that send email for it</dd></div>
-                <div><dt>From you</dt><dd>Access to your domain and to the tools that send email for you</dd></div>
-                <div><dt>Paid separately</dt><dd>Nothing, usually</dd></div>
-              </dl>
-              <p class="project-meta"><span class="project-time">3 to 4 weeks</span><span class="project-price"><span>From</span> $600</span></p>
-              <a class="btn btn-primary project-start" href="#contact" data-project="deliverability" data-project-name="Email that reaches the inbox" data-topic="email" data-hint="Where your emails end up, and which tools send email for you.">Start this project<span class="sr-only">: email that reaches the inbox</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-              <details class="project-why">
-                <summary>Why it matters</summary>
-                <div class="project-why-body">
-                  <p>Gmail and Outlook decide in a fraction of a second whether an email really comes from you, and these three records are how your domain proves it. Without them, genuine emails land in spam and fake ones get through. <a href="/services/web-domains-email/email-deliverability/">How it works, step by step</a>.</p>
-                  <p><strong>My advice:</strong> set it up before you need it. It protects every email you’ll ever send.</p>
-                </div>
-              </details>
+              <p class="project-meta"><span class="project-scope">One domain and the services that send for it<span class="project-time">3 to 4 weeks</span></span><span class="project-price"><span>From</span> $600</span></p>
+              <p class="project-more" aria-hidden="true">See the details<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></p>
             </li>
             <li class="project" id="domain-recovery">
               <h3><a href="/services/web-domains-email/domain-recovery/">Your domain and accounts, back in your name</a></h3>
               <p class="project-for">For a business whose domain, website or email sits in the account of a former designer, agency or employee.</p>
-              <ul class="area-list">
-                <li>Who controls your domain, website and email, found and written down</li>
-                <li>Each one moved into an account in your name, with two-step sign-in</li>
-                <li>Renewals set to automatic, so nothing expires by surprise</li>
-              </ul>
-              <dl class="project-terms">
-                <div><dt>Price covers</dt><dd>One domain, with its website and email accounts</dd></div>
-                <div><dt>From you</dt><dd>Proof that the business is yours, and any access you still have</dd></div>
-                <div><dt>Paid separately</dt><dd>Any renewal or transfer fee from your domain registrar</dd></div>
-              </dl>
-              <p class="project-meta"><span class="project-time">1 to 2 weeks</span><span class="project-price"><span>From</span> $400</span></p>
-              <a class="btn btn-primary project-start" href="#contact" data-project="domain-recovery" data-project-name="Your domain and accounts, back in your name" data-topic="email" data-hint="Where your domain was registered, if you know, and who set it up.">Start this project<span class="sr-only">: your domain and accounts, back in your name</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-              <details class="project-why">
-                <summary>Why it matters</summary>
-                <div class="project-why-body">
-                  <p>Your domain is the address of both your website and your email, and whoever controls the account it’s registered in controls both. In someone else’s account, one missed renewal can take everything offline. In yours, with two-step sign-in and automatic renewal, it simply keeps working. <a href="/services/web-domains-email/domain-recovery/">How it works, step by step</a>.</p>
-                  <p><strong>My advice:</strong> check today whose name your domain is in. If it isn’t yours, fix it while it’s easy.</p>
-                </div>
-              </details>
+              <p class="project-meta"><span class="project-scope">One domain, with its website and email<span class="project-time">1 to 2 weeks</span></span><span class="project-price"><span>From</span> $400</span></p>
+              <p class="project-more" aria-hidden="true">See the details<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></p>
             </li>
           </ul>
+          <!-- /build:projects -->
           <div class="includes">
             <p class="includes-title">Extras for any website</p>
             <ul class="price-list price-list-short">
@@ -412,7 +378,6 @@
             <p id="siblings-title" class="siblings-label">Other services</p>
             <ul>
             <li><a class="sibling" href="/services/ai-automation/"><span class="area-icon mono" aria-hidden="true">{ }</span><span><strong>AI and automation</strong><small>AI that knows your business, and fewer hours lost to repetitive tasks.</small></span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a></li>
-            <li><a class="sibling" href="/services/computers-privacy/"><span class="area-icon mono" aria-hidden="true">$_</span><span><strong>Computers and privacy</strong><small>A computer that runs smoothly, and accounts that stay private and organized.</small></span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a></li>
             </ul>
           </nav>
         </div>
@@ -464,7 +429,6 @@
                   <option value="website" selected data-glyph="&lt;/&gt;">Website</option>
                   <option value="email" data-glyph="@">Email and domain</option>
                   <option value="ai" data-glyph="{ }">AI and automation</option>
-                  <option value="computers" data-glyph="$_">Computers and privacy</option>
                   <option value="other" data-glyph="+">Something else</option>
                 </select>
                 <svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
@@ -490,17 +454,21 @@
     </section>
   </main>
 
+  <!-- build:footer -->
   <footer class="foot">
     <div class="foot-inner">
       <div class="foot-grid">
         <div class="foot-brand">
           <a class="brand mono" href="/">mariohdz<span>.com</span></a>
           <p>Linux and AI every day. Open source whenever&nbsp;I&nbsp;can.</p>
+          <a class="foot-mail" href="mailto:contact@mariohdz.com">contact@mariohdz.com</a>
         </div>
         <div class="foot-col">
-          <p class="foot-title mono">Contact</p>
+          <p class="foot-title mono">Services</p>
           <ul>
-            <li><a href="mailto:contact@mariohdz.com">contact@mariohdz.com</a></li>
+            <li><a href="/services/web-domains-email/" aria-current="page">Web, domains and email</a></li>
+            <li><a href="/services/ai-automation/">AI and automation</a></li>
+            <li><a href="/pricing/">Prices</a></li>
           </ul>
         </div>
         <div class="foot-col">
@@ -524,6 +492,7 @@
       </div>
     </div>
   </footer>
+  <!-- /build:footer -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "30c94df6ea8f449082f6430f6d475a67"}'></script>
 </body>
 </html>

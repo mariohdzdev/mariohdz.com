@@ -27,6 +27,9 @@ jobs:
       - name: Validate the HTML
         run: npx --yes vnu-jar@26.10.12 --errors-only --skip-non-html public
 
+      - name: Check that the shared parts of every page match tools/site.mjs
+        run: node tools/build.mjs --check
+
       - name: Check links, language pairs, the sitemap, security.txt and the MTA-STS policy
         run: node tools/check-site.mjs
 

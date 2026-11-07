@@ -444,6 +444,7 @@ a:hover > .arrow-right {
 }
 
 .bar-inner {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -461,11 +462,17 @@ a:hover > .arrow-right {
   color: var(--faint);
 }
 
+/* Navigation. On desktops the header names the sections, and Services opens a panel with every project,
+   grouped by service. On phones and tablets one Menu button opens the same groups with everything else.
+   Both are details elements, so they open without JavaScript; main.js closes them with Escape,
+   a click outside or a link inside. */
+
 .nav {
   display: none;
 }
 
-.nav a {
+.nav > a,
+.nav-services > summary {
   position: relative;
   padding-block: 0.5rem;
   color: var(--muted);
@@ -473,7 +480,8 @@ a:hover > .arrow-right {
   transition: color 0.2s;
 }
 
-.nav a::after {
+.nav > a::after,
+.nav-services > summary::after {
   content: "";
   position: absolute;
   inset: auto 0 0;
@@ -484,13 +492,208 @@ a:hover > .arrow-right {
   transition: transform 0.4s var(--ease);
 }
 
-.nav a:hover,
-.nav a[aria-current] {
+.nav > a:hover,
+.nav > a[aria-current],
+.nav-services > summary:hover,
+.nav-services > summary[aria-current],
+.nav-services[open] > summary {
   color: var(--text);
 }
 
-.nav a[aria-current]::after {
+.nav > a[aria-current]::after,
+.nav-services > summary[aria-current]::after,
+.nav-services[open] > summary::after {
   transform: scaleX(1);
+}
+
+.nav-services > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.nav-services > summary::-webkit-details-marker {
+  display: none;
+}
+
+.chevron {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s var(--ease);
+}
+
+.nav-services[open] .chevron {
+  transform: rotate(180deg);
+}
+
+/* The services panel: a lit tile under the header, like the open topic menu of the form, with the two services
+   side by side and custom work in the corner the shorter list leaves free. */
+.nav-panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2.5rem;
+  width: min(100%, 46rem);
+  padding: 1.6rem 1.75rem 1.75rem;
+  border: 1px solid transparent;
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--tile-light) var(--tile-mix), transparent), transparent 55%) padding-box,
+    linear-gradient(180deg, var(--tile-top), var(--tile-bottom)) padding-box,
+    linear-gradient(135deg, var(--metal-hi), var(--metal-lo) 30%, var(--metal) 55%, var(--metal-lo) 80%, var(--metal-hi)) border-box;
+  box-shadow:
+    inset 0 1px 0 var(--sheen),
+    0 2rem 3.5rem -1.5rem var(--shade);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+/* A strip above the panel keeps it open while the pointer crosses the gap from the header. */
+.nav-panel::before {
+  content: "";
+  position: absolute;
+  inset: -0.85rem 0 100%;
+}
+
+.nav-panel > .menu-group:first-child {
+  grid-row: span 2;
+}
+
+.motion .nav-services[open] > .nav-panel {
+  animation: drop 0.3s var(--ease);
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+}
+
+/* A service and its projects, the same in the panel and in the menu. */
+.menu-group {
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+}
+
+.menu-service {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: fit-content;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.menu-service .area-icon {
+  min-width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 0.6rem;
+  font-size: 0.75rem;
+}
+
+.menu-service .arrow-right {
+  color: var(--green);
+}
+
+.menu-service:hover,
+.menu-service[aria-current] {
+  color: var(--green);
+}
+
+.menu-service:hover .arrow-right {
+  transform: translateX(3px);
+}
+
+/* The projects line up under the name of their service. */
+.menu-projects {
+  display: grid;
+  margin: 0;
+  padding: 0 0 0 2.9rem;
+  list-style: none;
+}
+
+.menu-projects a {
+  display: block;
+  margin-inline: -0.65rem;
+  padding: 0.42rem 0.65rem;
+  border-radius: 0.55rem;
+  color: var(--muted);
+  text-decoration: none;
+  text-wrap: pretty;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.menu-projects a:hover {
+  background: color-mix(in srgb, var(--platinum) 9%, transparent);
+  color: var(--text);
+}
+
+/* The page being read is marked in jade, like the active section in the header. */
+.menu-projects a[aria-current] {
+  color: var(--green);
+}
+
+/* Custom work, lit in green like its tile on the home page. */
+.menu-custom {
+  --tile-light: var(--green);
+  --tile-mix: 14%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-self: end;
+  gap: 0.25rem 1rem;
+  padding: 1rem 1.15rem 1.05rem;
+  border-radius: 0.95rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.3s var(--ease);
+}
+
+.menu-custom::before {
+  background: var(--jade-edge);
+}
+
+.menu-custom strong {
+  font-weight: 500;
+}
+
+.menu-custom span {
+  grid-column: 1;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.menu-custom .arrow-right {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--green);
+}
+
+.motion .menu-custom:hover {
+  transform: translateY(-1px);
+}
+
+.menu-custom:hover .arrow-right {
+  transform: translateX(3px);
 }
 
 .bar-tools {
@@ -498,6 +701,233 @@ a:hover > .arrow-right {
   align-items: center;
   gap: 0.5rem;
   margin-left: auto;
+}
+
+/* The menu on phones and tablets: a button at the end of the header that opens a page of its own over the site.
+   The language and the theme move into it, so the header keeps only the name, Contact and Menu. */
+.bar-tools > .lang,
+.js .bar-tools > .theme-toggle {
+  display: none;
+}
+
+.menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.25rem;
+  padding: 0 0.95rem 0 1rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: border-color 0.2s;
+}
+
+.menu-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.menu-toggle:hover {
+  border-color: color-mix(in srgb, var(--green) 60%, transparent);
+}
+
+.menu .when-open,
+.menu[open] .when-shut {
+  display: none;
+}
+
+.menu[open] .when-open {
+  display: inline;
+}
+
+/* Two fine lines that cross into a close mark once the menu is open. */
+.menu-lines {
+  position: relative;
+  flex: none;
+  width: 0.875rem;
+  height: 7px;
+}
+
+.menu-lines::before,
+.menu-lines::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: transform 0.35s var(--ease);
+}
+
+.menu-lines::before {
+  top: 0;
+}
+
+.menu-lines::after {
+  bottom: 0;
+}
+
+.menu[open] .menu-lines::before {
+  transform: translateY(2.75px) rotate(45deg);
+}
+
+.menu[open] .menu-lines::after {
+  transform: translateY(-2.75px) rotate(-45deg);
+}
+
+/* The narrowest phones keep only the two lines: the word stays for screen readers, out of sight. */
+@media (max-width: 22.49rem) {
+  .menu-toggle {
+    justify-content: center;
+    width: 2.25rem;
+    padding: 0;
+  }
+
+  .menu-toggle > span:not(.menu-lines) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* With the menu open the header turns solid, without its blur, which would otherwise hold the menu inside it. */
+.bar:has(.menu[open]) {
+  border-bottom-color: var(--rule);
+  background: var(--bg);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* While the menu is open, the page behind it stays still. */
+.has-menu {
+  overflow: hidden;
+}
+
+.menu-panel {
+  position: fixed;
+  inset: var(--head) 0 0;
+  display: grid;
+  align-content: space-between;
+  gap: 2.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.75rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(120% 50% at 100% 0%, color-mix(in srgb, var(--tile-light) var(--tile-mix), transparent), transparent 60%),
+    var(--bg);
+  font-size: 1rem;
+}
+
+.motion .menu[open] > .menu-panel {
+  animation: drop 0.35s var(--ease);
+}
+
+.menu-nav {
+  display: grid;
+  align-content: start;
+  gap: 1.5rem;
+}
+
+.menu-nav > .eyebrow {
+  margin: 0 0 -0.25rem;
+}
+
+.menu-panel .menu-service {
+  font-size: 1.125rem;
+}
+
+.menu-panel .menu-service .area-icon {
+  min-width: 2.4rem;
+  height: 2.4rem;
+  font-size: 0.8125rem;
+}
+
+.menu-panel .menu-projects {
+  padding-left: 3.15rem;
+}
+
+.menu-panel .menu-projects a {
+  padding-block: 0.55rem;
+}
+
+/* The other sections, two by two, and the prices first. */
+.menu-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.5rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.menu-links a {
+  display: block;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--text);
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.menu-links a:hover,
+.menu-links a[aria-current] {
+  color: var(--green);
+}
+
+.menu-foot {
+  display: grid;
+  gap: 1rem;
+}
+
+.menu-foot .btn {
+  justify-content: center;
+}
+
+.menu-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.menu-lang {
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  padding: 0 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.menu-lang:hover {
+  border-color: color-mix(in srgb, var(--green) 60%, transparent);
+  color: var(--text);
+}
+
+.menu-tools .theme-toggle {
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 @media (min-width: 56rem) {
@@ -509,9 +939,17 @@ a:hover > .arrow-right {
     font-size: 0.8125rem;
   }
 
-  /* After the menu; the not-found pages have none, so there the tools stay at the right. */
   .nav + .bar-tools {
     margin-left: 1.25rem;
+  }
+
+  .bar-tools > .lang,
+  .js .bar-tools > .theme-toggle {
+    display: grid;
+  }
+
+  .menu {
+    display: none;
   }
 }
 
@@ -1111,7 +1549,8 @@ a:hover > .arrow-right {
   }
 }
 
-/* Services: three areas over a soft light, all alike, with the same platinum plate and edge. */
+/* Services: each area on a glass card over a soft light, the same platinum plate and edge on both, and its
+   projects as rows that lead to their own pages. Every starting price comes with what it covers. */
 
 .areas {
   position: relative;
@@ -1127,12 +1566,11 @@ a:hover > .arrow-right {
 .areas::before {
   content: "";
   position: absolute;
-  inset: -16% -10%;
+  inset: -12% -10%;
   z-index: -1;
   background:
-    radial-gradient(28% 36% at 17% 45%, var(--aurora-tone), transparent 70%),
-    radial-gradient(28% 36% at 50% 45%, var(--aurora-tone), transparent 70%),
-    radial-gradient(28% 36% at 83% 45%, var(--aurora-tone), transparent 70%);
+    radial-gradient(34% 40% at 20% 30%, var(--aurora-tone), transparent 70%),
+    radial-gradient(34% 40% at 80% 72%, var(--aurora-tone), transparent 70%);
   /* Fades out well before its own edges, so the lights never show a border. */
   -webkit-mask-image: radial-gradient(farthest-side, #000 45%, transparent);
   mask-image: radial-gradient(farthest-side, #000 45%, transparent);
@@ -1151,8 +1589,8 @@ a:hover > .arrow-right {
   position: relative;
   isolation: isolate;
   display: grid;
-  gap: 1.25rem;
-  padding: 1.5rem 1.25rem 1.6rem;
+  gap: 1.5rem;
+  padding: 1.5rem 1.25rem 1.25rem;
   border: 1px solid var(--glass-line);
   border-radius: 1rem;
   background: var(--glass);
@@ -1233,6 +1671,28 @@ a:hover > .arrow-right {
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* The name of the area leads to its own page, with the extras and its questions. */
+.area h3 a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.area h3 .arrow-right {
+  margin-left: 0.45rem;
+  color: var(--green);
+  vertical-align: 0.05em;
+}
+
+.area h3 a:hover {
+  color: var(--green);
+}
+
+.area h3 a:hover .arrow-right {
+  transform: translateX(3px);
 }
 
 .area-sum {
@@ -1242,48 +1702,153 @@ a:hover > .arrow-right {
   text-wrap: pretty;
 }
 
-/* On phones what's included folds away under each area; wider screens always show it. */
-.area-more summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-top: 1.1rem;
-  border-top: 1px dashed var(--rule-strong);
-  color: var(--muted);
-  font: 500 0.75rem/1.2 var(--mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+/* Each project is a row: its name, what its starting price covers, and the price. The whole row leads to
+   the project's page, and lights up evenly under the pointer. */
+.offers {
+  display: grid;
+  margin: 0;
+  padding: 0;
   list-style: none;
-  cursor: pointer;
+  border-top: 1px solid var(--rule);
+}
+
+.offer {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "name name name"
+    "scope price arrow";
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-inline: -0.75rem;
+  padding: 0.85rem 0.75rem 0.9rem;
+  border-radius: 0.65rem;
+  transition: background-color 0.25s;
+}
+
+/* The rule under each row stays in line with the text, while the light spreads a little past it. */
+.offer::before {
+  content: "";
+  position: absolute;
+  inset: auto 0.75rem 0;
+  height: 1px;
+  background: var(--rule);
+}
+
+.offer-name {
+  grid-area: name;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.35;
+  text-decoration: none;
+  text-wrap: pretty;
   transition: color 0.2s;
 }
 
-.area-more summary::-webkit-details-marker {
-  display: none;
+.offer-name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
 
-.area-more summary::after {
-  content: "+";
-  color: var(--label);
-  font-size: 1.125rem;
-  line-height: 1;
-  transition: transform 0.3s var(--ease);
+.offer-scope {
+  grid-area: scope;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-wrap: pretty;
 }
 
-.area-more summary:hover {
-  color: var(--text);
+.offer-price {
+  grid-area: price;
+  justify-self: end;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.area-more summary:hover::after,
-.area-more[open] summary::after {
+.offer-price span {
+  margin-right: 0.3rem;
+  color: var(--faint);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* On phones the arrow sits beside the price, on the line under the name. */
+.offer > .arrow-right {
+  grid-area: arrow;
+  align-self: start;
+  margin-top: 0.3rem;
   color: var(--green);
 }
 
-.area-more[open] summary::after {
-  transform: rotate(45deg);
+.offer:hover {
+  background: color-mix(in srgb, var(--platinum) 8%, transparent);
 }
 
+.offer:hover .offer-name {
+  color: var(--green);
+}
+
+.offer:hover > .arrow-right {
+  transform: translateX(3px);
+}
+
+/* The focus ring goes around the whole row, which is what the link covers. */
+.offer-name:focus-visible {
+  outline: none;
+}
+
+.offer:has(.offer-name:focus-visible) {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
+}
+
+/* Tablets and wider: what the area is on the left, its projects on the right, each price beside its name. */
+@media (min-width: 40rem) {
+  .areas {
+    gap: 1.25rem;
+  }
+
+  .area {
+    grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
+    gap: 2.25rem;
+    align-items: start;
+    padding: 1.9rem 1.75rem;
+  }
+
+  .offer {
+    grid-template-columns: minmax(0, 1fr) auto 0.8rem;
+    grid-template-areas:
+      "name price arrow"
+      "scope price arrow";
+    column-gap: 1.25rem;
+  }
+
+  .offer-price,
+  .offer > .arrow-right {
+    align-self: center;
+  }
+
+  .offer > .arrow-right {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 64rem) {
+  .area {
+    gap: 3rem;
+    padding: 2.1rem 2.25rem 2.1rem 2.1rem;
+  }
+}
+
+/* Lists of what's included: a plus before each line, like the notes of a plan. */
 .area-list {
   display: grid;
   gap: 0.7rem;
@@ -1291,12 +1856,6 @@ a:hover > .arrow-right {
   margin: 0;
   padding: 1.1rem 0 0;
   list-style: none;
-}
-
-@media (min-width: 40rem) {
-  .js .area-more summary {
-    display: none;
-  }
 }
 
 .area-list li {
@@ -1398,85 +1957,8 @@ a:hover > .arrow-right {
   }
 }
 
-/* Tablets list the areas as rows: what it is on the left, what's included on the right.
-   Each row's tone runs along its top edge and stretches out as the section comes into view. */
-@media (min-width: 40rem) and (max-width: 63.999rem) {
-  .areas {
-    gap: 0;
-  }
-
-  .areas::before {
-    opacity: calc(var(--aurora) * 0.55);
-  }
-
-  .area {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    gap: 2rem;
-    padding: 1.75rem 0 2rem;
-    border: 0;
-    border-top: 1px solid var(--rule);
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
-  }
-
-  .motion .area:hover {
-    transform: none;
-  }
-
-  .area::before {
-    inset: -1px 0 auto;
-    height: 1px;
-    padding: 0;
-    -webkit-mask: none;
-    mask: none;
-    background: linear-gradient(90deg, var(--hue), transparent);
-    opacity: 1;
-    transform: scaleX(0.2);
-    transform-origin: left;
-  }
-
-  .area:hover::before,
-  .is-in .area::before {
-    transform: scaleX(1);
-  }
-
-  .is-in .area:nth-child(2)::before {
-    transition-delay: 0.15s;
-  }
-
-  .is-in .area:nth-child(3)::before {
-    transition-delay: 0.3s;
-  }
-
-  .area::after {
-    display: none;
-  }
-
-  .js .area-list {
-    padding-top: 3.7rem;
-  }
-}
-
-/* Desktops show the three areas side by side as glass cards, with their lists lined up. */
+/* Desktops: the invitation on the left, the examples on the right. */
 @media (min-width: 64rem) {
-  .areas {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: auto auto;
-    gap: 0 1.25rem;
-  }
-
-  .area {
-    grid-row: span 2;
-    grid-template-rows: subgrid;
-    padding: 1.75rem 1.5rem 2rem;
-  }
-
-  .js .area-list {
-    padding-top: 1.25rem;
-    border-top: 1px dashed var(--rule-strong);
-  }
-
   .custom {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     gap: 3rem;
@@ -2478,6 +2960,16 @@ a:hover > .arrow-right {
   color: var(--text);
 }
 
+/* The address to write to sits under the motto, beside the name. */
+.foot .foot-mail {
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.foot .foot-mail:hover {
+  color: var(--green);
+}
+
 .foot-base {
   display: flex;
   flex-wrap: wrap;
@@ -2643,49 +3135,6 @@ a:hover > .arrow-right {
   }
 }
 
-/* Services on the home page: each area links to its own page, below what's included. */
-
-.area-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: fit-content;
-  color: var(--green);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.area-link:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
-}
-
-@media (min-width: 40rem) and (max-width: 63.999rem) {
-  .area-more {
-    grid-row: span 2;
-  }
-
-  .area-link {
-    align-self: end;
-  }
-}
-
-@media (min-width: 64rem) {
-  .areas {
-    grid-template-rows: auto auto auto;
-  }
-
-  .area {
-    grid-row: span 3;
-  }
-
-  .area-link {
-    align-self: end;
-  }
-}
-
 /* Questions: each one opens in place, and its answer starts with the short reply. */
 
 .faq {
@@ -2772,20 +3221,28 @@ a:hover > .arrow-right {
   }
 }
 
-/* Service pages: a shorter hero over the same glyphs, with the name of the area in large type. */
+/* Service, project and prices pages: a hero over the same glyphs, with the name in large type, only as tall as
+   what it says, so the page's own content starts on the first screen. Only the home page fills the screen. */
 
 .hero-page {
-  min-height: min(82svh, 54rem);
+  min-height: 0;
+  padding-block: calc(var(--head) + clamp(3rem, 9vh, 6.5rem)) clamp(2.5rem, 6vh, 4.5rem);
 }
 
-.page-kicker {
-  width: fit-content;
+/* Where the page sits, above its name: Services, then its service, each one a way back. */
+.crumbs {
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
   margin: 0;
+}
+
+.crumbs a {
+  color: inherit;
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.page-kicker:hover {
+.crumbs a:hover {
   color: var(--green);
 }
 
@@ -2993,6 +3450,63 @@ a:hover > .arrow-right {
 
 .projects-note a:hover {
   text-decoration-thickness: 2px;
+}
+
+/* On a service page each project is a short card: who it's for, what its starting price covers and how long it
+   takes. The whole card leads to the project's own page, where the rest is. */
+.projects-short > .project {
+  gap: 0.9rem;
+  padding-bottom: 1.3rem;
+}
+
+.projects-short .project h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.projects-short .project:hover h3 a {
+  color: var(--green);
+}
+
+.projects-short .project h3 a:focus-visible {
+  outline: none;
+}
+
+.projects-short .project:has(h3 a:focus-visible) {
+  outline: 2px solid var(--glow);
+  outline-offset: 3px;
+}
+
+/* What the price covers and how long it takes on the left, the price always on the right. */
+.projects-short .project-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.project-scope {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.project-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--green);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.project:hover .project-more .arrow-right {
+  transform: translateX(3px);
 }
 
 /* The card that brings several projects together gets an edge of jade metal, like the custom work tile. */
@@ -3259,6 +3773,76 @@ a.price-name:hover {
   letter-spacing: 0;
 }
 
+/* A project's row leads to its page: the whole row, with an arrow at its end, lights up under the pointer.
+   Its rule stays in line with the text while the light spreads a little past it. */
+.price-list li:has(> a.price-name) {
+  position: relative;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto 0.8rem;
+  grid-template-areas:
+    "name name name"
+    "time amount arrow";
+  margin-inline: -0.75rem;
+  padding-inline: 0.75rem;
+  border-bottom: 0;
+  border-radius: 0.65rem;
+  transition: background-color 0.25s;
+}
+
+.price-list li:has(> a.price-name)::before {
+  content: "";
+  position: absolute;
+  inset: auto 0.75rem 0;
+  height: 1px;
+  background: var(--rule);
+}
+
+a.price-name {
+  grid-area: name;
+}
+
+a.price-name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.price-list li:has(> a.price-name) .price-time {
+  grid-area: time;
+}
+
+.price-list li:has(> a.price-name) .price-amount {
+  grid-area: amount;
+}
+
+.price-list li > .arrow-right {
+  grid-area: arrow;
+  align-self: center;
+  color: var(--green);
+}
+
+.price-list li:has(> a.price-name):hover {
+  background: color-mix(in srgb, var(--platinum) 8%, transparent);
+}
+
+.price-list li:has(> a.price-name):hover a.price-name {
+  color: var(--green);
+}
+
+.price-list li:has(> a.price-name):hover > .arrow-right {
+  transform: translateX(3px);
+}
+
+a.price-name:focus-visible {
+  outline: none;
+}
+
+.price-list li:has(> a.price-name:focus-visible) {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
+}
+
 /* Extras have no timeline, so the name and the price share one line. */
 .price-list-short .price-name {
   grid-column: auto;
@@ -3267,6 +3851,11 @@ a.price-name:hover {
 @media (min-width: 40rem) {
   .price-list li {
     grid-template-columns: minmax(0, 1fr) 8.5rem 8.5rem;
+  }
+
+  .price-list li:has(> a.price-name) {
+    grid-template-columns: minmax(0, 1fr) 8.5rem 8.5rem 0.8rem;
+    grid-template-areas: "name time amount arrow";
   }
 
   .price-name {
@@ -3288,6 +3877,10 @@ a.price-name:hover {
     grid-row: span 7;
     grid-template-rows: subgrid;
     padding: 1.75rem 1.5rem 1.5rem;
+  }
+
+  .projects-short > .project {
+    grid-row: span 4;
   }
 
   .project-start {
@@ -3381,6 +3974,16 @@ a.price-name:hover {
 .custom .project-terms {
   padding-top: 0;
   border-top: 0;
+}
+
+/* In the tile, the advice that goes with the project, and what's included above the terms. */
+.custom-intro .project-advice strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.custom-examples .custom-list + .custom-label {
+  margin-top: 1.75rem;
 }
 
 /* The project a card started, named above the message. */

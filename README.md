@@ -2,7 +2,7 @@
 
 The source of [mariohdz.com](https://mariohdz.com), my personal site.
 
-Plain HTML, CSS and a little JavaScript in `public/`, served by a Cloudflare Worker (`src/worker.js`) that also sends the contact form to my inbox. No build step, no dependencies and no cookies. The fonts are served from the same domain, and visits are counted with Cloudflare Web Analytics, which doesn't use cookies either.
+Plain HTML, CSS and a little JavaScript in `public/`, served by a Cloudflare Worker (`src/worker.js`) that also sends the contact form to my inbox. No build step on deploy, no dependencies and no cookies. The fonts are served from the same domain, and visits are counted with Cloudflare Web Analytics, which doesn't use cookies either.
 
 ## Pages
 
@@ -15,11 +15,22 @@ The site is in English and Spanish. Each page has its counterpart, linked with `
 | `/services/web-domains-email/` | `/es/servicios/web-dominios-correo/` |
 | `/services/web-domains-email/email-deliverability/` | `/es/servicios/web-dominios-correo/correo-a-la-bandeja/` |
 | `/services/ai-automation/` | `/es/servicios/ia-automatizacion/` |
-| `/services/computers-privacy/` | `/es/servicios/equipos-privacidad/` |
 | `/privacy/` | `/es/privacidad/` |
 | `/legal/` | `/es/aviso-legal/` |
 
-Each service page lists its projects as cards: what each one is for and includes, what its price covers, what's needed from the client and what they pay on their own, how long it takes, its starting price, a button that starts it and, folded away, why it matters. Its own questions and the same contact form as the home page follow. The prices page brings every project, extra, the tech check-up and the care plan together, and a project can have a page of its own under its service's address, with the signs that call for it, why it matters, how it's done, its terms and its questions. Those pages are listed in the sitemap after their service. The header, the contact section and the footer are copies of the home page's, so a change to them has to be made on the other pages as well. A starting price appears on its card, in the page's description and structured data (`minPrice`) and on the prices page, so a new price means editing all four places in both languages.
+Every project has a page of its own under its service's address, listed in the sitemap after its service: the signs that call for it, why it matters, how it's done, what's included, its terms, my advice, its questions and a button that starts it. Each service page lists its projects as short cards that lead there: who each one is for, what its starting price covers, how long it takes and the price. The extras, what every project includes, the service's own questions and the same contact form as the home page follow. The home page lists every project the same way, as a row under its service, and the prices page brings every project, extra, the tech check-up and the care plan together. A starting price never appears without what it covers.
+
+On desktops, Services in the header opens a panel with every project, grouped by service; on phones and tablets a Menu button opens the same groups with the other sections, the language and the theme. Both are `details` elements, so they work without JavaScript.
+
+## Shared parts
+
+The header with its menus, the footer, the services on the home page, the projects on each service page and the lists on the prices page are written by `tools/build.mjs` from `tools/site.mjs`, which holds the services, their projects and prices in both languages, and the words those parts use. In the pages, each part sits between `<!-- build:name -->` and `<!-- /build:name -->`; everything outside those marks is edited by hand as before. After changing `tools/site.mjs`, or adding a page, run:
+
+```sh
+node tools/build.mjs
+```
+
+and commit what it writes. The deploy runs it with `--check` and stops if any page is out of date. A new price also goes in the project's own page, its service page's description and structured data (`minPrice`), in both languages. The contact section is still a copy of the home page's on every page that has one.
 
 Missing pages show `public/404.html`, or `public/es/404.html` under `/es/`. Both languages share `styles.css` and `main.js`; the script picks its messages from the `lang` attribute of the page.
 
@@ -33,11 +44,11 @@ npx wrangler@4.151.3 dev
 
 Then open <http://localhost:8787>. Locally the contact form doesn't send real email: Wrangler logs each message and saves its text under `.wrangler/tmp/email/`. The MTA-STS Worker runs on its own with `npx wrangler@4.151.3 dev --config mta-sts/wrangler.jsonc --port 8788`.
 
-Before pushing, `node tools/check-site.mjs` runs the same link, language and file checks as the deploy.
+Before pushing, `node tools/build.mjs --check` and `node tools/check-site.mjs` run the same checks as the deploy.
 
 ## Contact form
 
-The form posts to `/api/contact`. The Worker checks the fields and sends the message to contact@mariohdz.com with the visitor's address as Reply-To. A card's "Start this project" button fills in a hidden `project` field, and the project, or else the topic the visitor picks, goes in the subject. The Worker only accepts the projects and topics it lists, so a new card needs its key added there. A hidden `lang` field tells the Worker which language to answer in. It works without JavaScript too; with JavaScript the page shows the result in place.
+The form posts to `/api/contact`. The Worker checks the fields and sends the message to contact@mariohdz.com with the visitor's address as Reply-To. A project's "Start this project" button fills in a hidden `project` field, and the project, or else the topic the visitor picks, goes in the subject. The Worker only accepts the projects and topics it lists, so a new project needs its key added there. A hidden `lang` field tells the Worker which language to answer in. It works without JavaScript too; with JavaScript the page shows the result in place.
 
 Three protections, none of which someone filling in the form should notice:
 
@@ -77,7 +88,7 @@ The `magick` step shrinks each file to about a third of its size without a visib
 
 Every push to `main` deploys the site with GitHub Actions (`.github/workflows/deploy.yml`), in three steps:
 
-1. **Check.** The HTML goes through the W3C's Nu HTML Checker, and `tools/check-site.mjs` checks every internal link and anchor, that each page is paired with its counterpart in the other language, the sitemap, `security.txt` and the MTA-STS policy. Both Workers are built without being deployed. Pull requests, like Dependabot's, stop here.
+1. **Check.** The HTML goes through the W3C's Nu HTML Checker, `tools/build.mjs --check` confirms the shared parts match `tools/site.mjs`, and `tools/check-site.mjs` checks every internal link and anchor, that each page is paired with its counterpart in the other language, the sitemap, `security.txt` and the MTA-STS policy. Both Workers are built without being deployed. Pull requests, like Dependabot's, stop here.
 2. **Deploy.** Wrangler deploys the site and then the MTA-STS Worker.
 3. **Check the live site.** `tools/check-live.mjs` confirms that every file in `public/` is the one from this commit, that the headers in `public/_headers` are sent, that missing pages, www and plain HTTP answer as they should, and that the form's API turns down an empty form, which sends nothing.
 

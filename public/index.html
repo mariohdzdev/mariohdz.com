@@ -70,8 +70,7 @@
           "name": "Services",
           "itemListElement": [
             { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/web-domains-email/#service", "name": "Web, domains and email", "url": "https://mariohdz.com/services/web-domains-email/", "description": "Websites designed, built and published for you, business email with SPF, DKIM and DMARC, and domains and DNS on Cloudflare." } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/ai-automation/#service", "name": "AI and automation", "url": "https://mariohdz.com/services/ai-automation/", "description": "AI assistants set up around your documents and tools, automations and custom tools, and local, private AI." } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/computers-privacy/#service", "name": "Computers and privacy", "url": "https://mariohdz.com/services/computers-privacy/", "description": "Linux setup, moves from Windows or macOS and troubleshooting, and every account on your team protected with a password manager and two-step sign-in." } }
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "@id": "https://mariohdz.com/services/ai-automation/#service", "name": "AI and automation", "url": "https://mariohdz.com/services/ai-automation/", "description": "AI assistants set up around your documents and tools, automations and custom tools, and local, private AI." } }
           ]
         }
       }
@@ -82,11 +81,36 @@
 <body id="top">
   <a class="skip" href="#main">Skip to content</a>
 
+  <!-- build:header -->
   <header class="bar">
     <div class="bar-inner">
       <a class="brand mono" href="/" data-shield>mariohdz<span>.com</span></a>
       <nav class="nav mono" aria-label="Main">
-        <a href="#services" data-spy data-shield>Services</a>
+        <details class="nav-services" data-menu>
+          <summary data-shield data-spy="#services">Services<svg class="chevron" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 3.75 5 6.25l2.5-2.5"/></svg></summary>
+          <div class="nav-panel">
+            <div class="menu-group">
+              <a class="menu-service" href="/services/web-domains-email/"><span class="area-icon mono" aria-hidden="true">&lt;/&gt;</span><span>Web, domains and email</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <ul class="menu-projects">
+                <li><a href="/services/web-domains-email/launch-package/">Launch package</a></li>
+                <li><a href="/services/web-domains-email/business-website/">A website for your business</a></li>
+                <li><a href="/services/web-domains-email/one-page-website/">A one-page website</a></li>
+                <li><a href="/services/web-domains-email/business-email/">Business email on your domain</a></li>
+                <li><a href="/services/web-domains-email/email-deliverability/">Email that reaches the inbox</a></li>
+                <li><a href="/services/web-domains-email/domain-recovery/">Your domain and accounts, back in your name</a></li>
+              </ul>
+            </div>
+            <div class="menu-group">
+              <a class="menu-service" href="/services/ai-automation/"><span class="area-icon mono" aria-hidden="true">{ }</span><span>AI and automation</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <ul class="menu-projects">
+                <li><a href="/services/ai-automation/ai-assistant/">An AI assistant for your business</a></li>
+                <li><a href="/services/ai-automation/task-automation/">Automating a repetitive task</a></li>
+                <li><a href="/services/ai-automation/private-ai/">Private AI on your own computer</a></li>
+              </ul>
+            </div>
+            <a class="menu-custom glow" href="#contact"><strong>Something else in mind?</strong><span>Tell me what you need, and I’ll tell you honestly whether I&nbsp;can help.</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+          </div>
+        </details>
         <a href="/pricing/" data-shield>Prices</a>
         <a href="#about" data-spy data-shield>About</a>
         <a href="#process" data-spy data-shield>Process</a>
@@ -99,9 +123,53 @@
           <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
         </button>
         <a class="bar-cta" href="#contact"><span class="long">Start a project</span><span class="short">Contact</span></a>
+        <details class="menu" data-menu>
+          <summary class="menu-toggle mono" data-shield><span class="when-shut">Menu</span><span class="when-open">Close</span><span class="menu-lines" aria-hidden="true"></span></summary>
+          <div class="menu-panel">
+            <nav class="menu-nav" aria-label="Menu">
+              <p class="eyebrow mono">Services</p>
+              <div class="menu-group">
+                <a class="menu-service" href="/services/web-domains-email/"><span class="area-icon mono" aria-hidden="true">&lt;/&gt;</span><span>Web, domains and email</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+                <ul class="menu-projects">
+                  <li><a href="/services/web-domains-email/launch-package/">Launch package</a></li>
+                  <li><a href="/services/web-domains-email/business-website/">A website for your business</a></li>
+                  <li><a href="/services/web-domains-email/one-page-website/">A one-page website</a></li>
+                  <li><a href="/services/web-domains-email/business-email/">Business email on your domain</a></li>
+                  <li><a href="/services/web-domains-email/email-deliverability/">Email that reaches the inbox</a></li>
+                  <li><a href="/services/web-domains-email/domain-recovery/">Your domain and accounts, back in your name</a></li>
+                </ul>
+              </div>
+              <div class="menu-group">
+                <a class="menu-service" href="/services/ai-automation/"><span class="area-icon mono" aria-hidden="true">{ }</span><span>AI and automation</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+                <ul class="menu-projects">
+                  <li><a href="/services/ai-automation/ai-assistant/">An AI assistant for your business</a></li>
+                  <li><a href="/services/ai-automation/task-automation/">Automating a repetitive task</a></li>
+                  <li><a href="/services/ai-automation/private-ai/">Private AI on your own computer</a></li>
+                </ul>
+              </div>
+              <ul class="menu-links">
+                <li><a href="/pricing/">Prices</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#process">Process</a></li>
+                <li><a href="#faq">FAQ</a></li>
+              </ul>
+            </nav>
+            <div class="menu-foot">
+              <a class="btn btn-primary" href="#contact">Start a project<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <div class="menu-tools">
+                <a class="menu-lang" href="/es/" hreflang="es" lang="es">Español</a>
+                <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+                  <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06"/></svg>
+                  <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
   </header>
+  <!-- /build:header -->
 
   <main id="main">
     <section class="hero" aria-labelledby="name">
@@ -126,56 +194,82 @@
         <p class="eyebrow mono" aria-hidden="true"><span data-decode>Services</span></p>
         <div class="section-body">
           <h2 id="services-title" class="section-title">What I&nbsp;take care of.</h2>
+          <!-- build:services -->
           <ul class="areas">
             <li class="area">
               <div class="area-head">
                 <span class="area-icon mono" aria-hidden="true" data-decode>&lt;/&gt;</span>
-                <h3>Web, domains and email</h3>
+                <h3><a href="/services/web-domains-email/">Web, domains and email<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a></h3>
                 <p class="area-sum">A website that makes a strong first impression, and email that reaches the inbox.</p>
               </div>
-              <details class="area-more">
-                <summary>What’s included</summary>
-                <ul class="area-list">
-                  <li>Websites designed, built and published for you, new or redesigned</li>
-                  <li>Business email like you@yourcompany.com, with SPF, DKIM and DMARC</li>
-                  <li>Domains, DNS and redirects on Cloudflare, set up cleanly</li>
-                </ul>
-              </details>
-              <a class="area-link" href="/services/web-domains-email/">Projects and prices<span class="sr-only"> for web, domains and email</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <ul class="offers">
+                <li class="offer">
+                  <a class="offer-name" href="/services/web-domains-email/launch-package/">Launch package</a>
+                  <span class="offer-scope">A one-page site and up to 5 mailboxes</span>
+                  <span class="offer-price"><span>From</span> $2,000</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/web-domains-email/business-website/">A website for your business</a>
+                  <span class="offer-scope">Up to five pages, new or redesigned</span>
+                  <span class="offer-price"><span>From</span> $3,000</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/web-domains-email/one-page-website/">A one-page website</a>
+                  <span class="offer-scope">One page, new or redesigned</span>
+                  <span class="offer-price"><span>From</span> $1,500</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/web-domains-email/business-email/">Business email on your domain</a>
+                  <span class="offer-scope">Up to 5 mailboxes</span>
+                  <span class="offer-price"><span>From</span> $500</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/web-domains-email/email-deliverability/">Email that reaches the inbox</a>
+                  <span class="offer-scope">One domain and the services that send for it</span>
+                  <span class="offer-price"><span>From</span> $600</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/web-domains-email/domain-recovery/">Your domain and accounts, back in your name</a>
+                  <span class="offer-scope">One domain, with its website and email</span>
+                  <span class="offer-price"><span>From</span> $400</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+              </ul>
             </li>
             <li class="area">
               <div class="area-head">
                 <span class="area-icon mono" aria-hidden="true" data-decode>{ }</span>
-                <h3>AI and automation</h3>
+                <h3><a href="/services/ai-automation/">AI and automation<svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a></h3>
                 <p class="area-sum">AI that knows your business, and fewer hours lost to repetitive tasks.</p>
               </div>
-              <details class="area-more">
-                <summary>What’s included</summary>
-                <ul class="area-list">
-                  <li>AI assistants set up around your documents, instructions and tools</li>
-                  <li>Automations and custom tools, like answering every new lead within minutes</li>
-                  <li>Local, private AI that keeps your files on your own computer</li>
-                </ul>
-              </details>
-              <a class="area-link" href="/services/ai-automation/">Projects and prices<span class="sr-only"> for AI and automation</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
-            </li>
-            <li class="area">
-              <div class="area-head">
-                <span class="area-icon mono" aria-hidden="true" data-decode>$_</span>
-                <h3>Computers and privacy</h3>
-                <p class="area-sum">A computer that runs smoothly, and accounts that stay private and organized.</p>
-              </div>
-              <details class="area-more">
-                <summary>What’s included</summary>
-                <ul class="area-list">
-                  <li>Linux setup, moves from Windows or macOS, and troubleshooting</li>
-                  <li>A password manager and two-step sign-in for your whole team</li>
-                  <li>Access that follows your team when people join or leave</li>
-                </ul>
-              </details>
-              <a class="area-link" href="/services/computers-privacy/">Projects and prices<span class="sr-only"> for computers and privacy</span><svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg></a>
+              <ul class="offers">
+                <li class="offer">
+                  <a class="offer-name" href="/services/ai-automation/ai-assistant/">An AI assistant for your business</a>
+                  <span class="offer-scope">One assistant, for one team or one kind of task</span>
+                  <span class="offer-price"><span>From</span> $950</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/ai-automation/task-automation/">Automating a repetitive task</a>
+                  <span class="offer-scope">One workflow</span>
+                  <span class="offer-price"><span>From</span> $700</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+                <li class="offer">
+                  <a class="offer-name" href="/services/ai-automation/private-ai/">Private AI on your own computer</a>
+                  <span class="offer-scope">One computer</span>
+                  <span class="offer-price"><span>From</span> $600</span>
+                  <svg class="arrow-right" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5"/></svg>
+                </li>
+              </ul>
             </li>
           </ul>
+          <!-- /build:services -->
           <div class="custom glow">
             <div class="custom-intro">
               <h3>Something else in mind?</h3>
@@ -378,7 +472,6 @@
                   <option value="website" data-glyph="&lt;/&gt;">Website</option>
                   <option value="email" data-glyph="@">Email and domain</option>
                   <option value="ai" data-glyph="{ }">AI and automation</option>
-                  <option value="computers" data-glyph="$_">Computers and privacy</option>
                   <option value="other" data-glyph="+">Something else</option>
                 </select>
                 <svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
@@ -404,17 +497,21 @@
     </section>
   </main>
 
+  <!-- build:footer -->
   <footer class="foot">
     <div class="foot-inner">
       <div class="foot-grid">
         <div class="foot-brand">
           <a class="brand mono" href="/">mariohdz<span>.com</span></a>
           <p>Linux and AI every day. Open source whenever&nbsp;I&nbsp;can.</p>
+          <a class="foot-mail" href="mailto:contact@mariohdz.com">contact@mariohdz.com</a>
         </div>
         <div class="foot-col">
-          <p class="foot-title mono">Contact</p>
+          <p class="foot-title mono">Services</p>
           <ul>
-            <li><a href="mailto:contact@mariohdz.com">contact@mariohdz.com</a></li>
+            <li><a href="/services/web-domains-email/">Web, domains and email</a></li>
+            <li><a href="/services/ai-automation/">AI and automation</a></li>
+            <li><a href="/pricing/">Prices</a></li>
           </ul>
         </div>
         <div class="foot-col">
@@ -438,6 +535,7 @@
       </div>
     </div>
   </footer>
+  <!-- /build:footer -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "30c94df6ea8f449082f6430f6d475a67"}'></script>
 </body>
 </html>
