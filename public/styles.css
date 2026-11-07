@@ -1430,6 +1430,13 @@ a:hover > .arrow-right {
   margin: 0;
 }
 
+/* Phones: beside the portrait, the statement takes a size that keeps it to a few lines. */
+@media (max-width: 39.999rem) {
+  .about .section-title {
+    font-size: clamp(1.3rem, 0.55rem + 3.6vw, 1.875rem);
+  }
+}
+
 .path {
   margin: 0;
   padding: 0;
@@ -1911,6 +1918,30 @@ a:hover > .arrow-right {
   font-size: 0.9375rem;
 }
 
+/* On the home page the examples follow the invitation, and the button and the check-up come after them,
+   so on phones the examples read as custom work and not as part of the check-up. */
+.custom-work .custom-intro p {
+  margin-bottom: 0;
+}
+
+.custom-actions .custom-more {
+  max-width: 34rem;
+  margin: 1.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+/* In a project's tile, a note under what's included. */
+.custom-examples .custom-more {
+  margin: 1.1rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
 .custom-more a {
   color: var(--green);
   text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
@@ -1970,6 +2001,28 @@ a:hover > .arrow-right {
   .custom-examples {
     padding-left: 2.5rem;
     border-left: 1px solid var(--rule);
+  }
+
+  /* The invitation and its button stay together on the left, the examples on the right. */
+  .custom-work {
+    grid-template-areas: "intro examples" "actions examples";
+    row-gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .custom-work .custom-intro {
+    grid-area: intro;
+    align-self: end;
+  }
+
+  .custom-work .custom-examples {
+    grid-area: examples;
+    align-self: center;
+  }
+
+  .custom-work .custom-actions {
+    grid-area: actions;
+    align-self: start;
   }
 }
 
@@ -3655,6 +3708,7 @@ a:hover > .arrow-right {
 
 .includes-list li {
   display: grid;
+  align-content: start;
   gap: 0.2rem;
   padding-block: 0.9rem 1rem;
   border-bottom: 1px solid var(--rule);
@@ -3941,14 +3995,16 @@ a.price-name:focus-visible {
   text-wrap: pretty;
 }
 
-.explain > p a {
+.explain > p a,
+.explain .path-what a {
   color: var(--green);
   text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
 }
 
-.explain > p a:hover {
+.explain > p a:hover,
+.explain .path-what a:hover {
   text-decoration-thickness: 2px;
 }
 
@@ -3976,14 +4032,15 @@ a.price-name:focus-visible {
   border-top: 0;
 }
 
-/* In the tile, the advice that goes with the project, and what's included above the terms. */
-.custom-intro .project-advice strong {
-  color: var(--text);
-  font-weight: 500;
+/* In the tile, what's included above the terms. */
+.custom-examples .custom-list + .custom-label,
+.custom-examples .custom-more + .custom-label {
+  margin-top: 1.75rem;
 }
 
-.custom-examples .custom-list + .custom-label {
-  margin-top: 1.75rem;
+/* Words that read badly when a line breaks inside them, like "one-page". */
+.nowrap {
+  white-space: nowrap;
 }
 
 /* The project a card started, named above the message. */
@@ -4075,17 +4132,19 @@ a.price-name:focus-visible {
   }
 }
 
-/* About: the portrait beside the statement, and what clients wrote on Upwork. */
+/* About: the portrait beside the statement, and what clients wrote on Upwork. On phones they keep the
+   same composition as on wider screens, and the portrait and the statement grow together with the screen. */
 
 .about-head {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(0.9rem, 4vw, 1.5rem);
   align-items: center;
 }
 
 .portrait {
   position: relative;
-  width: 6.5rem;
+  width: clamp(5.5rem, 26vw, 8.5rem);
   margin: 0;
   border-radius: 1rem;
   box-shadow: 0 1.25rem 2.5rem -1.75rem var(--shade);

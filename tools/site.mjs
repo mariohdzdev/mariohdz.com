@@ -84,7 +84,7 @@ export const PROJECTS = {
       url: "/services/web-domains-email/one-page-website/",
       name: "A one-page website",
       scope: "One page, new or redesigned",
-      for: "For an independent professional who needs a clear, fast page that turns visits into messages, built new or redesigned.",
+      for: "For a business or professional with one main offer, who needs a clear, fast page that turns visits into messages, built new or redesigned.",
       time: "1 to 2 weeks",
     },
     es: {
@@ -92,7 +92,7 @@ export const PROJECTS = {
       url: "/es/servicios/web-dominios-correo/web-de-una-pagina/",
       name: "Una web de una página",
       scope: "Una página, nueva o rediseñada",
-      for: "Para un profesional independiente que necesita una página clara y rápida que convierta visitas en mensajes, nueva o rediseñada.",
+      for: "Para un negocio o un profesional con una oferta principal, que necesita una página clara y rápida que convierta visitas en mensajes, nueva o rediseñada.",
       time: "1 a 2 semanas",
     },
   },
